@@ -1,0 +1,35 @@
+<div class="container" style="background-color:white">
+    <br>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>University</th>
+                  <th>Date Joined</th>
+                  <th>Status</th>
+          </thead>
+          <tbody>
+              <% var idx = 1 %>
+              <% _.each(users, function(user){%>
+                <tr>
+                    <td><%=idx%></td>
+                    <td><%=user.name%></td>
+                    <td><%=user.email%></td>
+                    <td><%=user.university%></td>
+                    <td><%=user.createdAt%></td>
+                    <% if(user.verification) {%>
+                        <td>Verified</td>
+                    <% } else {%>
+                        <td> Not Verified</td>
+                        <td><a class="btn btn-success" href="/user/verify_user?idUser=<%=user.id%>">Verify</a></td>
+                    <% } %>     
+                </tr>
+                <% idx++ %>
+              <%})%>
+              
+          </tbody>
+        </table>
+    </div>
+</div>

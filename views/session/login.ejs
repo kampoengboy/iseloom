@@ -1,0 +1,88 @@
+<div id="body" class="container">
+<% if(flash) { %>
+<% if(flash.err) { %>
+      <div>
+      <br><br>
+      <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <% Object.keys(flash.err).forEach(function(error) { %>
+              <%= flash.err[error] %>
+        <% }) %>
+      </div>
+      </div>
+<% } else if (flash.success){ %>
+  <div>
+  <br><br>
+  <div class="alert alert-success" role="alert">
+    <span class="sr-only">Success:</span>
+    <% Object.keys(flash.success).forEach(function(success) { %>
+          <%= flash.success[success] %>
+    <% }) %>
+  </div>
+  </div>
+<% } %>
+<% } %>
+  <div class="col-md-6 col-md-offset-3" style="margin-top:50px;">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h2 class="panel-title">Login</h2>
+    </div>
+    <div class="panel-body">
+          <form  method="post" action="/session/login_user" class="form-horizontal" role="form">
+
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Email or Username: </label>
+          <div class="col-lg-8">
+          <input type="text" id="email" name="email" required="required" pattern=".{2,}" class="form-control" >
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Password:</label>
+          <div class="col-lg-8">
+          <input type="password" id="password" name="password" required="required" class="form-control" >
+          </div>
+          </div>
+          <div class="form-group">
+          <div class="col-lg-offset-4 col-lg-8">
+          <input type="checkbox" id="remember_me" name="_remember_me" value="on" checked="checked" /> Remember me
+          <br><br>
+          <input type="hidden" value="<%=flash.url%>" name="url_redirect" />
+          <button type="submit" id="login" name="login" class="btn-color btn btn-primary">Login</button>
+          </div>
+          </div>
+          </form>
+
+      <div class="row">
+        <div class="col-lg-4">&nbsp;</div>
+        <div class="col-lg-8">
+          <a href="#" data-toggle="modal" data-target="#myModal1">Forget your password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="modal fade" id="myModal1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Forget your password?</h4>
+      </div>
+      <form action="/user/forgotpass" method="POST" class="regsite" id="regsite">
+      <div class="modal-body">
+        <p style="font-size:15px; font-weight: normal;">Please fill your email that has been registered to Iseloom and we will send you an Email</p>
+        <div class="control-group">
+                <input type="text" class="form-control" placeholder="Your email address" name="email" id="email">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class= "btn btn-primary" value="Send" id="">
+        <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</div>

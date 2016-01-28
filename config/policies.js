@@ -18,7 +18,13 @@
 
 
 module.exports.policies = {
-
+  'session' : {
+      'register' : ['flash'],
+      'login' : ['flash']
+  },
+  'user' : {
+      'dashboard' : ['flash','sessionAuth']
+  }
   /***************************************************************************
   *                                                                          *
   * Default policy for all controllers and actions (`true` allows public     *
