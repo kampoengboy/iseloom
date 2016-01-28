@@ -36,9 +36,19 @@
                             <li>
                                 <a href="/dashboard">Dashboard</a>
                             </li>
-                            <li>
-                                <a href="#">Contests</a>
-                            </li>
+                             <li>
+                                <a href="#">Contests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Create Contest</a></li>
+                                    <li>
+                                        <a href="#">List Contests <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">Running Contest</a></li>
+                                            <li><a href="#">Past Contest</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                </li>
                             <li>
                                 <a href="#">Problem Sets</a>
                             </li>
@@ -113,6 +123,8 @@
 
     <!--SCRIPTS-->
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.smartmenus.js"></script>
+    <script src="/js/jquery.smartmenus.boostrap.js"></script>
     <!--SCRIPTS END-->
   </body>
 </html>
