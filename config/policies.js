@@ -23,7 +23,8 @@ module.exports.policies = {
       'login' : ['flash']
   },
   'user' : {
-      'dashboard' : ['flash','sessionAuth']
+      'dashboard' : ['flash','sessionAuth'],
+      'createcontest' : ['flash','sessionAuth']
   }
   /***************************************************************************
   *                                                                          *
