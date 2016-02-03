@@ -1,0 +1,39 @@
+<div class="container" style="background-color:white">
+    <h4 class="text-center">Create a Contest</h4>
+    <br><br>
+    <form  method="post" action="/user/create_contest" class="form-horizontal" role="form">
+
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Contest Name : </label>
+          <div class="col-lg-8">
+          <input type="text" id="contest_name" name="contestname" required="required" pattern=".{2,}" class="form-control" >
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Date / Time Open : </label>
+          <div class="col-lg-8">
+          <input type="text" id="datetimeopen" name="datetimeopen" required="required" class="form-control time-class" >
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Date / Time Close : </label>
+          <div class="col-lg-8">
+          <input type="text" id="datetimeclose" name="datetimeclose" required="required" class="form-control time-class" >
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="control-label col-lg-4 required">Freeze Time (in Minutes) : </label>
+          <div class="col-lg-8">
+          <input type="text" id="freezetime" name="freezetime" required="required" class="form-control" >
+          </div>
+          </div>
+          <div class="form-group">
+          <div class="col-lg-offset-4 col-lg-8">
+          <button type="submit" id="createcontest" name="createcontest" class="btn-color form-control btn btn-primary">Create Contest</button>
+          </div>
+          </div>
+    </form>
+</div>
+<script>
+    $('.time-class').datetimepicker();
+</script>
