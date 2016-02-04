@@ -1,6 +1,16 @@
 <div class="container" style="background-color:white">
     <h3 class="text-center">Create a Problem Set</h3>
     <form action="/user/create_testcase" method="POST">
+    <div class="form-group">
+          <label class="control-label col-md-1 required">Name: </label>
+          <div class="col-md-11">
+          <input type="text" id="name" name="name" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br><br>
+    <b style="margin-left:15px">Description : </b>
+    <br><br>
+    <div style="border: 1px solid black">
     <div id="wysihtml5-toolbar">
         <a data-wysihtml5-command="bold"><span class="glyphicon glyphicon-bold"></span></a>
         <a data-wysihtml5-command="italic"><span class="glyphicon glyphicon-italic"></span></a>
@@ -35,7 +45,8 @@
         <a data-wysihtml5-action="change_view">< / ></a>
     </div>
     <br><br>
-    <textarea id="wysihtml5-textarea" placeholder="Enter your text ..." autofocus; style="height:500px; border:1px solid black;"></textarea>
+    <textarea id="wysihtml5-textarea" placeholder="Enter your text ..." autofocus; name="description" style="height:500px; border-top: 1px solid black;"></textarea>
+    </div>
     <br><br>
     <div class="form-group">
           <label class="control-label col-lg-4 required">Time Limit (in Seconds): </label>
