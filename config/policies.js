@@ -24,7 +24,8 @@ module.exports.policies = {
   },
   'user' : {
       'dashboard' : ['flash','sessionAuth'],
-      'createcontest' : ['flash','sessionAuth']
+      'createcontest' : ['flash','sessionAuth'],
+      'problemsets' : ['flash','sessionAuth'],
   }
   /***************************************************************************
   *                                                                          *

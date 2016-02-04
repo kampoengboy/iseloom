@@ -1,0 +1,175 @@
+<div class="container" style="background-color:white">
+    <h3 class="text-center">Create a Problem Set</h3>
+    <form action="/user/create_testcase" method="POST">
+    <div id="wysihtml5-toolbar">
+        <a data-wysihtml5-command="bold"><span class="glyphicon glyphicon-bold"></span></a>
+        <a data-wysihtml5-command="italic"><span class="glyphicon glyphicon-italic"></span></a>
+        <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">H1</a>
+        <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">H2</a>
+        <!-- Some wysihtml5 commands require extra parameters -->
+        <a data-wysihtml5-command="insertImage"><span class="glyphicon glyphicon-picture"></span></a>
+        <div data-wysihtml5-dialog="insertImage" style="display: none;">
+        <label>
+            Image:
+            <input data-wysihtml5-dialog-field="src" value="http://">
+        </label>
+        <label>
+            Align:
+            <select data-wysihtml5-dialog-field="className">
+            <option value="">default</option>
+            <option value="wysiwyg-float-left">left</option>
+            <option value="wysiwyg-float-right">right</option>
+            </select>
+        </label>
+        <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+        </div>
+        <!-- Some wysihtml5 commands like 'createLink' require extra paramaters specified by the user (eg. href) -->
+        <a data-wysihtml5-command="createLink"><span class="glyphicon glyphicon-link"></span></a>
+        <div data-wysihtml5-dialog="createLink" style="display: none;">
+            <label>
+            Link:
+            <input data-wysihtml5-dialog-field="href" value="http://" class="text">
+            </label>
+            <a data-wysihtml5-dialog-action="save">OK</a> <a data-wysihtml5-dialog-action="cancel">Cancel</a>
+        </div>
+        <a data-wysihtml5-action="change_view">< / ></a>
+    </div>
+    <br><br>
+    <textarea id="wysihtml5-textarea" placeholder="Enter your text ..." autofocus; style="height:500px; border:1px solid black;"></textarea>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Time Limit (in Seconds): </label>
+          <div class="col-lg-8">
+          <input type="text" id="timelimit" name="timelimit" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Memory Limit (in MB): </label>
+          <div class="col-lg-8">
+          <input type="text" id="memorylimit" name="memorylimit" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases Input : </label>
+          <div class="col-lg-8">
+          <input type="file" id="file1" onchange="previewFile1()"/>
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases Output : </label>
+          <div class="col-lg-8">
+          <input type="file" id="file2" onchange="previewFile2()"/>
+          </div>
+    </div>
+    <br><br>
+    <!--<div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases : </label>
+          <div class="col-lg-8">
+          <select class="form-control" style="width: 100%;" onchange="func()" id="tc">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+          </div>
+    </div>
+    <div class="form-group">
+          <label class="control-label col-lg-8 required">Testcases : </label>
+          <div class="col-lg-8">
+          <textarea
+          </div>
+    </div>-->
+    <input type="hidden" name="file_name_1" id="filename1">
+    <input type="hidden" name="file_url_1" id="fileurl1">
+    <input type="hidden" name="file_name_2" id="filename2">
+    <input type="hidden" name="file_url_2" id="fileurl2">
+    <div class="form-group">
+    <button type="submit" class="btn btn-success form-control">Create TestCase</button>
+    </div>
+    </form>
+    <br><br>
+</div>
+<script>
+var editor = new wysihtml5.Editor("wysihtml5-textarea", { // id of textarea element
+  toolbar:      "wysihtml5-toolbar", // id of toolbar element
+  parserRules:  wysihtml5ParserRules, // defined in parser rules set 
+  stylesheets: ["/css/stylesheet.css"]
+});
+
+function previewFile1(){
+  var file1    = document.getElementById('file1').files[0];
+  var reader  = new FileReader();
+  var file_url_1 = document.querySelector('#fileurl1');
+  var file_name_1 = document.querySelector('#filename1');
+  reader.onloadend = function () {
+      file_url_1.value = reader.result;
+  }
+  if (file1) {
+       if(file1.type!="application/zip" && file1.type!="application/x-rar")
+       {
+         $('#file1').val("");
+         alert("File yang diupload harus dalam bentuk RAR ataupun ZIP.");
+         file_name_1.value = "";
+         file_url_1.value = "";
+         return;
+       }
+      if(file1.size>=10000000)
+      {
+          $('#file1').val("");
+          alert("File yang diupload tidak boleh lebih dari 10 MB.");
+          file_name_1.value = "";
+          file_url_1.value = "";
+          return;
+      }
+      else {
+        file_name_1.value = file1.name;
+        reader.readAsDataURL(file1); //reads the data as a URL
+      }
+    } else {
+      file_name_1.value = "";
+      file_url_1.value = "";
+  }
+}
+function previewFile2(){
+  var file2    = document.getElementById('file2').files[0];
+  var reader  = new FileReader();
+  var file_url_2 = document.querySelector('#fileurl2');
+  var file_name_2 = document.querySelector('#filename2');
+  reader.onloadend = function () {
+      file_url_2.value = reader.result;
+  }
+  if (file2) {
+       if(file2.type!="application/zip" && file2.type!="application/x-rar")
+       {
+         $('#file2').val("");
+         alert("File yang diupload harus dalam bentuk RAR ataupun ZIP.");
+         file_name_2.value = "";
+         file_url_2.value = "";
+         return;
+       }
+      if(file2.size>=10000000)
+      {
+          $('#file2').val("");
+          alert("File yang diupload tidak boleh lebih dari 10 MB.");
+          file_name_2.value = "";
+          file_url_2.value = "";
+          return;
+      }
+      else {
+        file_name_2.value = file2.name;
+        reader.readAsDataURL(file2); //reads the data as a URL
+      }
+    } else {
+      file_name_2.value = "";
+      file_url_2.value = "";
+  }
+}
+function func(){
+  var tmp_tc = document.getElementById('tc');
+  var num_tc = tmp_tc.options[tmp_tc.selectedIndex].value;
+  console.log(num_tc);
+}
+</script>

@@ -4,11 +4,37 @@
  * @description :: Server-side logic for managing users
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-
+var AdmZip = require('adm-zip');
+var fs = require('fs');
 module.exports = {
     createcontest : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
+    },
+    problemsets : function(req,res,next){
+        if(!req.session.User.admin) return res.redirect('/');
+        return res.view();  
+    },
+    'create_testcase' : function(req,res,next){
+        if(!req.session.User.admin) return res.redirect('/');
+        var stdin_file = req.param('file_url_1');
+        var stdin_name = req.param('file_name_1');
+        var stdout_file = req.param('file_url_2');
+        var stdout_name = req.param('file_name_2')
+        stdin_file= stdin_file.replace('data:application/zip;base64,', "");
+        stdin_file = stdin_file.replace('data:application/x-rar;base64,', "");
+        stdout_file= stdout_file.replace('data:application/zip;base64,', "");
+        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "");
+        buf = new Buffer(stdin_file,'base64');
+        fs.writeFile(stdin_name,buf, function(err,data){
+            if(err) return next(err);
+            var zip = new AdmZip(stdin_name);
+            var zipEntries = zip.getEntries(); // an array of ZipEntry records
+            zipEntries.forEach(function(zipEntry) {
+                console.log(zipEntry.getData().toString('utf-8'));
+            });
+            fs.unlink(stdin_name);
+        });
     },
     'create_contest' : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
