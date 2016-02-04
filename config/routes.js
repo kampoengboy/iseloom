@@ -37,7 +37,11 @@ module.exports.routes = {
   },
   '/login' : 'SessionController.login',
   '/register' : 'SessionController.register',
-  '/dashboard' : 'UserController.dashboard'
+  '/dashboard' : 'UserController.dashboard',
+  '/uploader' : {
+    controller: 'post',
+    action: 'upload_file'
+  }
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

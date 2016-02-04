@@ -46,6 +46,8 @@
     </div>
     <br><br>
     <textarea id="wysihtml5-textarea" placeholder="Enter your text ..." autofocus; name="description" style="height:500px; border-top: 1px solid black;"></textarea>
+    <div class="clearfix"></div>
+    <textarea name="body" id="ck"></textarea>
     </div>
     <br><br>
     <div class="form-group">
@@ -183,4 +185,5 @@ function func(){
   var num_tc = tmp_tc.options[tmp_tc.selectedIndex].value;
   console.log(num_tc);
 }
+  CKEDITOR.replace('ck');
 </script>

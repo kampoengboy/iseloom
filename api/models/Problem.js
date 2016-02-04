@@ -14,6 +14,7 @@ module.exports = {
       'description' : 'integer',
       'input' : 'object',
       'output' : 'object',
+      'status' : 'boolean',
   }
 };
 
