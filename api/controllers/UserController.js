@@ -24,7 +24,10 @@ module.exports = {
         stdin_file = stdin_file.replace('data:application/zip;base64,', "");
         stdin_file = stdin_file.replace('data:application/x-rar;base64,', "");
         stdout_file= stdout_file.replace('data:application/zip;base64,', "");
-        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "");
+        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "")
+        if(stdin_name==stdout_name){
+            return res.send('Anda harus memasukkan nama file yang berbeda');
+        }
         var usrObj = {
             name : req.param('name'),
             description : req.param('description'),
@@ -36,35 +39,33 @@ module.exports = {
         Problem.create(usrObj, function(err,problem){
             if(err) return next(err);
             //for input file
+            var stdin = [];
             buf = new Buffer(stdin_file,'base64');
             fs.writeFile(stdin_name,buf, function(err,data){
                 if(err) return next(err);
                 var zip = new AdmZip(stdin_name);
                 var zipEntries = zip.getEntries(); // an array of ZipEntry records
                 zipEntries.forEach(function(zipEntry) {
-                    Problem.findOne(problem.id, function(err,prob){
-                        if(err) return next(err);
-                        var stdin = prob.input;
-                        stdin.push(zipEntry.getData().toString('utf-8'));
-                        Problem.update(prob.id, {input:stdin}, function(err,prob1){}); 
-                    });
+                       if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX"){
+                           stdin.push(zipEntry.getData().toString('utf-8'));
+                       }
                 });
+                Problem.update(problem.id, {input:stdin}, function(err,prob){}); 
                 fs.unlink(stdin_name);
             });
             //for output file
+            var stdout = [];
             buf2 = new Buffer(stdout_file,'base64');
             fs.writeFile(stdout_name,buf2, function(err,data){
                 if(err) return next(err);
                 var zip2 = new AdmZip(stdout_name);
                 var zipEntries2 = zip2.getEntries(); // an array of ZipEntry records
                 zipEntries2.forEach(function(zipEntry2) {
-                    Problem.findOne(problem.id, function(err,prob){
-                        if(err) return next(err);
-                        var stdout = prob.output;
+                    if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX"){
                         stdout.push(zipEntry2.getData().toString('utf-8'));
-                        Problem.update(prob.id, {output:stdout}, function(err,prob1){}); 
-                    });
+                    }
                 });
+                Problem.update(problem.id, {output:stdout}, function(err,prob){}); 
                 fs.unlink(stdout_name);
             });
             return res.redirect('/user/problemsets');
