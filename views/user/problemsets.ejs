@@ -11,43 +11,8 @@
     <b style="margin-left:15px">Description : </b>
     <br><br>
     <div style="border: 1px solid black">
-    <div id="wysihtml5-toolbar">
-        <a data-wysihtml5-command="bold"><span class="glyphicon glyphicon-bold"></span></a>
-        <a data-wysihtml5-command="italic"><span class="glyphicon glyphicon-italic"></span></a>
-        <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">H1</a>
-        <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">H2</a>
-        <!-- Some wysihtml5 commands require extra parameters -->
-        <a data-wysihtml5-command="insertImage"><span class="glyphicon glyphicon-picture"></span></a>
-        <div data-wysihtml5-dialog="insertImage" style="display: none;">
-        <label>
-            Image:
-            <input data-wysihtml5-dialog-field="src" value="http://">
-        </label>
-        <label>
-            Align:
-            <select data-wysihtml5-dialog-field="className">
-            <option value="">default</option>
-            <option value="wysiwyg-float-left">left</option>
-            <option value="wysiwyg-float-right">right</option>
-            </select>
-        </label>
-        <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
-        </div>
-        <!-- Some wysihtml5 commands like 'createLink' require extra paramaters specified by the user (eg. href) -->
-        <a data-wysihtml5-command="createLink"><span class="glyphicon glyphicon-link"></span></a>
-        <div data-wysihtml5-dialog="createLink" style="display: none;">
-            <label>
-            Link:
-            <input data-wysihtml5-dialog-field="href" value="http://" class="text">
-            </label>
-            <a data-wysihtml5-dialog-action="save">OK</a> <a data-wysihtml5-dialog-action="cancel">Cancel</a>
-        </div>
-        <a data-wysihtml5-action="change_view">< / ></a>
-    </div>
-    <br><br>
-    <textarea id="wysihtml5-textarea" placeholder="Enter your text ..." autofocus; name="description" style="height:500px; border-top: 1px solid black;"></textarea>
     <div class="clearfix"></div>
-    <textarea name="body" id="ck"></textarea>
+    <textarea name="description" id="ck"></textarea>
     </div>
     <br><br>
     <div class="form-group">
@@ -106,11 +71,7 @@
     <br><br>
 </div>
 <script>
-var editor = new wysihtml5.Editor("wysihtml5-textarea", { // id of textarea element
-  toolbar:      "wysihtml5-toolbar", // id of toolbar element
-  parserRules:  wysihtml5ParserRules, // defined in parser rules set 
-  stylesheets: ["/css/stylesheet.css"]
-});
+
 
 function previewFile1(){
   var file1    = document.getElementById('file1').files[0];

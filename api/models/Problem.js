@@ -8,13 +8,12 @@
 module.exports = {
 
   attributes: {
-      'name' : 'string',
-      'memorylimit' : 'integer',
-      'timelimit' : 'integer',
-      'description' : 'integer',
-      'input' : 'object',
-      'output' : 'object',
-      'status' : 'boolean',
+      name : 'string',
+      memorylimit : 'integer',
+      timelimit : 'integer',
+      description : 'string',
+      input : 'array',
+      output : 'array'
   }
 };
 
