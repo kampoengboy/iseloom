@@ -13,7 +13,11 @@ module.exports = {
       timelimit : 'integer',
       description : 'string',
       input : 'array',
-      output : 'array'
+      output : 'array',
+      status : {
+          type : 'boolean',
+          defaultsTo : false
+      }
   }
 };
 
