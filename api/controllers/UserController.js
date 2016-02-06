@@ -46,7 +46,7 @@ module.exports = {
                 var zip = new AdmZip(stdin_name);
                 var zipEntries = zip.getEntries(); // an array of ZipEntry records
                 zipEntries.forEach(function(zipEntry) {
-                       if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX"){
+                       if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX" && zipEntry.entryName.split('/')[zipEntry.entryName.split('/').length-1]!=".DS_Store"){
                            stdin.push(zipEntry.getData().toString('utf-8'));
                        }
                 });
@@ -61,7 +61,7 @@ module.exports = {
                 var zip2 = new AdmZip(stdout_name);
                 var zipEntries2 = zip2.getEntries(); // an array of ZipEntry records
                 zipEntries2.forEach(function(zipEntry2) {
-                    if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX"){
+                    if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX" && zipEntry2.entryName.split('/')[zipEntry2.entryName.split('/').length-1]!=".DS_Store"){
                         stdout.push(zipEntry2.getData().toString('utf-8'));
                     }
                 });
