@@ -112,6 +112,11 @@ module.exports = {
                return res.redirect('/dashboard'); 
             });
         });
+    },
+    'profile' : function(req,res,next){
+        return res.view({
+            user: req.session.User
+        });
     }
 };
 
