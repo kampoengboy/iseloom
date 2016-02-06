@@ -22,7 +22,7 @@
                     <% if(user.verification) {%>
                         <td>Verified</td>
                     <% } else {%>
-                        <td><a class="btn btn-success" href="/user/verify_user?idUser=<%=user.id%>">Verify</a></td>
+                        <td><a class="btn btn-success" href="/admin/verify_user?idUser=<%=user.id%>">Verify</a></td>
                     <% } %>     
                 </tr>
                 <% idx++ %>

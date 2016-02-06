@@ -40,12 +40,12 @@
                     <% if(session.authenticated) { %>
                         <% if(session.User.admin) {%>
                             <li>
-                                <a href="/dashboard">Dashboard</a>
+                                <a href="admin/dashboard">Dashboard</a>
                             </li>
                              <li>
                                 <a href="#">Contests <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/user/createcontest">Create Contest</a></li>
+                                    <li><a href="/admin/createcontest">Create Contest</a></li>
                                     <li>
                                         <a href="#">List Contests <span class="caret"></span></a>
                                         <ul class="dropdown-menu">
@@ -56,7 +56,7 @@
                                 </ul>
                                 </li>
                             <li>
-                                <a href="/user/problemsets">Problem Sets</a>
+                                <a href="/admin/problemsets">Problem Sets</a>
                             </li>
                         <% } else { %>
                             <li>
