@@ -105,13 +105,33 @@ module.exports = {
 				req.session.flash = {
 					err: noAccountError,
 				}
-				res.redirect('/dashboard');
+				res.redirect('/admin/dashboard');
 				return;
             }
             User.update(user.id,{'verification':true}, function(err,user1){
                if(err) return next(err);
-               return res.redirect('/dashboard'); 
+               return res.redirect('/admin/dashboard'); 
             });
+        });
+    },
+    university : function(req,res,next) {
+        if(!req.session.User.admin) return res.redirect('/');
+        University.find(function(err,universities){
+            if(err) return next(err);
+            return res.view({
+                universities : universities
+            });
+        });
+    },
+    'add_university' : function(req,res,next) {
+        var universityObj = {
+            name : req.param('name'),
+            city : req.param('city'),
+            country : req.param('country')
+        }
+        University.create(universityObj, function(err,university){
+           if(err) return next(err);
+            res.redirect('/admin/university');
         });
     }
 };

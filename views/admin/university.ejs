@@ -1,0 +1,55 @@
+<div class="container" style="background-color:white">
+    <br>
+    <legend>Universities</legend>
+    <% if(universities.length > 0) {%>
+      <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+              <thead>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Country</th>
+            </thead>
+            <tbody>
+                <% var idx = 1 %>
+                <% _.each(universities, function(university){%>
+                  <tr>
+                      <td><%=idx%></td>
+                      <td><%=university.name%></td>
+                      <td><%=university.city%></td>
+                      <td><%=university.country%></td>
+                  </tr>
+                  <% idx++ %>
+                <%})%>
+            </tbody>
+          </table>
+      </div>
+    <% } %>
+
+    <legend>Add University</legend>
+    <form class="form-horizontal" method="post" action="/admin/add_university" role="form">
+      <div class="form-group">
+        <label for="name" class="col-md-2 control-label">University Name</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="city" class="col-md-2 control-label">City</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="city" name="city" placeholder="City">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="country" class="col-md-2 control-label">Country</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="country" name="country" placeholder="Country">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-2">
+          <button type="submit" id="add" name="add" class="btn-color form-control btn btn-primary">Add University</button>
+        </div>
+      </div>
+    </form>
+</div>
