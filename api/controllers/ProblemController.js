@@ -8,7 +8,7 @@
 var AdmZip = require('adm-zip');
 var fs = require('fs');
 module.exports = {
-    createproblemsets : function(req,res,next){
+    create : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
     },
@@ -27,7 +27,7 @@ module.exports = {
             req.session.flash = {
                 err: sameNameError,
             }
-            res.redirect('/problem/createproblemsets');
+            res.redirect('/problem/create');
             return;
         }
         var usrObj = {
@@ -74,10 +74,10 @@ module.exports = {
             req.session.flash = {
                success: createSuccess
             }
-            return res.redirect('/problem/createproblemsets');
+            return res.redirect('/problem/create');
         });
     },
-    problemsets : function(req,res,next) {
+    list : function(req,res,next) {
         Problem.find(function(err,problems){
             if(err) return next(err);
             return res.view({

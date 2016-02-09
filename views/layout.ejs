@@ -48,21 +48,17 @@
                              <li>
                                 <a href="#">Contests <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/admin/createcontest">Create Contest</a></li>
+                                    <li><a href="/contest/create">Create Contest</a></li>
                                     <li>
-                                        <a href="#">List Contests <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Running Contest</a></li>
-                                            <li><a href="#">Past Contest</a></li>
-                                        </ul>
+                                        <a href="/contest/list">List Contests</a>
                                     </li>
                                 </ul>
                             </li>
                             <li>
                                 <a href="">Problem Sets <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/problem/problemsets">List Problem Sets</a></li>
-                                    <li><a href="/problem/createproblemsets">Create Problem Sets</a></li>
+                                    <li><a href="/problem/list">List Problem Sets</a></li>
+                                    <li><a href="/problem/create">Create Problem Sets</a></li>
                                 </ul>
                             </li>
                         <% } else { %>
@@ -70,10 +66,10 @@
                                 <a href="/user/profile"><%= session.User.username %></a>
                             </li>
                             <li>
-                                <a href="/problem/problemsets">Problems</a>
+                                <a href="/problem/list">Problems</a>
                             </li>
                             <li>
-                                <a href="/contest">Contests</a>
+                                <a href="/contest/list">Contests</a>
                             </li>
                             <li>
                                 <a href="/ranklist">Ranklists</a>
@@ -81,10 +77,10 @@
                         <% } %>
                     <% } else { %>
                         <li>
-                            <a href="/problem/problemsets">Problems</a>
+                            <a href="/problem/list">Problems</a>
                         </li>
                         <li>
-                            <a href="/contest">Contests</a>
+                            <a href="/contest/list">Contests</a>
                         </li>
                         <li>
                             <a href="/ranklist">Ranklists</a>
