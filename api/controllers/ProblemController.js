@@ -76,6 +76,14 @@ module.exports = {
             }
             return res.redirect('/problem/createproblemsets');
         });
+    },
+    problemsets : function(req,res,next) {
+        Problem.find(function(err,problems){
+            if(err) return next(err);
+            return res.view({
+                problems : problems 
+            });
+        });
     }
 };
 

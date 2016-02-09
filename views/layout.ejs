@@ -61,9 +61,8 @@
                             <li>
                                 <a href="">Problem Sets <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
+                                    <li><a href="/problem/problemsets">List Problem Sets</a></li>
                                     <li><a href="/problem/createproblemsets">Create Problem Sets</a></li>
-                                    <li>
-                                    </li>
                                 </ul>
                             </li>
                         <% } else { %>
@@ -71,7 +70,7 @@
                                 <a href="/user/profile"><%= session.User.username %></a>
                             </li>
                             <li>
-                                <a href="/Create">Problems</a>
+                                <a href="/problem/problemsets">Problems</a>
                             </li>
                             <li>
                                 <a href="/contest">Contests</a>
@@ -82,7 +81,7 @@
                         <% } %>
                     <% } else { %>
                         <li>
-                            <a href="/problem">Problems</a>
+                            <a href="/problem/problemsets">Problems</a>
                         </li>
                         <li>
                             <a href="/contest">Contests</a>
