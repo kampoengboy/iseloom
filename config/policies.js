@@ -22,10 +22,12 @@ module.exports.policies = {
       'register' : ['flash'],
       'login' : ['flash']
   },
-  'user' : {
+  'admin' : {
       'dashboard' : ['flash','sessionAuth'],
-      'createcontest' : ['flash','sessionAuth'],
-      'createproblemsets' : ['flash','sessionAuth'],
+      'createcontest' : ['flash','sessionAuth']
+  },
+  'problem' : {
+      'createproblemsets' : ['flash','sessionAuth']
   }
   /***************************************************************************
   *                                                                          *

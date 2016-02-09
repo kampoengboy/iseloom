@@ -23,7 +23,12 @@ module.exports = {
         stdout_file= stdout_file.replace('data:application/zip;base64,', "");
         stdout_file = stdout_file.replace('data:application/x-rar;base64,', "")
         if(stdin_name==stdout_name){
-            return res.send('Anda harus memasukkan nama file yang berbeda');
+            var sameNameError = ['File name for Testcase Input and Output should be different.']
+            req.session.flash = {
+                err: sameNameError,
+            }
+            res.redirect('/problem/createproblemsets');
+            return;
         }
         var usrObj = {
             name : req.param('name'),
@@ -65,6 +70,10 @@ module.exports = {
                 Problem.update(problem.id, {output:stdout}, function(err,prob){}); 
                 fs.unlink(stdout_name);
             });
+            var createSuccess = ['Problem Set ', usrObj.name, ' has been created.'];
+            req.session.flash = {
+               success: createSuccess
+            }
             return res.redirect('/problem/createproblemsets');
         });
     }
