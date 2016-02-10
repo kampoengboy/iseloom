@@ -18,7 +18,7 @@
                     <td><%=contest.datetimeopen%></td>
                     <td><%=contest.datetimeclose%></td>
                     <td><span class="glyphicon glyphicon-th-list" aria-hidden="true" title="Set Problems"></span></td>
-                    <td><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Contest"></span></td>
+                    <td><a href="edit/<%=contest.id%>"><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Contest"></span></a></td>
                     <td><a href="remove/<%=contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
                 </tr>
               <%})%>

@@ -51,5 +51,40 @@ module.exports = {
             res.redirect('/contest/list');
         });
     },
-};
+    edit: function(req,res,next) {
+        if(!req.session.User.admin) {
+            return res.redirect('/');
+        }
+        Contest.findOne(req.param('id'), function foundContest(err, contest) {
+            if (err) return next(err);
 
+            if (!contest) return next('Contest doesn\'t exist.');
+            return res.view({
+                contest : contest
+            });
+        });
+    },
+    'edit_contest' : function(req,res,next) {
+        if(!req.session.User.admin) return res.redirect('/');
+        Contest.findOne(req.param('id'), function foundContest(err, contest) {
+            if (err) return next(err);
+
+            if (!contest) return next('Contest doesn\'t exist.');
+            var data = {
+                name : req.param('contestname'),
+                datetimeopen : req.param('datetimeopen'),
+                datetimeclose : req.param('datetimeclose'),
+                freezetime : parseInt(req.param('freezetime'))
+            }
+            Contest.update(req.param('id'), data, function contestUpdated(err) {
+                if (err) return next(err);
+            });
+
+            var updateContestSuccess = ['Contest ', contest.name, ' has been updated.'];
+            req.session.flash = {
+               success: updateContestSuccess
+            }
+            res.redirect('/contest/list');
+        });
+    }
+};
