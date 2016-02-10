@@ -30,6 +30,26 @@ module.exports = {
                 contests : contests 
             });
         });
-    }
+    },
+    remove: function(req, res, next) {
+        if(!req.session.User.admin) {
+            return res.redirect('/');
+        }
+        Contest.findOne(req.param('id'), function foundContest(err, contest) {
+            if (err) return next(err);
+
+            if (!contest) return next('Contest doesn\'t exist.');
+
+            Contest.destroy(req.param('id'), function contestDestroyed(err) {
+                if (err) return next(err);
+            });
+
+            var removeContestSuccess = ['Contest ', contest.name, ' has been removed.'];
+            req.session.flash = {
+               success: removeContestSuccess
+            }
+            res.redirect('/contest/list');
+        });
+    },
 };
 
