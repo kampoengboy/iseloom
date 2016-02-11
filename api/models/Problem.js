@@ -9,6 +9,7 @@ module.exports = {
 
   attributes: {
       name : 'string',
+      problemID : 'string',
       memorylimit : 'integer',
       timelimit : 'integer',
       description : 'string',

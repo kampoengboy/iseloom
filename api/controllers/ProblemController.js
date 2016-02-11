@@ -32,6 +32,7 @@ module.exports = {
         }
         var usrObj = {
             name : req.param('name'),
+            problemID : req.param('problemID'),
             description : req.param('description'),
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
