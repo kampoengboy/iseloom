@@ -1073,7 +1073,8 @@ module.exports = {
                 }
            }
            if(!user){
-                var usrObj = {
+               University.findOne({'val_name':req.param('university')}, function(err,university){
+                   var usrObj = {
                         email : req.param('email'),
                         username : req.param('username'),
                         name : req.param('name'),
@@ -1081,7 +1082,7 @@ module.exports = {
                         grade : '',
                         gender : req.param('gender'),
                         rating_chart : [],
-                        university : req.param('university')
+                        university : university.id,
                 }
                 bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {
                     usrObj.password = encryptedPassword;
@@ -1103,6 +1104,7 @@ module.exports = {
                         });
                     })
                 });
+               }); 
            }
       });   
     },
