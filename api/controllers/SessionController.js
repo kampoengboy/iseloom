@@ -8,7 +8,11 @@ var bcrypt = require('bcrypt');
 module.exports = {
 	register : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');
-        return res.view();
+        University.find(function(err,universities){
+            return res.view({
+                universities : universities
+            });
+        });
     },
     login : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');

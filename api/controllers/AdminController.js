@@ -45,14 +45,24 @@ module.exports = {
         });
     },
     'add_university' : function(req,res,next) {
+        var val_name = req.param('name').toLowerCase();
+        var tmp = "";
+        for(var i=0;i<val_name.length;i++){
+            if(val_name[i]==' '){
+                tmp+='_';
+            } else {
+                tmp+=val_name[i];
+            }
+        }
         var universityObj = {
+            val_name : tmp,
             name : req.param('name'),
             city : req.param('city'),
             country : req.param('country')
         }
         University.create(universityObj, function(err,university){
            if(err) return next(err);
-            res.redirect('/admin/university');
+            return res.redirect('/admin/university');
         });
     }
 };
