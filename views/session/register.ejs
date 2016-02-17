@@ -55,8 +55,9 @@
           <label class="control-label col-lg-4 required">University</label>
           <div class="col-lg-8">
           <select id="university" name="university" required="required" class="form-control">
-          <option value="mikroskil">Mikroskil</option>
-          <option value="binus">Binus University</option>
+          <% _.each(universities, function(university){ %>
+                <option value="<%=university.val_name%>"><%=university.name%></option>
+          <% }) %>  
           </select>
           </div>
           </div>

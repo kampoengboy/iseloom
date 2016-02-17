@@ -8,6 +8,7 @@
 module.exports = {
 
   attributes: {
+      val_name : 'string',
       name : {
         type: 'string',
         unique: true,
