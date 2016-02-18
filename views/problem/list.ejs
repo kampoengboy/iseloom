@@ -44,30 +44,15 @@
       <div class="table-responsive">
           <table class="table table-bordered table-hover table-striped">
               <thead>
-                    <th></th>
-                    <th colspan="4">SUBMISSIONS</th>
-                    <th colspan="3">USERS</th>
-                    <th></th>
-                    <th></th>
+                  <th>NAME</th>
+                  <th></th>
               </thead>
             <tbody>
-                <tr>
-                  <td>NAME</td>
-                  <td>TOTAL</td>
-                  <td>ACC.</td>
-                  <td>RATIO</td>
-                  <td>FASTEST</td>
-                  <td>TOTAL</td>
-                  <td>ACC.</td>
-                  <td>RATIO</td>
-                  <td>DIFFICULTY</td>
-                  <td></td>
-                  <td></td>
-                </tr>
                 <% var idx = 1 %>
                 <% _.each(problemsNotPublish, function(problem){%>
                   <tr>
                       <td><%=problem.name%></td>
+                      <td><button class="btn btn-primary"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</button></td>
                   </tr>
                   <% idx++ %>
                 <%})%>

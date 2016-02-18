@@ -7,7 +7,7 @@
 
 var AdmZip = require('adm-zip');
 var fs = require('fs');
-var Promise = require('q');
+var Promise = require('bluebird');
 module.exports = {
     create : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
