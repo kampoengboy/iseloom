@@ -7,6 +7,7 @@
 
 var AdmZip = require('adm-zip');
 var fs = require('fs');
+var Promise = require('q');
 module.exports = {
     create : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
@@ -79,12 +80,32 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
-        Problem.find(function(err,problems){
-            if(err) return next(err);
+        var problemsPublish = [], problemNotPublish = [];
+        Promise.all([
+            Problem.find().where({'publish':true}),
+            Problem.find().where({'publish':false})
+        ])
+        .spread(function(ProblemPublish, ProblemNotPublish){
+            problemsPublish = ProblemPublish;
+            problemsNotPublish = ProblemNotPublish;
+        })
+        .catch(function(){
+            return next(err);
+        })
+        .done(function(){
             return res.view({
-                problems : problems 
+                problemsPublish : problemsPublish,
+                problemsNotPublish : problemsNotPublish
             });
         });
+        // .exec(function callBack(err, results) {
+        //     if (err) return next(err);
+        //     problemsPublish = results;
+        // });
+        // .where({'publish':true}).exec(function callBack(err,problems){
+        //     if(err) return next(err);
+        //     var problemsPublish = problems;
+        // });
     }
 };
 

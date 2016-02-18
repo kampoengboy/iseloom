@@ -13,7 +13,8 @@ module.exports = {
       },
       id_contest: {
         model: 'contest'
-      }
+      },
+      order: 'integer'
   }
 };
 

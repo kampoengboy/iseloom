@@ -1,5 +1,10 @@
 <div class="container" style="background-color:white">
     <br>
+    <% if(session.authenticated && session.User.admin) {%>
+      <legend>Publish Problem Sets</legend>
+    <% } else { %>
+      <legend>Problem Sets</legend>
+    <% } %>
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-striped">
             <thead>
@@ -24,7 +29,7 @@
                 <td></td>
               </tr>
               <% var idx = 1 %>
-              <% _.each(problems, function(problem){%>
+              <% _.each(problemsPublish, function(problem){%>
                 <tr>
                     <td><%=problem.name%></td>
                 </tr>
@@ -33,4 +38,41 @@
           </tbody>
         </table>
     </div>
+    <% if(session.authenticated && session.User.admin) {%>
+      <br>
+      <legend>Not Publish Problem Sets</legend>
+      <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+              <thead>
+                    <th></th>
+                    <th colspan="4">SUBMISSIONS</th>
+                    <th colspan="3">USERS</th>
+                    <th></th>
+                    <th></th>
+              </thead>
+            <tbody>
+                <tr>
+                  <td>NAME</td>
+                  <td>TOTAL</td>
+                  <td>ACC.</td>
+                  <td>RATIO</td>
+                  <td>FASTEST</td>
+                  <td>TOTAL</td>
+                  <td>ACC.</td>
+                  <td>RATIO</td>
+                  <td>DIFFICULTY</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <% var idx = 1 %>
+                <% _.each(problemsNotPublish, function(problem){%>
+                  <tr>
+                      <td><%=problem.name%></td>
+                  </tr>
+                  <% idx++ %>
+                <%})%>
+            </tbody>
+          </table>
+      </div>
+    <% } %>
 </div>

@@ -15,7 +15,7 @@ module.exports = {
       description : 'string',
       input : 'array',
       output : 'array',
-      status : {
+      publish : {
           type : 'boolean',
           defaultsTo : false
       }
