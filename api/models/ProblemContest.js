@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
       id_problem: {
-        model: 'user'
+        model: 'problem'
       },
       id_contest: {
         model: 'contest'
