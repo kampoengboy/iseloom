@@ -9,12 +9,13 @@ module.exports = {
 
   attributes: {
       name : 'string',
+      problemID : 'string',
       memorylimit : 'integer',
       timelimit : 'integer',
       description : 'string',
       input : 'array',
       output : 'array',
-      status : {
+      publish : {
           type : 'boolean',
           defaultsTo : false
       }

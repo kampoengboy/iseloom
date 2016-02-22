@@ -7,7 +7,9 @@
                   <th>Length</th>
                   <th>Start Time</th>
                   <th>End Time</th>
-                  <th colspan="3"></th>
+                  <% if(session.authenticated && session.User.admin) { %>
+                    <th colspan="3"></th>
+                  <% } %>
           </thead>
           <tbody>
               <% _.each(contests, function(contest){%>
@@ -17,9 +19,11 @@
                     <td><%=Math.floor(range/3600)%>:<%=("0" + (range/60)%60).slice(-2)%>:<%=("0" + range%60).slice(-2)%></td>
                     <td><%=contest.datetimeopen%></td>
                     <td><%=contest.datetimeclose%></td>
-                    <td><span class="glyphicon glyphicon-th-list" aria-hidden="true" title="Set Problems"></span></td>
-                    <td><a href="edit/<%=contest.id%>"><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Contest"></span></a></td>
-                    <td><a href="remove/<%=contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
+                    <% if(session.authenticated && session.User.admin) { %>
+                      <td><span class="glyphicon glyphicon-th-list" aria-hidden="true" title="Set Problems"></span></td>
+                      <td><a href="edit/<%=contest.id%>"><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Contest"></span></a></td>
+                      <td><a href="remove/<%=contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
+                    <% } %>
                 </tr>
               <%})%>
           </tbody>

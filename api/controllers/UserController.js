@@ -11,6 +11,7 @@ module.exports = {
             user: req.session.User
         });
     },
+<<<<<<< HEAD
     compile : function(req,res,next){
         Http.sendHttpRequest({
                 url: '/compile',
@@ -53,6 +54,15 @@ module.exports = {
                   console.log(result);
                 },
               });
+=======
+    ranklist: function(req,res,next) {
+        User.find(function(err,users){
+            if(err) return next(err);
+            return res.view({
+                users : users 
+            });
+        });
+>>>>>>> 7401205276d9c9ef4ba7e24317362ee2a50898a4
     }
 };
 
