@@ -52,7 +52,7 @@
                 <% _.each(problemsNotPublish, function(problem){%>
                   <tr>
                       <td><%=problem.name%></td>
-                      <td><button class="btn btn-primary"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</button></td>
+                      <td><button class="btn btn-primary"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</button> <a href="/problem/preview?prob=<%=problem.problemID%>"class="btn btn-success"> Preview</a></td>
                   </tr>
                   <% idx++ %>
                 <%})%>

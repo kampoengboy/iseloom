@@ -1,0 +1,18 @@
+<div class="container" style="background-color:white">
+    <h1 class="text-center"><%=problem.name%></h1>
+    <h5 class="text-center">Time Limit : <%=problem.timelimit%> s</h5>
+    <h5 class="text-center">Memory Limit : <%=problem.memorylimit%> MB</h5>
+    <br><br>
+    <%- problem.description %>
+</div>
+<br>
+<div class="container" style="background-color:white">
+    <h5>Write your code below</h5>
+    <form action="/user/compile" method="POST">
+    <textarea style="border:1px solid black; height:400px" name="code" placeholder="Write your code"></textarea>
+    <br><br>
+    <button type="submit" class="btn btn-success btn-block">Send</button>
+    <br>
+    <input type="hidden" value="<%=problem.id%>" name="idProblem">
+    </form>
+</div>

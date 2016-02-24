@@ -79,6 +79,17 @@ module.exports = {
             return res.redirect('/problem/create');
         });
     },
+    preview : function(req,res,next){
+        if(typeof req.param('prob')=="undefined" || req.param('prob').length==0)
+            return res.redirect('/');
+        Problem.findOne({'problemID':req.param('prob')}, function(err,problem){
+            if(err) return next(err);
+            if(!problem) return res.redirect('/');
+            return res.view({
+                problem : problem
+            }); 
+        });
+    },
     list : function(req,res,next) {
         var problemsPublish = [], problemNotPublish = [];
         Promise.all([

@@ -12,11 +12,17 @@ module.exports = {
         });
     },
     compile : function(req,res,next){
-        Http.sendHttpRequest({
+        if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0 || typeof req.param('code')=="undefined" || req.param('code').length==0)
+            return res.redirect('/');
+        Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
+            if(!problem) return res.redirect('/');
+            var compile_output = [];
+            function compile(input,i){
+                Http.sendHttpRequest({
                 url: '/compile',
                 baseUrl: 'http://api.mikelrn.com',
                 method: 'POST',
-                params: {language:0,code:"print 'Hello!'",stdin:"hello"},
+                params: {language:7,code:req.param('code'),stdin:input},
                 formData: false,
                 headers: {},
               }).exec({
@@ -50,9 +56,20 @@ module.exports = {
                 },
                 // OK.
                 success: function (result){
-                  console.log(result);
+                  var ans = JSON.parse(result.body);
+                  if(ans.output==problem.output[i])
+                    console.log("CORRECT");
+                  else
+                    console.log("WRONG ANSWER");
                 },
               });
+            }
+            for(var i=0;i<problem.input.length;i++){
+                compile(problem.input[i],i);
+            }
+            return res.redirect('back');
+        });
+        
     },
     ranklist: function(req,res,next) {
         User.find(function(err,users){
