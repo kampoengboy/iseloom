@@ -33,56 +33,67 @@ module.exports = {
         }
         var usrObj = {
             name : req.param('name'),
-            problemID : req.param('problemID'),
+            valName : req.param('problemID'),
             description : req.param('description'),
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
             input : [],
             output : []
         }
-        Problem.create(usrObj, function(err,problem){
-            if(err) return next(err);
-            //for input file
-            var stdin = [];
-            buf = new Buffer(stdin_file,'base64');
-            fs.writeFile(stdin_name,buf, function(err,data){
+        Problem.findOne({'valName':req.param('problemID')}, function(err,problem1){
+           if(err) return next(err);
+           if(problem1){
+                var sameNameError = ['The Problem ID has been exist. Please give another one.']
+                req.session.flash = {
+                    err: sameNameError,
+                }
+                res.redirect('/problem/create');
+                return;
+           }
+           Problem.create(usrObj, function(err,problem){
                 if(err) return next(err);
-                var zip = new AdmZip(stdin_name);
-                var zipEntries = zip.getEntries(); // an array of ZipEntry records
-                zipEntries.forEach(function(zipEntry) {
-                       if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX" && zipEntry.entryName.split('/')[zipEntry.entryName.split('/').length-1]!=".DS_Store"){
-                           stdin.push(zipEntry.getData().toString('utf-8'));
-                       }
+                //for input file
+                var stdin = [];
+                buf = new Buffer(stdin_file,'base64');
+                fs.writeFile(stdin_name,buf, function(err,data){
+                    if(err) return next(err);
+                    var zip = new AdmZip(stdin_name);
+                    var zipEntries = zip.getEntries(); // an array of ZipEntry records
+                    zipEntries.forEach(function(zipEntry) {
+                        if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX" && zipEntry.entryName.split('/')[zipEntry.entryName.split('/').length-1]!=".DS_Store"){
+                            stdin.push(zipEntry.getData().toString('utf-8'));
+                        }
+                    });
+                    Problem.update(problem.id, {input:stdin}, function(err,prob){}); 
+                    fs.unlink(stdin_name);
                 });
-                Problem.update(problem.id, {input:stdin}, function(err,prob){}); 
-                fs.unlink(stdin_name);
-            });
-            //for output file
-            var stdout = [];
-            buf2 = new Buffer(stdout_file,'base64');
-            fs.writeFile(stdout_name,buf2, function(err,data){
-                if(err) return next(err);
-                var zip2 = new AdmZip(stdout_name);
-                var zipEntries2 = zip2.getEntries(); // an array of ZipEntry records
-                zipEntries2.forEach(function(zipEntry2) {
-                    if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX" && zipEntry2.entryName.split('/')[zipEntry2.entryName.split('/').length-1]!=".DS_Store"){
-                        stdout.push(zipEntry2.getData().toString('utf-8'));
-                    }
+                //for output file
+                var stdout = [];
+                buf2 = new Buffer(stdout_file,'base64');
+                fs.writeFile(stdout_name,buf2, function(err,data){
+                    if(err) return next(err);
+                    var zip2 = new AdmZip(stdout_name);
+                    var zipEntries2 = zip2.getEntries(); // an array of ZipEntry records
+                    zipEntries2.forEach(function(zipEntry2) {
+                        if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX" && zipEntry2.entryName.split('/')[zipEntry2.entryName.split('/').length-1]!=".DS_Store"){
+                            stdout.push(zipEntry2.getData().toString('utf-8'));
+                        }
+                    });
+                    Problem.update(problem.id, {output:stdout}, function(err,prob){}); 
+                    fs.unlink(stdout_name);
                 });
-                Problem.update(problem.id, {output:stdout}, function(err,prob){}); 
-                fs.unlink(stdout_name);
-            });
-            var createSuccess = ['Problem Set ', usrObj.name, ' has been created.'];
-            req.session.flash = {
-               success: createSuccess
-            }
-            return res.redirect('/problem/create');
+                var createSuccess = ['Problem Set ', usrObj.name, ' has been created.'];
+                req.session.flash = {
+                success: createSuccess
+                }
+                return res.redirect('/problem/create');
+            });  
         });
     },
     preview : function(req,res,next){
         if(typeof req.param('prob')=="undefined" || req.param('prob').length==0)
             return res.redirect('/');
-        Problem.findOne({'problemID':req.param('prob')}, function(err,problem){
+        Problem.findOne({'valName':req.param('prob')}, function(err,problem){
             if(err) return next(err);
             if(!problem) return res.redirect('/');
             return res.view({
