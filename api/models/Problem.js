@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
       name : 'string',
-      problemID : 'string',
+      valName : 'string',
       memorylimit : 'integer',
       timelimit : 'integer',
       description : 'string',

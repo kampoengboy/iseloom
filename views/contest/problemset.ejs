@@ -1,0 +1,51 @@
+<div class="container" style="background-color:white">
+    <br>
+    <% if(problemsContest.length > 0) {%>
+    <legend>Problems</legend>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Order</th>
+              </thead>
+              <tbody>
+                  <% var idx = 1 %>
+                  <% _.each(problemsContest, function(problem){%>
+                      <tr>
+                          <td><%=idx%></td>
+                          <td><%=problem.id_problem.name%></td>
+                          <td><%=problem.order%></td>
+                      </tr>
+                      <% idx++ %>
+                  <%})%>
+              </tbody>
+            </table>
+        </div>
+    <% } %>
+    <legend>Add Problem</legend>
+    <form class="form-horizontal" method="post" action="/contest/add_problem/<%=contestId%>" role="form">
+      <div class="form-group">
+        <label for="problem" class="col-md-2 control-label">Problem</label>
+        <div class="col-md-5">
+          <select id="problems" name="problems" required="required" class="form-control" required>
+              <option value="" disabled>Select Problem</option>
+              <% _.each(problemsList, function(problem){ %>
+                  <option value="<%=problem.valName%>"><%=problem.name%></option>
+              <% }) %>  
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="order" class="col-md-2 control-label">Order</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="order" name="order" placeholder="Set Order" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-2">
+          <button type="submit" id="add" name="add" class="btn-color form-control btn btn-primary">Add Problem</button>
+        </div>
+      </div>
+    </form>
+</div>
