@@ -1,0 +1,30 @@
+<div class="container" style="background-color:white">
+    <h3 class="text-center">Scoreboard <%=contest.name%></h3>
+    <h4 id="clock" class="text-center"></h4>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <th>#</th>
+            <th>Univ</th>
+            <th>Name</th>
+            <% _.each(problems, function(problem) { %>
+                <th><%=problem.valName%></th>
+            <% }) %>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Mikroskil</td>
+                <td>Michael</td>
+            <tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    var d = new Date('<%=contest.datetimeclose%>');
+    var clock_div_name = '#clock';
+    $(clock_div_name).countdown(d).on('update.countdown', function(event) {
+        $(this).html(event.strftime('%D days %H:%M:%S'));
+     }).on('finish.countdown', function(event) {
+      $(this).html('Bid has closed!!!')
+    });
+</script>
