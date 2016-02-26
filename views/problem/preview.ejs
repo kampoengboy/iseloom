@@ -5,6 +5,7 @@
     <br><br>
     <%- problem.description %>
 </div>
+<% if(session.authenticated) { %>
 <br>
 <div class="container" style="background-color:white">
     <h5>Write your code below</h5>
@@ -16,3 +17,4 @@
     <input type="hidden" value="<%=problem.id%>" name="idProblem">
     </form>
 </div>
+<% } %>
