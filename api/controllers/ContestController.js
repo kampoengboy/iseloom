@@ -25,18 +25,43 @@ module.exports = {
                             var elPos = allproblem.map(function(x) {return x.id; }).indexOf(problems[i].id_problem);
                             probs.push(allproblem[elPos]);
                          }
-                         return res.view({
-                            scoreboard : scoreboard,
-                            contest : contest,
-                            problems : probs
-                         });
+                         UserContest.find({'id_contest' : req.param('id')})
+                         .populate('id_user')
+                         .exec(function(err,users){
+                            return res.view({
+                                scoreboard : scoreboard,
+                                contest : contest,
+                                problems : probs,
+                                users : users
+                            });
+                         })
                     });
                     
                 });
             });
         });
     },
+    'add_contestant' : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Contest.findOne(req.param('id'), function (err, contest) {
+            if (err) return next(err);
+            if (!contest) return next('Contest doesn\'t exist.');
+            User.findOne({'id' : req.param('contestants')}, function(err,user){
+                if(err) return next(err);
+                var valObj = {
+                    id_contest : contest.id,
+                    id_user : user.id,
+                }
+                UserContest.create(valObj, function(err,userContest){
+                    if(err) return next(err);
+                    return res.redirect('/contest/problemset/'+userContest.id_contest);
+                });
+            });
+        }); 
+    },
     'create_contest' : function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
         if(!req.session.User.admin) return res.redirect('/');
         var usrObj = {
             name : req.param('contestname'),
@@ -126,10 +151,14 @@ module.exports = {
             if (err) return next(err);
             Promise.all([
                 ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order DESC'}).populate('id_problem'),
-                Problem.find()
-            ]).spread(function(ProblemsContest, ProblemsList){
+                Problem.find(),
+                User.find({where : { admin : false }}),
+                UserContest.find({ where : {id_contest:contest.id}}).populate('id_user')
+            ]).spread(function(ProblemsContest, ProblemsList, Users, UserContest){
                 problemsContest = ProblemsContest;
                 problemsList = ProblemsList;
+                users = Users;
+                userContest = UserContest;
             })
             .catch(function(){
                 return next(err);
@@ -138,7 +167,9 @@ module.exports = {
                 return res.view({
                     problemsContest : problemsContest,
                     problemsList : problemsList,
-                    contestId : contest.id
+                    users : users,
+                    contestId : contest.id,
+                    userContest : userContest
                 });
             });
             // ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order DESC'}).exec(function (err, problems){
@@ -153,6 +184,7 @@ module.exports = {
         });
     },
     'add_problem': function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
         if(!req.session.User.admin) return res.redirect('/');
         // Promise.all([
         //     Contest.findOne({ where: { id_contest: req.param('contestId') }}),

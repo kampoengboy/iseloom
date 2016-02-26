@@ -48,4 +48,52 @@
         </div>
       </div>
     </form>
+    <br>
+    <% if(userContest.length > 0) {%>
+    <legend>Contestant</legend>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>University</th>
+              </thead>
+              <tbody>
+                  <% var idx = 1 %>
+                  <% _.each(userContest, function(usercontest){%>
+                      <tr>
+                          <td><%=idx%></td>
+                          <td><%=usercontest.id_user.name%></td>
+                          <td><%=usercontest.id_user.university%></td>
+                      </tr>
+                      <% idx++ %>
+                  <%})%>
+              </tbody>
+            </table>
+        </div>
+    <% } %>
+    <legend>Add Contestant</legend>
+    <form class="form-horizontal" method="post" action="/contest/add_contestant/<%=contestId%>" role="form">
+      <div class="form-group">
+        <label for="problem" class="col-md-2 control-label">Contestant</label>
+        <div class="col-md-5">
+          <select id="contestant" name="contestants" required="required" class="form-control" required>
+              <option value="" disabled>Select Contestant</option>
+              <% _.each(users, function(user){ %>
+                  <% if(user.verification) { %>
+                    <% var elPos = userContest.map(function(x) {return x.id_user.id; }).indexOf(user.id); %>
+                    <% if(elPos== -1) { %>
+                            <option value="<%=user.id%>"><%=user.name%></option>
+                    <% } %>
+                  <% } %>
+              <% }) %>  
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-2">
+          <button type="submit" id="add" name="add" class="btn-color form-control btn btn-primary">Add Contestant</button>
+        </div>
+      </div>
+    </form>
 </div>

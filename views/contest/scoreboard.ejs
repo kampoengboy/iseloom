@@ -7,15 +7,24 @@
             <th>Univ</th>
             <th>Name</th>
             <% _.each(problems, function(problem) { %>
-                <th><%=problem.valName%></th>
+                <th><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.valName%></a></th>
             <% }) %>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Mikroskil</td>
-                <td>Michael</td>
-            <tr>
+            <% if(users.length > 0) { %>
+           <% var idx = 1 %>
+                  <% _.each(users, function(user){%>
+                      <tr>
+                          <td><%=idx%></td>
+                          <td><%=user.id_user.university%></td>
+                          <td><%=user.id_user.name%></td>
+                          <% _.each(problems, function(problem) { %>
+                            <td></td>
+                          <% }) %>
+                      </tr>
+                      <% idx++ %>
+                  <%})%>
+            <% } %>
         </tbody>
     </table>
 </div>
