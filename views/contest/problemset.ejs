@@ -31,7 +31,10 @@
           <select id="problems" name="problems" required="required" class="form-control" required>
               <option value="" disabled>Select Problem</option>
               <% _.each(problemsList, function(problem){ %>
-                  <option value="<%=problem.valName%>"><%=problem.name%></option>
+                  <% var elPos = problemsContest.map(function(x) {return x.id_problem.id; }).indexOf(problem.id); %>
+                  <% if(elPos== -1) { %>
+                       <option value="<%=problem.valName%>"><%=problem.name%></option>
+                  <% } %>
               <% }) %>  
           </select>
         </div>
