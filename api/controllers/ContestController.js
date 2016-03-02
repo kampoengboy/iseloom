@@ -146,11 +146,11 @@ module.exports = {
         });
     },
     problemset: function(req,res,next) {
-        // if(!req.session.User.admin) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
         Contest.findOne(req.param('id'), function foundContest(err, contest) {
             if (err) return next(err);
             Promise.all([
-                ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order DESC'}).populate('id_problem'),
+                ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order ASC'}).populate('id_problem'),
                 Problem.find(),
                 User.find({where : { admin : false }}),
                 UserContest.find({ where : {id_contest:contest.id}}).populate('id_user')

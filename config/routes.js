@@ -42,6 +42,7 @@ module.exports.routes = {
     action: 'upload_file'
   },
   '/ranklists' : 'UserController.ranklist',
+  '/ranklists/university' : 'UserController.rankUniversity'
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

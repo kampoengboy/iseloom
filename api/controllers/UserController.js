@@ -4,6 +4,7 @@
  * @description :: Server-side logic for managing users
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
     'profile' : function(req,res,next){
@@ -72,10 +73,41 @@ module.exports = {
         
     },
     ranklist: function(req,res,next) {
-        User.find(function(err,users){
-            if(err) return next(err);
+        Promise.all([
+            User.find().populate('university'),
+            University.find()
+        ]).spread(function(Users, Universities){
+            users = Users;
+            universities = Universities;
+        })
+        .catch(function(err){
+            return next(err);
+        })
+        .done(function(){
             return res.view({
-                users : users 
+                users : users,
+                universities : universities
+            });
+        });
+        // User.find().populate('university').exec(function(err,users){
+        //     if(err) return next(err);
+        //     return res.view({
+        //         users : users 
+        //     });
+        // });
+    },
+    rankUniversity: function(req,res,next) {
+        Promise.all([
+            University.find()
+        ]).spread(function(Universities){
+            universities = Universities;
+        })
+        .catch(function(err){
+            return next(err);
+        })
+        .done(function(){
+            return res.view({
+                universities : universities
             });
         });
     }

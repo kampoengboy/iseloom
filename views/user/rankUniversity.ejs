@@ -1,11 +1,11 @@
 <div class="container" style="background-color:white">
   <br>
-    <legend>Ranklists</legend>
+    <legend>University Ranklists</legend>
     <div class="row">
       <div class="col-md-4">
         <div class="btn-group" role="group" aria-label="...">
-          <a href="/ranklists"><button type="button" class="btn btn-default active">User ranklist</button></a>
-          <a href="/ranklists/university"><button type="button" class="btn btn-default">University ranklist</button></a>
+          <a href="/ranklists"><button type="button" class="btn btn-default">User ranklist</button></a>
+          <a href="/ranklists/university"><button type="button" class="btn btn-default active">University ranklist</button></a>
         </div>
       </div>
       <div class="col-md-3">
@@ -23,20 +23,18 @@
         <table class="table table-bordered table-hover table-striped">
           <thead>
                   <th>#</th>
-                  <th>User</th>
                   <th>University</th>
                   <th>Grade</th>
                   <th>Rating</th>
           </thead>
           <tbody>
               <% var idx = 1 %>
-              <% _.each(users, function(user){%>
+              <% _.each(universities, function(university){%>
                 <tr>
                     <td><%=idx%></td>
-                    <td><%=user.username%></td>
-                    <td><%=user.university.name%></td>
-                    <td><%=user.grade%></td>
-                    <td><%=user.rating%></td>
+                    <td><%=university.name%></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 <% idx++ %>
               <%})%>
