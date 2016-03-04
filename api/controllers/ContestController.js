@@ -84,9 +84,23 @@ module.exports = {
     list : function(req,res,next) {
         Contest.find(function(err,contests){
             if(err) return next(err);
-            return res.view({
-                contests : contests 
-            });
+            userActiveContests = [];
+            if (req.session.authenticated && !req.session.User.admin) {
+                UserContest.find({where: { id_user: req.session.User.id }}).populate('id_contest').exec(function (err, userActiveContests){
+                    var now = new Date();
+                    if (err) return next(err);
+                    return res.view({
+                        contests : contests,
+                        userActiveContests : userActiveContests,
+                        now : now
+                    });
+                });
+            } else {
+                return res.view({
+                    contests : contests,
+                    userActiveContests : userActiveContests
+                });
+            }
         });
     },
     remove: function(req, res, next) {
@@ -225,5 +239,8 @@ module.exports = {
                 });
             });
         });
+    },
+    'index': function(req,res,next) {
+        console.log(req.param('id'));
     }
 };
