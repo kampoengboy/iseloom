@@ -8,9 +8,11 @@ var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
     'profile' : function(req,res,next){
-        return res.view({
-            user: req.session.User
-        });
+        User.findOne({where: { id: req.session.User.id }}).populate('university').exec(function (err, user){
+            return res.view({
+                user: user
+            });
+        })
     },
     compile : function(req,res,next){
         if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0 || typeof req.param('code')=="undefined" || req.param('code').length==0)
