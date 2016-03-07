@@ -25,7 +25,7 @@
                         <td><a href="edit/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit usercontest.id_contest"></span></a></td>
                         <td><a href="remove/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
                       <% } else if (now >= usercontest.id_contest.datetimeopen && now <= usercontest.id_contest.datetimeclose) {%>
-                        <td><a href="/contest/<%=usercontest.id_contest.id%>"><button class="btn-success">Join Contest!</button></a></td>
+                        <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><button class="btn-success">Join Contest!</button></a></td>
                       <% } %>
                   </tr>
                 <%})%>

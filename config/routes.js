@@ -43,7 +43,6 @@ module.exports.routes = {
   },
   '/ranklists' : 'UserController.ranklist',
   '/ranklists/university' : 'UserController.rankUniversity',
-  '/contest/:id' : 'ContestController.index'
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

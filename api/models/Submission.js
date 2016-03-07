@@ -17,7 +17,8 @@ module.exports = {
       id_user : {
           model : 'user'
       },
-      output : 'array'
+      output : 'array',
+      result : 'string'
   }
 };
 

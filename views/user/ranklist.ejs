@@ -31,6 +31,7 @@
           <tbody>
               <% var idx = 1 %>
               <% _.each(users, function(user){%>
+                <% if(!user.admin && user.verification) { %>
                 <tr>
                     <td><%=idx%></td>
                     <td><%=user.username%></td>
@@ -39,6 +40,7 @@
                     <td><%=user.rating%></td>
                 </tr>
                 <% idx++ %>
+                <% } %>
               <%})%>
 
           </tbody>

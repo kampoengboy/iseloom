@@ -11,6 +11,20 @@ module.exports = {
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
     },
+    submission : function(req,res,next){
+        if(typeof req.param('idc')=="undefined" || typeof req.param('idp')=="undefined") return res.redirect('/');
+        Submission.find({ and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
+        .populate('id_contest')
+        .populate('id_problem')
+        .exec(
+        function(err,submission){
+            if(err) return next(err);
+            if(!submission) return res.redirect('/');
+            return res.view({
+                submissions : submission
+            }) 
+        });  
+    },
     scoreboard : function(req,res,next){
         var probs = [];
         Scoreboard.findOne({'id_contest' : req.param('id')}, function(err,scoreboard){
@@ -28,11 +42,14 @@ module.exports = {
                          UserContest.find({'id_contest' : req.param('id')})
                          .populate('id_user')
                          .exec(function(err,users){
-                            return res.view({
-                                scoreboard : scoreboard,
-                                contest : contest,
-                                problems : probs,
-                                users : users
+                            University.find(function(err,universities){
+                                return res.view({
+                                    universities : universities,
+                                    scoreboard : scoreboard,
+                                    contest : contest,
+                                    problems : probs,
+                                    users : users
+                                });
                             });
                          })
                     });
@@ -239,8 +256,5 @@ module.exports = {
                 });
             });
         });
-    },
-    'index': function(req,res,next) {
-        console.log(req.param('id'));
     }
 };

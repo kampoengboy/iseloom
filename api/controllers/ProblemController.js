@@ -96,9 +96,19 @@ module.exports = {
         Problem.findOne({'valName':req.param('prob')}, function(err,problem){
             if(err) return next(err);
             if(!problem) return res.redirect('/');
-            return res.view({
-                problem : problem
-            }); 
+            if(typeof req.param('idc')=="undefined" || req.param('idc').length==0) {
+                return res.view({
+                    problem : problem,
+                    st : 0,
+                }); 
+            }
+            else {
+                return res.view({
+                    problem : problem,
+                    st : 1,
+                    idc : req.param('idc')
+                }); 
+            }
         });
     },
     list : function(req,res,next) {

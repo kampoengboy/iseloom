@@ -7,7 +7,7 @@
             <th>Univ</th>
             <th>Name</th>
             <% _.each(problems, function(problem) { %>
-                <th><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.valName%></a></th>
+                <th><a href="/problem/preview?prob=<%=problem.valName%>&idc=<%=contest.id%>"><%=problem.valName%></a></th>
             <% }) %>
         </thead>
         <tbody>
@@ -16,7 +16,8 @@
                   <% _.each(users, function(user){%>
                       <tr>
                           <td><%=idx%></td>
-                          <td><%=user.id_user.university%></td>
+                          <% var elPos = universities.map(function(x) {return x.id; }).indexOf(user.id_user.university); %>
+                          <td><%=universities[elPos].name%></td>
                           <td><%=user.id_user.name%></td>
                           <% _.each(problems, function(problem) { %>
                             <td></td>
