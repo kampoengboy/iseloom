@@ -17,17 +17,21 @@
                           <td><%=submission.id_problem.valName%></td>
                           <td><%=submission.createdAt%></td>
                           <% var res = true; %>
-                          <% for(var i=0;i<submission.output.length;i++) {%>
-                               <% if(submission.output[i].result!=1){ %>
-                                    <% res = false; %>
-                                    <% break; %>
-                               <% } %>
+                          <% if(submission.output.length==0) {%>
+                            <td>COMPILING</td>
+                          <% } else { %>
+                            <% for(var i=0;i<submission.output.length;i++) {%>
+                                <% if(submission.output[i].result!=1){ %>
+                                        <% res = false; %>
+                                        <% break; %>
+                                <% } %>
+                            <% } %>
+                            <% if(res) { %>
+                            <td style="background-color:#00FF33">CORRECT</td>
+                            <% } else {%>
+                            <td style="background-color:#FF0000; color:white;">WRONG ANSWER</td>
+                            <% } %> 
                           <% } %>
-                          <% if(res) { %>
-                          <td style="background-color:#00FF33">CORRECT</td>
-                          <% } else {%>
-                          <td style="background-color:#FF0000; color:white;">WRONG ANSWER</td>
-                          <% } %> 
                       </tr>
                       <% idx++ %>
                   <%})%>

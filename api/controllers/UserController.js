@@ -98,7 +98,7 @@ module.exports = {
                         for(var i=0;i<problem.input.length;i++){
                             compile(problem.input[i],i);
                         }
-                        return res.redirect('back');
+                        return res.redirect('/contest/submission?idc='+contest.id+'&idp='+problem.id);
                    });
                 });
             }
