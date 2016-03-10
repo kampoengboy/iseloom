@@ -12,6 +12,7 @@ module.exports = {
         return res.view();  
     },
     submission : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
         if(typeof req.param('idc')=="undefined" || typeof req.param('idp')=="undefined") return res.redirect('/');
         Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
         .populate('id_contest')
