@@ -6,9 +6,9 @@
     <hr >
     <h3><%= user.university.name %></h3>
 	<% if(userRating) { %>
-	    <div style="width:30%">
+	    <div style="width:70%">
 			<div>
-				<canvas id="canvas" height="450" width="600"></canvas>
+				<canvas id="canvas" height="300" width="600"></canvas>
 			</div>
 		</div>
 	<% } %>
@@ -20,8 +20,7 @@
 		var lineChartData = {
 			labels : [
 				<% _.each(userRating, function(rating){ %>
-					// "<%=rating.date%>",
-					"A",
+					"<%=rating.date.getDate() + "-" + (rating.date.getMonth()+1) + "-" + rating.date.getFullYear()%>",
 				<% }) %>
 			],
 			datasets : [
