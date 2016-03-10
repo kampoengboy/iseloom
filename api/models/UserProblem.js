@@ -18,6 +18,7 @@ module.exports = {
       	model : 'contest',
 	    defaultsTo: null
       },
+      //0 = WA, 1 = AC
       status : 'integer',
       minute_contest : {
 	    type: 'integer',

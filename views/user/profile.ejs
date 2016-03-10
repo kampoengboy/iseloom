@@ -5,38 +5,48 @@
 	</div>
     <hr >
     <h3><%= user.university.name %></h3>
-    <div style="width:30%">
-		<div>
-			<canvas id="canvas" height="450" width="600"></canvas>
+	<% if(userRating) { %>
+	    <div style="width:30%">
+			<div>
+				<canvas id="canvas" height="450" width="600"></canvas>
+			</div>
 		</div>
-	</div>
+	<% } %>
 </div>
 
-<script>
-	var randomScalingFactor = function(){
-		return Math.round(Math.random()*100)
-	};
-	var lineChartData = {
-		labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul"],
-		datasets : [
-			{
-				label: "This",
-				fillColor : "rgba(151,187,205,0.2)",
-				strokeColor : "rgba(151,187,205,1)",
-				pointColor : "rgba(151,187,205,1)",
-				pointStrokeColor : "#fff",
-				pointHighlightFill : "#fff",
-				pointHighlightStroke : "rgba(151,187,205,1)",
-				data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
-			}
-		]
-	}
+<% if(userRating) { %>
+	<script>
+		var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+		var lineChartData = {
+			labels : [
+				<% _.each(userRating, function(rating){ %>
+					// "<%=rating.date%>",
+					"A",
+				<% }) %>
+			],
+			datasets : [
+				{
+					label: "This",
+					fillColor : "rgba(151,187,205,0.2)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : [
+						<% _.each(userRating, function(rating){ %>
+							"<%=rating.rating%>",
+						<% }) %>
+					]
+				}
+			]
+		}
 
-	$( document ).ready(function() {
-	    var ctx = document.getElementById("canvas").getContext("2d");
-	    console.log(ctx);
-		window.myLine = new Chart(ctx).Line(lineChartData, {
-			responsive: true
+		$( document ).ready(function() {
+		    var ctx = document.getElementById("canvas").getContext("2d");
+			window.myLine = new Chart(ctx).Line(lineChartData, {
+				responsive: true
+			});
 		});
-	});
-</script>
+	</script>
+<% } %>
