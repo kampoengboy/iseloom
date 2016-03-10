@@ -13,9 +13,10 @@ module.exports = {
     },
     submission : function(req,res,next){
         if(typeof req.param('idc')=="undefined" || typeof req.param('idp')=="undefined") return res.redirect('/');
-        Submission.find({ and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
+        Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
         .populate('id_contest')
         .populate('id_problem')
+        .sort('createdAt DESC')
         .exec(
         function(err,submission){
             if(err) return next(err);
@@ -43,12 +44,19 @@ module.exports = {
                          .populate('id_user')
                          .exec(function(err,users){
                             University.find(function(err,universities){
-                                return res.view({
-                                    universities : universities,
-                                    scoreboard : scoreboard,
-                                    contest : contest,
-                                    problems : probs,
-                                    users : users
+                                Submission.find({'id_contest':req.param('id')})
+                                .populate('id_user')
+                                .populate('id_problem')
+                                .exec(function(err,submissions){
+                                   if(err) return next(err);
+                                   return res.view({
+                                        universities : universities,
+                                        scoreboard : scoreboard,
+                                        submissions : submissions,
+                                        contest : contest,
+                                        problems : probs,
+                                        users : users
+                                    }); 
                                 });
                             });
                          })
