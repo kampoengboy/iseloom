@@ -29,7 +29,7 @@
                                <% var res = false; %>
                                <% var amount = 0; %>
                                <% for(var i=0;i<submissions.length;i++) {%>
-                                  <% if(submissions[i].id_user.id==user.id_user.id) { %>   
+                                  <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id) { %>   
                                        <% for(var j=0;j<submissions[i].output.length;j++) { %>
                                             <% if(submissions[i].output[j].result==1) { %>
                                                 <% amount = amount+1; %>
@@ -41,11 +41,15 @@
                                        <% } %>
                                   <% } %>
                                <% } %>
-                          <% if(res) { %>
-                             <td style="background-color:#00FF33"></td>
-                          <% } else {%>
-                             <td style="background-color:#FF0000; color:white;"></td>
-                          <% } %> 
+                              <% if(amount == 0) { %>
+                               <td></td>
+                              <% } else { %>
+                                <% if(res) { %>
+                                   <td style="background-color:#00FF33"></td>
+                                <% } else {%>
+                                   <td style="background-color:#FF0000; color:white;"></td>
+                                <% } %>
+                              <% } %>
                           <% }) %>
                       </tr>
                       <% idx++ %>
