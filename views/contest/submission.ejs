@@ -1,0 +1,41 @@
+<div class="container" style="background-color:white">
+    <h3 class="text-center">My Submissions</h3>
+    <h4 id="clock" class="text-center"></h4>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <th>#</th>
+            <th>ID Problem</th>
+            <th>Time</th>
+            <th>Result</th>
+        </thead>
+        <tbody>
+           <% if(submissions.length > 0) { %>
+           <% var idx = 1 %>
+                  <% _.each(submissions, function(submission){%>
+                      <tr>
+                          <td><%=idx%></td>
+                          <td><%=submission.id_problem.valName%></td>
+                          <td><%=submission.createdAt%></td>
+                          <% var res = true; %>
+                          <% if(submission.output.length==0) {%>
+                            <td>COMPILING</td>
+                          <% } else { %>
+                            <% for(var i=0;i<submission.output.length;i++) {%>
+                                <% if(submission.output[i].result!=1){ %>
+                                        <% res = false; %>
+                                        <% break; %>
+                                <% } %>
+                            <% } %>
+                            <% if(res) { %>
+                            <td style="background-color:#00FF33">CORRECT</td>
+                            <% } else {%>
+                            <td style="background-color:#FF0000; color:white;">WRONG ANSWER</td>
+                            <% } %> 
+                          <% } %>
+                      </tr>
+                      <% idx++ %>
+                  <%})%>
+            <% } %>
+        </tbody>
+    </table>
+</div>

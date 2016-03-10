@@ -2,8 +2,8 @@
     <h1 class="text-center"><%=problem.name%></h1>
     <h5 class="text-center">Time Limit : <%=problem.timelimit%> s</h5>
     <h5 class="text-center">Memory Limit : <%=problem.memorylimit%> MB</h5>
-    <% if(req.session.authenticated { %> 
-    <a class="button button-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>&idc=<%=session.User.id%>"></a>
+    <% if(session.authenticated) { %> 
+    <a class="btn btn-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>">My Submission</a>
     <% } %>
     <br><br>
     <%- problem.description %>

@@ -7,7 +7,13 @@
             <th>Univ</th>
             <th>Name</th>
             <% _.each(problems, function(problem) { %>
-                <th><a href="/problem/preview?prob=<%=problem.valName%>&idc=<%=contest.id%>"><%=problem.valName%></a></th>
+                <th>
+                <% if(session.authenticated) { %>
+                    <a href="/problem/preview?prob=<%=problem.valName%>&idc=<%=contest.id%>"><%=problem.valName%></a>
+                <% } else {%>
+                    <%=problem.valName%>
+                <% } %>
+                </th>
             <% }) %>
         </thead>
         <tbody>
@@ -20,7 +26,26 @@
                           <td><%=universities[elPos].name%></td>
                           <td><%=user.id_user.name%></td>
                           <% _.each(problems, function(problem) { %>
-                            <td></td>
+                               <% var res = false; %>
+                               <% var amount = 0; %>
+                               <% for(var i=0;i<submissions.length;i++) {%>
+                                  <% if(submissions[i].id_user.id==user.id_user.id) { %>   
+                                       <% for(var j=0;j<submissions[i].output.length;j++) { %>
+                                            <% if(submissions[i].output[j].result==1) { %>
+                                                <% amount = amount+1; %>
+                                            <% } %>
+                                       <% } %>
+                                       <% if(amount==submissions[i].output.length) { %>  
+                                          <% res = true; %>
+                                          <% break; %>
+                                       <% } %>
+                                  <% } %>
+                               <% } %>
+                          <% if(res) { %>
+                             <td style="background-color:#00FF33"></td>
+                          <% } else {%>
+                             <td style="background-color:#FF0000; color:white;"></td>
+                          <% } %> 
                           <% }) %>
                       </tr>
                       <% idx++ %>
