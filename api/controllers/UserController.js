@@ -8,20 +8,13 @@ var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
     'profile' : function(req,res,next){
-        User.findOne({where: {username:'mike'}}).exec(function(err,user) {
-                req.session.authenticated = true;
-                req.session.User = user;
-                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30;
-                //asli
-                User.findOne({where: { id: req.session.User.id }}).populate('university').exec(function (err, user){
-                    UserRating.find({where: { id_user: req.session.User.id }}).exec(function(err,userRating) {
-                        return res.view({
-                            user: user,
-                            userRating: userRating
-                        });
-                    });
+        User.findOne({where: { id: req.session.User.id }}).populate('university').exec(function (err, user){
+            UserRating.find({where: { id_user: req.session.User.id }}).exec(function(err,userRating) {
+                return res.view({
+                    user: user,
+                    userRating: userRating
                 });
-                //
+            });
         });
     },
     compile : function(req,res,next){
