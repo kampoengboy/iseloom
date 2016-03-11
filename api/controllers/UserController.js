@@ -39,7 +39,8 @@ module.exports = {
                         id_user : req.session.User.id,
                         id_problem : req.param('idProblem'),
                         output : [],
-                        result : "",
+                        result : null,
+                        minute : null,
                    }
                    Submission.create(obj,function(err,submission){
                        var out = [];
@@ -96,7 +97,18 @@ module.exports = {
                                 }
                                 out.push(usr);
                                 if(out.length==n){
-                                    Submission.update({'id':submission.id}, {'output':out},function(err,su){});
+                                    var correct = true;
+                                    for (var j=0;j<out.length;j++) {
+                                        if (out[j].result != 1) {
+                                            correct = false;
+                                            break;
+                                        }
+                                    }
+                                    if (correct) {
+                                        Submission.update({'id':submission.id}, {'output':out, 'result':1, 'minute':Math.round((submission.createdAt - contest.datetimeopen)/60000)},function(err,su){});
+                                    } else {
+                                        Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
+                                    }
                                 }
                             },
                         });

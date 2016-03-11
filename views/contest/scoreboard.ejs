@@ -6,6 +6,7 @@
             <th>#</th>
             <th>Univ</th>
             <th>Name</th>
+            <th>Score</th>
             <% _.each(problems, function(problem) { %>
                 <th>
                 <% if(session.authenticated) { %>
@@ -25,6 +26,7 @@
                           <% var elPos = universities.map(function(x) {return x.id; }).indexOf(user.id_user.university); %>
                           <td><%=universities[elPos].name%></td>
                           <td><%=user.id_user.name%></td>
+                          <td><%=user.score%></td>
                           <% _.each(problems, function(problem) { %>
                                <% var res = false; %>
                                <% var tried = 0; %>

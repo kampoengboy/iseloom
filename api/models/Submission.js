@@ -18,7 +18,14 @@ module.exports = {
           model : 'user'
       },
       output : 'array',
-      result : 'string'
+      result : {
+          type : 'integer',
+          defaultsTo : false
+      },
+      minute : {
+          type : 'integer',
+          defaultsTo : false
+      }
   }
 };
 
