@@ -42,7 +42,8 @@ module.exports = {
                         result : "",
                    }
                    Submission.create(obj,function(err,submission){
-                       function compile(input,i){
+                       var out = [];
+                       function compile(input,i,n){
                             Http.sendHttpRequest({
                             url: '/compile',
                             baseUrl: 'http://api.mikelrn.com',
@@ -82,9 +83,7 @@ module.exports = {
                             // OK.
                             success: function (result){
                             var ans = JSON.parse(result.body);
-                            Submission.findOne({'id':submission.id}, function(err,sub){
-                                if(err) return next(err);
-                                var out = sub.output;
+                            //var out = sub.output;
                                 var usr = {
                                     idx : i,
                                     out : ans.output,
@@ -96,13 +95,14 @@ module.exports = {
                                     usr.result = 1
                                 }
                                 out.push(usr);
-                                Submission.update({'id':sub.id}, {'output':out},function(err,su){});
-                            });
+                                if(out.length==n){
+                                    Submission.update({'id':submission.id}, {'output':out},function(err,su){});
+                                }
                             },
                         });
                         }
                         for(var i=0;i<problem.input.length;i++){
-                            compile(problem.input[i],i);
+                            compile(problem.input[i],i,problem.input.length);
                         }
                         return res.redirect('/contest/submission?idc='+contest.id+'&idp='+problem.id);
                    });
