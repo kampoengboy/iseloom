@@ -27,12 +27,12 @@
                           <td><%=user.id_user.name%></td>
                           <% _.each(problems, function(problem) { %>
                                <% var res = false; %>
-                               <% var tried = false; %>
+                               <% var tried = 0; %>
                                <% var amount = 0; %>
                                <% for(var i=0;i<submissions.length;i++) {%>
-                                  <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id) { %>
+                                  <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id && !res) { %>
+                                      <% tried = tried + 1 %>
                                        <% for(var j=0;j<submissions[i].output.length;j++) { %>
-                                            <% tried = true %>
                                             <% if(submissions[i].output[j].result==1) { %>
                                                 <% amount = amount+1; %>
                                             <% } %>
@@ -47,9 +47,9 @@
                                <td></td>
                               <% } else { %>
                                 <% if(res) { %>
-                                   <td style="background-color:#00FF33"></td>
+                                   <td style="background-color:#00FF33" class="text-right"><%=tried %></td>
                                 <% } else {%>
-                                   <td style="background-color:#FF0000; color:white;"></td>
+                                   <td style="background-color:#FF0000; color:white;" class="text-right"><%=tried %></td>
                                 <% } %>
                               <% } %>
                           <% }) %>
