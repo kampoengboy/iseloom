@@ -122,7 +122,8 @@ module.exports = {
                                             if(!has_solve) { 
                                                 UserContest.findOne(user_contest, function(err,usercontest){
                                                     var solve = usercontest.solve + 1;
-                                                    UserContest.update(usercontest.id, {'solve':solve,'score':Math.round((submission.createdAt - contest.datetimeopen)/60000)}, function(err,usc){});
+                                                    var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000); 
+                                                    UserContest.update(usercontest.id, {'solve':solve,'score':score}, function(err,usc){});
                                                 }); 
                                             }
                                         } else {

@@ -43,7 +43,7 @@ module.exports = {
                          }
                          UserContest.find({'id_contest' : req.param('id')})
                          .populate('id_user')
-                         .sort('solved DESC')
+                         .sort('solve DESC')
                          .exec(function(err,users){
                             University.find(function(err,universities){
                                 Submission.find({'id_contest':req.param('id')})
