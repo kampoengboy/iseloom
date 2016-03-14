@@ -44,6 +44,7 @@ module.exports = {
                          UserContest.find({'id_contest' : req.param('id')})
                          .populate('id_user')
                          .sort('solve DESC')
+                         .sort('score ASC')
                          .exec(function(err,users){
                             University.find(function(err,universities){
                                 Submission.find({'id_contest':req.param('id')})
