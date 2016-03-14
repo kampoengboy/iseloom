@@ -42,82 +42,102 @@ module.exports = {
                         result : null,
                         minute : null,
                    }
-                   Submission.create(obj,function(err,submission){
-                       var out = [];
-                       function compile(input,i,n){
-                            Http.sendHttpRequest({
-                            url: '/compile',
-                            baseUrl: 'http://api.mikelrn.com',
-                            method: 'POST',
-                            params: {language:7,code:req.param('code'),stdin:input},
-                            formData: false,
-                            headers: {},
-                        }).exec({
-                            // An unexpected error occurred.
-                            error: function (err){
-                                console.log(err);
-                            },
-                            // 404 status code returned from server
-                            notFound: function (result){
-                                console.log(result);
-                            },
-                            // 400 status code returned from server
-                            badRequest: function (result){
-                                console.log(result);
-                            },
-                            // 403 status code returned from server
-                            forbidden: function (result){
-                                console.log(result);
-                            },
-                            // 401 status code returned from server
-                            unauthorized: function (result){
-                                console.log(result);
-                            },
-                            // 5xx status code returned from server (this usually means something went wrong on the other end)
-                            serverError: function (result){
-                                console.log(result);
-                            },
-                            // Unexpected connection error: could not send or receive HTTP request.
-                            requestFailed: function (err){
-                                console.log(err);
-                            },
-                            // OK.
-                            success: function (result){
-                            var ans = JSON.parse(result.body);
-                            //var out = sub.output;
-                                var usr = {
-                                    idx : i,
-                                    out : ans.output,
-                                    ans : problem.output[i]
-                                }
-                                if(ans.output!=problem.output[i]){
-                                    usr.result = 0
-                                } else {
-                                    usr.result = 1
-                                }
-                                out.push(usr);
-                                if(out.length==n){
-                                    var correct = true;
-                                    for (var j=0;j<out.length;j++) {
-                                        if (out[j].result != 1) {
-                                            correct = false;
-                                            break;
+                   Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idProblem')} ] })
+                   .exec(function(err,allsubs){
+                        var has_solve = false;
+                        for(var i=0;i<allsubs.length;i++){
+                            if(allsubs[i].result){
+                                has_solve = true;
+                                break;
+                            }
+                        }
+                        Submission.create(obj,function(err,submission){
+                        var out = [];
+                        function compile(input,i,n){
+                                Http.sendHttpRequest({
+                                url: '/compile',
+                                baseUrl: 'http://api.mikelrn.com',
+                                method: 'POST',
+                                params: {language:7,code:req.param('code'),stdin:input},
+                                formData: false,
+                                headers: {},
+                            }).exec({
+                                // An unexpected error occurred.
+                                error: function (err){
+                                    console.log(err);
+                                },
+                                // 404 status code returned from server
+                                notFound: function (result){
+                                    console.log(result);
+                                },
+                                // 400 status code returned from server
+                                badRequest: function (result){
+                                    console.log(result);
+                                },
+                                // 403 status code returned from server
+                                forbidden: function (result){
+                                    console.log(result);
+                                },
+                                // 401 status code returned from server
+                                unauthorized: function (result){
+                                    console.log(result);
+                                },
+                                // 5xx status code returned from server (this usually means something went wrong on the other end)
+                                serverError: function (result){
+                                    console.log(result);
+                                },
+                                // Unexpected connection error: could not send or receive HTTP request.
+                                requestFailed: function (err){
+                                    console.log(err);
+                                },
+                                // OK.
+                                success: function (result){
+                                var ans = JSON.parse(result.body);
+                                //var out = sub.output;
+                                    var usr = {
+                                        idx : i,
+                                        out : ans.output,
+                                        ans : problem.output[i]
+                                    }
+                                    if(ans.output!=problem.output[i]){
+                                        usr.result = 0
+                                    } else {
+                                        usr.result = 1
+                                    }
+                                    out.push(usr);
+                                    if(out.length==n){
+                                        var correct = true;
+                                        for (var j=0;j<out.length;j++) {
+                                            if (out[j].result != 1) {
+                                                correct = false;
+                                                break;
+                                            }
+                                        }
+                                        if (correct) {
+                                            Submission.update({'id':submission.id}, {'output':out, 'result':1, 'minute':Math.round((submission.createdAt - contest.datetimeopen)/60000)},function(err,su){});
+                                            var user_contest = {
+                                                id_contest : req.param('idc'),
+                                                id_user : req.session.User.id
+                                            }
+                                            if(!has_solve) { 
+                                                UserContest.findOne(user_contest, function(err,usercontest){
+                                                    var solve = usercontest.solve + 1;
+                                                    UserContest.update(usercontest.id, {'solve':solve,'score':Math.round((submission.createdAt - contest.datetimeopen)/60000)}, function(err,usc){});
+                                                }); 
+                                            }
+                                        } else {
+                                            Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
                                         }
                                     }
-                                    if (correct) {
-                                        Submission.update({'id':submission.id}, {'output':out, 'result':1, 'minute':Math.round((submission.createdAt - contest.datetimeopen)/60000)},function(err,su){});
-                                    } else {
-                                        Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
-                                    }
-                                }
-                            },
-                        });
-                        }
-                        for(var i=0;i<problem.input.length;i++){
-                            compile(problem.input[i],i,problem.input.length);
-                        }
-                        return res.redirect('/contest/submission?idc='+contest.id+'&idp='+problem.id);
-                   });
+                                },
+                            });
+                            }
+                            for(var i=0;i<problem.input.length;i++){
+                                compile(problem.input[i],i,problem.input.length);
+                            }
+                            return res.redirect('/contest/submission?idc='+contest.id+'&idp='+problem.id);
+                    }); 
+                   }); 
                 });
             }
             else {

@@ -14,9 +14,13 @@ module.exports = {
        id_contest : {
            model : 'contest'
        },
+       solve : {
+           type : 'integer',
+           defaultsTo : 0
+       },
        score : {
           type : 'integer',
-          defaultsTo : null
+          defaultsTo : 0
        }
   }
 };
