@@ -10,7 +10,7 @@
         </thead>
         <tbody>
            <% if(submissions.length > 0) { %>
-           <% var idx = 1 %>
+             <% var idx = 1 %>
                   <% _.each(submissions, function(submission){%>
                       <tr>
                           <td><%=idx%></td>
@@ -35,6 +35,10 @@
                       </tr>
                       <% idx++ %>
                   <%})%>
+            <% } else { %>
+              <tr>
+                <td colspan="4">No Submission.</td>
+              </tr>
             <% } %>
         </tbody>
     </table>
