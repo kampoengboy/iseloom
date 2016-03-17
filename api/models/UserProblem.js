@@ -21,10 +21,10 @@ module.exports = {
       //0 = WA, 1 = AC
       status : 'integer',
       minute_contest : {
-	    type: 'integer',
-	    defaultsTo: null
-	  },
-	  date : 'datetime'
+  	    type: 'integer',
+  	    defaultsTo: null
+  	  },
+  	  date : 'datetime'
   }
 };
 

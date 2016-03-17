@@ -126,7 +126,7 @@ module.exports = {
                                                         var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000) + (wrongsubs.length * 20); 
                                                         UserContest.update(usercontest.id, {'solve':solve,'score':score}, function(err,usc){});
                                                     });
-                                                }); 
+                                                });
                                             }
                                         } else {
                                             Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
