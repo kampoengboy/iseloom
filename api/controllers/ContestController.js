@@ -11,6 +11,44 @@ module.exports = {
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
     },
+    'donecontest' : function(req,res,next){
+          UserContest.find({'id_contest' : req.param('id')})
+          .populate('id_user')
+          .sort('solve DESC')
+          .sort('score ASC')
+          .populate('id_user')
+          .exec(function(err,users){
+              if(err) return next(err);
+              function update_rating(contestant){
+                  User.update({'id':contestant.id}, {'rating':contestant.rating}, function(err,user){});
+              }
+              var E = 0;
+              var new_rating = [];
+              for(var i=0;i<users.length;i++){
+                  for(var j=0;j<users.length;j++){
+                      if(i==j) continue;
+                      else {
+                          var Ra = users[i].id_user.rating;
+                          var Rb = users[j].id_user.rating;
+                          var e = 1 / ( 1 + (Rb-Ra) / 40 );
+                          E+=e;
+                      }
+                  }
+                  var seed = E + 1;
+                  var rating = users[i].rating + (seed - i);
+                  var d = (users[i].rating-rating)/2;
+                  var contestant = {
+                      id_user = users[i].id,
+                      rating = users[i].rating+d
+                  }
+                  new_rating.push(contestant);
+              }
+              for(var i=0;i<new_rating.length;i++){
+                  update_rating(new_rating[i]);
+              }
+              return res.redirect('/');
+          });
+    },
     submission : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
         if(typeof req.param('idc')=="undefined" || typeof req.param('idp')=="undefined") return res.redirect('/');
