@@ -109,11 +109,10 @@ module.exports = {
     },
     'add_contestant' : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
-        if(!req.session.User.admin) return res.redirect('/');
         Contest.findOne(req.param('id'), function (err, contest) {
             if (err) return next(err);
             if (!contest) return next('Contest doesn\'t exist.');
-            User.findOne({'id' : req.param('contestants')}, function(err,user){
+            User.findOne({'id' : req.session.User.id}, function(err,user){
                 if(err) return next(err);
                 var valObj = {
                     id_contest : contest.id,
@@ -121,7 +120,25 @@ module.exports = {
                 }
                 UserContest.create(valObj, function(err,userContest){
                     if(err) return next(err);
-                    return res.redirect('/contest/problemset/'+userContest.id_contest);
+                    return res.redirect('/contest/list');
+                });
+            });
+        }); 
+    },
+    'remove_contestant' : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        Contest.findOne(req.param('id'), function (err, contest) {
+            if (err) return next(err);
+            if (!contest) return next('Contest doesn\'t exist.');
+            User.findOne({'id' : req.session.User.id}, function(err,user){
+                if(err) return next(err);
+                var valObj = {
+                    id_contest : contest.id,
+                    id_user : user.id,
+                }
+                UserContest.destroy(valObj, function(err,userContest){
+                    if(err) return next(err);
+                    return res.redirect('/contest/list');
                 });
             });
         }); 
@@ -154,11 +171,16 @@ module.exports = {
             if (req.session.authenticated && !req.session.User.admin) {
                 UserContest.find({where: { id_user: req.session.User.id }}).populate('id_contest').exec(function (err, userActiveContests){
                     var now = new Date();
+                    var contestRegis = [];
+                    for(var i=0;i<userActiveContests.length;i++){
+                        contestRegis[userActiveContests[i].id_contest.id] = true;
+                    }
                     if (err) return next(err);
                     return res.view({
                         contests : contests,
                         userActiveContests : userActiveContests,
-                        now : now
+                        now : now,
+                        contestRegis : contestRegis
                     });
                 });
             } else {
