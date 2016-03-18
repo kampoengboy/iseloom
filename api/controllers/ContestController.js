@@ -16,12 +16,21 @@ module.exports = {
           .populate('id_user')
           .sort('solve DESC')
           .sort('score ASC')
-          .populate('id_user')
           .exec(function(err,users){
               if(err) return next(err);
               function update_rating(contestant){
                   User.update({'id':contestant.id}, {'rating':contestant.rating}, function(err,user){});
               }
+            //   function getRatingtoRank(seed,rank){
+            //       var left = 1;
+            //       var right = 8000;
+            //       while(right-left>1){
+            //           var mid = (left+right)/2;
+            //           if(seed<rank) right = mid;
+            //           else left = mid;
+            //       }
+            //       return left;
+            //   }
               var E = 0;
               var new_rating = [];
               for(var i=0;i<users.length;i++){
@@ -30,17 +39,23 @@ module.exports = {
                       else {
                           var Ra = users[i].id_user.rating;
                           var Rb = users[j].id_user.rating;
-                          var e = 1 / ( 1 + (Rb-Ra) / 40 );
+                          var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
                           E+=e;
                       }
                   }
                   var seed = E + 1;
-                  var rating = users[i].rating + (seed - i);
-                  var d = (users[i].rating-rating)/2;
+                  //console.log(seed);
+                //   var midRank = Math.sqrt((i+1)*seed);
+                  var k = 16;
+                  if(users[i].id_user.rating<2100) k = 32;
+                  else if(users[i].id_user.rating>=2100 && users[i].id_user.rating<=2400) k = 24;
+                  var rating = users[i].id_user.rating + k * (seed - (i+1));
+                  var d = (rating-users[i].id_user.rating)/2;
                   var contestant = {
-                      id_user = users[i].id,
-                      rating = users[i].rating+d
+                      id_user : users[i].id,
+                      rating : users[i].id_user.rating+d
                   }
+                  console.log(contestant.rating);
                   new_rating.push(contestant);
               }
               for(var i=0;i<new_rating.length;i++){
