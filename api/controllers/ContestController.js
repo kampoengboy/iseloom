@@ -245,11 +245,17 @@ module.exports = {
             if (err) return next(err);
 
             if (!contest) return next('Contest doesn\'t exist.');
+            var stop  = false;
+            if(req.param('stop')=="true") stop = true;
+            var publish = false;
+            if(req.param('publish')=="true") publish = true;
             var data = {
                 name : req.param('contestname'),
                 datetimeopen : req.param('datetimeopen'),
                 datetimeclose : req.param('datetimeclose'),
-                freezetime : parseInt(req.param('freezetime'))
+                freezetime : parseInt(req.param('freezetime')),
+                stop : stop,
+                publish : publish
             }
             Contest.update(req.param('id'), data, function contestUpdated(err) {
                 if (err) return next(err);
@@ -270,12 +276,14 @@ module.exports = {
                 ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order ASC'}).populate('id_problem'),
                 Problem.find(),
                 User.find({where : { admin : false }}),
-                UserContest.find({ where : {id_contest:contest.id}}).populate('id_user')
-            ]).spread(function(ProblemsContest, ProblemsList, Users, UserContest){
+                UserContest.find({ where : {id_contest:contest.id}}).populate('id_user'),
+                University.find()
+            ]).spread(function(ProblemsContest, ProblemsList, Users, UserContest,Universities){
                 problemsContest = ProblemsContest;
                 problemsList = ProblemsList;
                 users = Users;
                 userContest = UserContest;
+                universities = Universities;
             })
             .catch(function(){
                 return next(err);
@@ -286,7 +294,8 @@ module.exports = {
                     problemsList : problemsList,
                     users : users,
                     contestId : contest.id,
-                    userContest : userContest
+                    userContest : userContest,
+                    universities : universities
                 });
             });
             // ProblemContest.find({ where: { id_contest: contest.id }, sort: 'order DESC'}).exec(function (err, problems){

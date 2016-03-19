@@ -67,7 +67,8 @@
                       <tr>
                           <td><%=idx%></td>
                           <td><%=usercontest.id_user.name%></td>
-                          <td><%=usercontest.id_user.university%></td>
+                          <% var elPos = universities.map(function(x) {return x.id; }).indexOf(usercontest.id_user.university); %>
+                          <td><%=universities[elPos].name%></td>
                       </tr>
                       <% idx++ %>
                   <%})%>

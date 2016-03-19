@@ -19,7 +19,44 @@ module.exports = {
    //              if(err) return next(err);
    //          });
    //      });
-        return res.view();
+        var probs = [];
+        Contest.findOne({'publish':true}, function(err,contest){
+                if(err) return next(err);
+                if(!contest) return res.view({
+                     has_contest : false
+                });
+                ProblemContest.find({'id_contest':contest.id}, function(err,problems){
+                    Problem.find(function(err,allproblem){
+                         for(var i=0;i<problems.length;i++){
+                            var elPos = allproblem.map(function(x) {return x.id; }).indexOf(problems[i].id_problem);
+                            probs.push(allproblem[elPos]);
+                         }
+                         UserContest.find({'id_contest' : contest.id})
+                         .populate('id_user')
+                         .sort('solve DESC')
+                         .sort('score ASC')
+                         .exec(function(err,users){
+                            University.find(function(err,universities){
+                                Submission.find({'id_contest':contest.id})
+                                .populate('id_user')
+                                .populate('id_problem')
+                                .exec(function(err,submissions){
+                                   if(err) return next(err);
+                                   return res.view({
+                                        has_contest : true,
+                                        universities : universities,
+                                        submissions : submissions,
+                                        contest : contest,
+                                        problems : probs,
+                                        users : users
+                                    }); 
+                                });
+                            });
+                         })
+                    });
+                    
+                });
+        });
     }
 };
 

@@ -8,7 +8,9 @@
 module.exports = {
 	dashboard : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
-        User.find(function(err,users){
+        User.find()
+        .populate('university')
+        .exec(function(err,users){
             if(err) return next(err);
             return res.view({
                 users : users 

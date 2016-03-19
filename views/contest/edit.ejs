@@ -27,6 +27,34 @@
           </div>
           </div>
           <div class="form-group">
+          <label class="control-label col-md-4 required">Stop : </label>
+          <div class="col-md-8">
+          <select id="stop" name="stop" required="required" class="form-control">
+          <% if(contest.stop) { %>
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+          <% } else { %>
+            <option value="true">Yes</option>
+            <option value="false" selected>No</option>
+          <% } %>
+          </select>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="control-label col-md-4 required">Publish : </label>
+          <div class="col-md-8">
+          <select id="publish" name="publish" required="required" class="form-control">
+          <% if(contest.publish) { %>
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+          <% } else { %>
+            <option value="true">Yes</option>
+            <option value="false" selected>No</option>
+          <% } %>
+          </select>
+          </div>
+          </div>
+          <div class="form-group">
           <div class="col-md-offset-4 col-md-2">
           <button type="submit" id="editcontest" name="editcontest" class="btn-color form-control btn btn-primary">Edit Contest</button>
           </div>
