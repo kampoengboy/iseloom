@@ -90,7 +90,7 @@
                     <tbody>
                         <% var idx = 1 %>
                         <% _.each(users, function(user){ %>
-                            <% if(!user.admin) { %>
+                            <% if(!user.admin && user.verification) { %>
                             <tr>
                                 <td><%=idx%></td>
                                 <td><a href="/user/profile/<%=user.username%>"><%=user.name%></a></td>
