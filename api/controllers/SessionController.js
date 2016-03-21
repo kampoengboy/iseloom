@@ -76,7 +76,7 @@ module.exports = {
                         email : req.param('email'),
                         username : req.param('username'),
                         name : req.param('name'),
-                        rating : 0,
+                        rating : 1500,
                         grade : '',
                         gender : req.param('gender'),
                         rating_chart : [],
