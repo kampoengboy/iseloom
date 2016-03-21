@@ -63,4 +63,24 @@
 </div>
 <script>
     $('.time-class').datetimepicker();
+    Number.prototype.padLeft = function(base,chr){
+      var  len = (String(base || 10).length - String(this).length)+1;
+      return len > 0? new Array(len).join(chr || '0')+this : this;
+    };
+    var dateopen = new Date("<%=contest.datetimeopen%>");
+    var dateclose = new Date("<%=contest.datetimeclose%>");
+    dformatopen = [dateopen.getFullYear(),(dateopen.getMonth()+1).padLeft(),
+               dateopen.getDate().padLeft()]
+               .join('/') +' ' +
+              [dateopen.getHours().padLeft(),
+               dateopen.getMinutes().padLeft(),
+               dateopen.getSeconds().padLeft()].join(':');
+    dformatclose = [dateclose.getFullYear(),(dateclose.getMonth()+1).padLeft(),
+               dateclose.getDate().padLeft()]
+               .join('/') +' ' +
+              [dateclose.getHours().padLeft(),
+               dateclose.getMinutes().padLeft(),
+               dateclose.getSeconds().padLeft()].join(':');
+    $('#datetimeopen').val(dformatopen);
+    $('#datetimeclose').val(dformatclose);
 </script>
