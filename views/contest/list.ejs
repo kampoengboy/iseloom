@@ -43,7 +43,7 @@
                   <th>Start Time</th>
                   <th>End Time</th>
                   <% if(session.authenticated && session.User.admin) { %>
-                    <th colspan="3"></th>
+                    <th colspan="5"></th>
                   <% } %>
           </thead>
           <tbody>
@@ -71,6 +71,9 @@
                       <td><a href="problemset/<%=contest.id%>"><span class="glyphicon glyphicon-th-list" aria-hidden="true" title="Set Problems"></span></a></td>
                       <td><a href="edit/<%=contest.id%>"><span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Contest"></span></a></td>
                       <td><a href="remove/<%=contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
+                      <% if(contest.freeze && contest.datetimeclose < new Date()) { %>
+                        <td><a href="unfreeze/<%=contest.id%>"><span class="glyphicon glyphicon-check" aria-hidden="true" title="Unfreeze"></span></a></td>
+                      <% } %>
                     <% } else if (contest.datetimeopen <= new Date()) {%>
                       <td><a href="scoreboard/<%=contest.id%>"><span class="glyphicon glyphicon-equalizer" aria-hidden="true" title="Scoreboard"></span></a></td>
                     <% } %>

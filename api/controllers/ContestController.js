@@ -440,5 +440,16 @@ module.exports = {
                 });
             });
         });
+    },
+    'unfreeze' : function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Contest.findOne(req.param('id'), function foundContest(err, contest) {
+            if (err) return next(err);
+            if (!contest) return next('Contest doesn\'t exist.');
+            Contest.update(contest.id, {'freeze':false}, function(err,contest){
+              return res.redirect('/contest/list');
+            });
+        });
     }
 };
