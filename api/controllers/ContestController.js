@@ -227,7 +227,8 @@ module.exports = {
             name : req.param('contestname'),
             datetimeopen : req.param('datetimeopen'),
             datetimeclose : req.param('datetimeclose'),
-            freezetime : parseInt(req.param('freezetime'))
+            freezetime : (req.param('freezetime') != '') ? parseInt(req.param('freezetime')) : null,
+            freeze : (req.param('freezetime') != '') ? true : false,
         }
         Contest.create(usrObj, function(err,contest){
            if(err) return next(err);

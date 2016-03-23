@@ -11,7 +11,10 @@ module.exports = {
       name : 'string',
       datetimeopen : 'date',
       datetimeclose : 'date',
-      freezetime : 'integer',
+      freezetime : {
+          type : 'integer',
+          required : false
+      },
       publish : {
           type : 'boolean',
           defaultsTo : true
