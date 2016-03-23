@@ -18,9 +18,17 @@ module.exports = {
            type : 'integer',
            defaultsTo : 0
        },
+       solvefreeze : {
+           type : 'integer',
+           defaultsTo : 0
+       },
        score : {
           type : 'integer',
           defaultsTo : 0
+       },
+       scorefreeze : {
+           type : 'integer',
+           defaultsTo : 0
        }
   }
 };

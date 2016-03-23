@@ -35,21 +35,36 @@
                           <% var elPos = universities.map(function(x) {return x.id; }).indexOf(user.id_user.university); %>
                           <td><%=user.id_user.name%></td>
                           <td><%=universities[elPos].name%></td>
-                          <td><%=user.solve%></td>
-                          <td><%=user.score%></td>
+                          <td>
+                            <% if(contest.freeze) { %>
+                              <%=user.solvefreeze%>
+                            <% } else { %>
+                              <%=user.solve%>
+                            <% } %>
+                          </td>
+                          <td>
+                            <% if(contest.freeze) { %>
+                              <%=user.scorefreeze%>
+                            <% } else { %>
+                              <%=user.score%>
+                            <% } %>
+                          </td>
                           <% _.each(problems, function(problem) { %>
                                <% var res = false; %>
                                <% var tried = 0; %>
                                <% var min = 0; %>
                                <% for(var i=0;i<submissions.length;i++) {%>
-                                  <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id && !res) { %>
-                                      <% if (submissions[i].result != null) { %>
-                                        <% tried = tried + 1 %>
-                                        <% if (submissions[i].result) {%>
-                                          <% min = submissions[i].minute %>
-                                          <% res = true; %>
+                                  <% if(contest.freeze && ((contest.datetimeclose - submissions[i].createdAt) < contest.freezetime * 60000)) { %>
+                                  <% } else { %>
+                                    <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id && !res) { %>
+                                        <% if (submissions[i].result != null) { %>
+                                          <% tried = tried + 1 %>
+                                          <% if (submissions[i].result) {%>
+                                            <% min = submissions[i].minute %>
+                                            <% res = true; %>
+                                          <% } %>
                                         <% } %>
-                                      <% } %>
+                                    <% } %>
                                   <% } %>
                                <% } %>
                               <% if(!tried) { %>

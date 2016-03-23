@@ -177,7 +177,10 @@ module.exports = {
                                                 UserContest.findOne(user_contest, function(err,usercontest){
                                                     Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idProblem')}, {'result' : 0} ] }).exec(function(err,wrongsubs){
                                                         var solve = usercontest.solve + 1;
-                                                        var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000) + (wrongsubs.length * 20); 
+                                                        var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000) + (wrongsubs.length * 20);
+                                                        if ((contest.datetimeclose - submission.createdAt) >= contest.freezetime * 60000) {
+                                                            UserContest.update(usercontest.id, {'solvefreeze':solve,'scorefreeze':score}, function(err,usc){});
+                                                        }
                                                         UserContest.update(usercontest.id, {'solve':solve,'score':score}, function(err,usc){});
                                                     });
                                                 });

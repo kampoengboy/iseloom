@@ -155,29 +155,55 @@ module.exports = {
                             var elPos = allproblem.map(function(x) {return x.id; }).indexOf(problems[i].id_problem);
                             probs.push(allproblem[elPos]);
                          }
-                         UserContest.find({'id_contest' : req.param('id')})
-                         .populate('id_user')
-                         .sort('solve DESC')
-                         .sort('score ASC')
-                         .exec(function(err,users){
-                            University.find(function(err,universities){
-                                Submission.find({'id_contest':req.param('id')})
-                                .populate('id_user')
-                                .populate('id_problem')
-                                .exec(function(err,submissions){
-                                   if(err) return next(err);
-                                   return res.view({
-                                        show_approval : show_approval,
-                                        universities : universities,
-                                        scoreboard : scoreboard,
-                                        submissions : submissions,
-                                        contest : contest,
-                                        problems : probs,
-                                        users : users
-                                    }); 
+                         if (contest.freeze) {
+                            UserContest.find({'id_contest' : req.param('id')})
+                             .populate('id_user')
+                             .sort('solvefreeze DESC')
+                             .sort('scorefreeze ASC')
+                             .exec(function(err,users){
+                                University.find(function(err,universities){
+                                    Submission.find({'id_contest':req.param('id')})
+                                    .populate('id_user')
+                                    .populate('id_problem')
+                                    .exec(function(err,submissions){
+                                       if(err) return next(err);
+                                       return res.view({
+                                            show_approval : show_approval,
+                                            universities : universities,
+                                            scoreboard : scoreboard,
+                                            submissions : submissions,
+                                            contest : contest,
+                                            problems : probs,
+                                            users : users
+                                        }); 
+                                    });
                                 });
-                            });
-                         })
+                             })
+                         } else {
+                             UserContest.find({'id_contest' : req.param('id')})
+                             .populate('id_user')
+                             .sort('solve DESC')
+                             .sort('score ASC')
+                             .exec(function(err,users){
+                                University.find(function(err,universities){
+                                    Submission.find({'id_contest':req.param('id')})
+                                    .populate('id_user')
+                                    .populate('id_problem')
+                                    .exec(function(err,submissions){
+                                       if(err) return next(err);
+                                       return res.view({
+                                            show_approval : show_approval,
+                                            universities : universities,
+                                            scoreboard : scoreboard,
+                                            submissions : submissions,
+                                            contest : contest,
+                                            problems : probs,
+                                            users : users
+                                        }); 
+                                    });
+                                });
+                             })
+                         }
                     });
                     
                 });
