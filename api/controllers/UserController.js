@@ -8,8 +8,10 @@ var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
     'profile' : function(req,res,next){
-        User.findOne({where: { id: req.session.User.id }}).populate('university').exec(function (err, user){
-            UserRating.find({where: { id_user: req.session.User.id }}).sort('date DESC').limit(10).exec(function(err,userRating) {
+        User.findOne({where: { username:  req.param('id')}}).populate('university').exec(function (err, user){
+            if(err) return next(err);
+            if(!user) return res.redirect('/');
+            UserRating.find({where: { id_user: user.id }}).sort('date DESC').limit(10).exec(function(err,userRating) {
                 userRating.sort(function(a, b) {
                     return a.date - b.date;
                 });

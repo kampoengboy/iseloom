@@ -1,76 +1,107 @@
 <div class="container" style="background-color:white;">
-    <% if(has_contest) { %>
-        <h3 class="text-center">Scoreboard <%=contest.name%></h3>
-        <h4 id="clock" class="text-center"></h4>
-        <table class="table table-bordered table-hover table-striped">
-            <thead>
-                <th>#</th>
-                <th>Name</th>
-                <th>Univ</th>
-                <th>Solved</th>
-                <th>Score</th>
-                <% _.each(problems, function(problem) { %>
-                    <th>
-                    <% if(session.authenticated) { %>
-                        <a href="/problem/preview?prob=<%=problem.valName%>&idc=<%=contest.id%>"><%=problem.valName%></a>
-                    <% } else {%>
-                        <%=problem.valName%>
-                    <% } %>
-                    </th>
-                <% }) %>
-            </thead>
-            <tbody>
-                <% if(users.length > 0) { %>
-            <% var idx = 1 %>
-                    <% _.each(users, function(user){%>
+    <h2>Welcome to Iseloom Problem Archive
+    <h5>In this site, you can find hundreds of programming problems. If you're new here, just <a href="/register">register</a> and start solving!</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Suggested Problems</div>
+                <div class="panel-body">
+                    <p>This is the suggested problems</p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <th>#</th>
+                        <th>Problems</th>
+                        <th>Solved</th>
+                    </thead>
+                    <tbody>
                         <tr>
-                            <td><%=idx%></td>
-                            <% var elPos = universities.map(function(x) {return x.id; }).indexOf(user.id_user.university); %>
-                            <td><%=user.id_user.name%></td>
-                            <td><%=universities[elPos].name%></td>
-                            <td><%=user.solve%></td>
-                            <td><%=user.score%></td>
-                            <% _.each(problems, function(problem) { %>
-                                <% var res = false; %>
-                                <% var tried = 0; %>
-                                <% var min = 0; %>
-                                <% for(var i=0;i<submissions.length;i++) {%>
-                                    <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id && !res) { %>
-                                        <% if (submissions[i].result != null) { %>
-                                            <% tried = tried + 1 %>
-                                            <% if (submissions[i].result) {%>
-                                            <% min = submissions[i].minute %>
-                                            <% res = true; %>
-                                            <% } %>
-                                        <% } %>
-                                    <% } %>
-                                <% } %>
-                                <% if(!tried) { %>
-                                <td></td>
-                                <% } else { %>
-                                    <% if(res) { %>
-                                    <td style="background-color:#00FF33" class="text-right"><%=tried %> (<% if (tried > 1) { %><%=(tried-1)*20+"+"%><% } %><%=min%>)</td>
-                                    <% } else {%>
-                                    <td style="background-color:#FF0000; color:white;" class="text-right"><%=tried %></td>
-                                    <% } %>
-                                <% } %>
-                            <% }) %>
+                            <td>1</td>
+                            <td>2048</td>
+                            <td>112</td>
                         </tr>
-                        <% idx++ %>
-                    <%})%>
-                <% } %>
-            </tbody>
-        </table>
-        <script>
-            var d = new Date('<%=contest.datetimeclose%>');
-            var clock_div_name = '#clock';
-            $(clock_div_name).countdown(d).on('update.countdown', function(event) {
-                $(this).html(event.strftime('%D days %H:%M:%S'));
-            }).on('finish.countdown', function(event) {
-            $(this).html('Contest has done.')
-            });
-        </script>
-    <% } else { %>
-        <h3 class="text-center">There are no active contests</h3>
-    <% } %>
+                        <tr>
+                            <td>2</td>
+                            <td>2049</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>2050</td>
+                            <td>112</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Top 10 Ranklists</div>
+                <div class="panel-body">
+                    <p>The top 10 ranklists in iseloom</p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                    </thead>
+                    <tbody>
+                        <% var idx = 1 %>
+                        <% _.each(users, function(user){ %>
+                            <% if(!user.admin && user.verification) { %>
+                            <tr>
+                                <td><%=idx%></td>
+                                <td><a href="/user/profile/<%=user.username%>"><%=user.name%></a></td>
+                                <td><%=user.rating%></td>
+                            </tr>
+                            <% idx++; %>
+                            <% } %>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

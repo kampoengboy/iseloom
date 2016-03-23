@@ -12,7 +12,7 @@ module.exports = {
         return res.view();  
     },
     'done_contest' : function(req,res,next){
-          
+
     },
     'apply_rating' : function(req,res,next){
           UserContest.find({'id_contest' : req.param('id')})
@@ -70,7 +70,7 @@ module.exports = {
               for(var i=0;i<new_rating.length;i++){
                   update_rating(new_rating[i]);
               }
-              Contest.update({'id':req.param('id')}, {'approve':true}, function(err,contestsss){});
+              Contest.update({'id':req.param('id')}, {'approve':true,'stop':true}, function(err,contestsss){});
               return res.redirect('/contest/scoreboard/'+req.param('id'));
           });
     },
