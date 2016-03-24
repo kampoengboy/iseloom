@@ -87,7 +87,13 @@ module.exports = {
                             cannot_submit = false;
                         }
                     }
-                   if(cannot_submit) return res.redirect('/contest/scoreboard/'+req.param('idc'));
+                   if(cannot_submit) {
+                        var contestHasDone = ['Contest has done.'];
+                        req.session.flash = {
+                                err: contestHasDone
+                        }
+                        return res.redirect('/contest/scoreboard/'+req.param('idc'));
+                    }
                    var obj = {
                         id_contest : req.param('idc'),
                         id_user : req.session.User.id,

@@ -1,4 +1,20 @@
 <div class="container" style="background-color:white">
+<% if(flash) { %>
+<% if(flash.err) { %>
+      <div>
+      <br><br>
+      <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <% Object.keys(flash.err).forEach(function(error) { %>
+              <%= flash.err[error] %>
+        <% }) %>
+      </div>
+      </div>
+<% } else if (flash.success){ %>
+
+<% } %>
+<% } %>
     <h3 class="text-center">Scoreboard <%=contest.name%>
       <br/>
       <% if(contest.freeze && ((contest.datetimeclose - new Date()) < contest.freezetime * 60000)) { %><% var check = true %><% var datefreeze = contest.datetimeclose.getTime() - (contest.freezetime*60000) %>(FREEZE since <span id="time"></span>)<% } %>
