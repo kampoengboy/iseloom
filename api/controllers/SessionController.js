@@ -77,9 +77,7 @@ module.exports = {
                         username : req.param('username'),
                         name : req.param('name'),
                         rating : 1500,
-                        grade : '',
                         gender : req.param('gender'),
-                        rating_chart : [],
                         university : university.id,
                 }
                 bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {

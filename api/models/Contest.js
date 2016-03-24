@@ -15,10 +15,6 @@ module.exports = {
           type : 'integer',
           required : false
       },
-      publish : {
-          type : 'boolean',
-          defaultsTo : true
-      },
       approve : {
         type : 'boolean',
         defaultsTo : false  
