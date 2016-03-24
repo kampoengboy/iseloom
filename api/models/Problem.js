@@ -18,8 +18,7 @@ module.exports = {
       publish : {
           type : 'boolean',
           defaultsTo : false
-      },
-      rating : 'integer'
+      }
   }
 };
 

@@ -23,8 +23,6 @@ module.exports = {
           defaultsTo : false
       },
       rating : 'integer',
-      grade : 'string',
-      rating_chart : 'array',
       university : {
           model : 'university'
       }
