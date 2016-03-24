@@ -1,5 +1,8 @@
 <div class="container" style="background-color:white">
-    <h3 class="text-center">Scoreboard <%=contest.name%></h3>
+    <h3 class="text-center">Scoreboard <%=contest.name%>
+      <br/>
+      <% if(contest.freeze && ((contest.datetimeclose - new Date()) < contest.freezetime * 60000)) { %><% var check = true %><% var datefreeze = contest.datetimeclose.getTime() - (contest.freezetime*60000) %>(FREEZE since <span id="time"></span>)<% } %>
+    </h3>
     <h4 id="clock" class="text-center"></h4>
     <% if(session.authenticated) { %>
         <% if(session.User.admin) { %>
@@ -18,7 +21,7 @@
             <th>Score</th>
             <% _.each(problems, function(problem) { %>
                 <th>
-                <% if(session.authenticated) { %>
+                <% if(session.authenticated && contest.datetimeclose >= new Date()) { %>
                     <a href="/problem/preview?prob=<%=problem.valName%>&idc=<%=contest.id%>"><%=problem.valName%></a>
                 <% } else {%>
                     <%=problem.valName%>
@@ -92,4 +95,15 @@
      }).on('finish.countdown', function(event) {
       $(this).html('Contest has done.')
     });
+    if ("<%=check%>") {
+      Number.prototype.padLeft = function(base,chr){
+        var  len = (String(base || 10).length - String(this).length)+1;
+        return len > 0? new Array(len).join(chr || '0')+this : this;
+      };
+      var date = new Date("<%=new Date(datefreeze)%>");
+      dformat = [date.getHours().padLeft(),
+                 date.getMinutes().padLeft(),
+                 date.getSeconds().padLeft()].join(':');
+      $('#time').html(dformat);
+    }
 </script>
