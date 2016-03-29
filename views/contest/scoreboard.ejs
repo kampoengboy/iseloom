@@ -19,7 +19,11 @@
       <br/>
       <% if(contest.freeze && ((contest.datetimeclose - new Date()) < contest.freezetime * 60000)) { %><% var check = true %><% var datefreeze = contest.datetimeclose.getTime() - (contest.freezetime*60000) %>(FREEZE since <span id="time"></span>)<% } %>
     </h3>
-    <h4 id="clock" class="text-center"></h4>
+    <% if(contest.datetimeopen <= new Date()) { %>
+      <h4 id="clock" class="text-center"></h4>
+    <% } else { %>
+      <h4 class="text-center">Not yet start.</h4>
+    <% } %>
     <% if(session.authenticated) { %>
         <% if(session.User.admin) { %>
             <% if(!contest.approve && show_approval) { %>
@@ -108,7 +112,7 @@
     var clock_div_name = '#clock';
     $(clock_div_name).countdown(d).on('update.countdown', function(event) {
         $(this).html(event.strftime('%D days %H:%M:%S'));
-     }).on('finish.countdown', function(event) {
+    }).on('finish.countdown', function(event) {
       $(this).html('Contest has done.')
     });
     if ("<%=check%>") {

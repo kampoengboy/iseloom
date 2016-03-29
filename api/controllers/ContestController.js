@@ -23,6 +23,9 @@ module.exports = {
               if(err) return next(err);
               function update_rating(contestant){
                   User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
+                     if(contestant.highest_rating < contestant.rating) {
+                        User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
+                     }
                      var valObj = {
                         id_user : contestant.id_user,
                         rating : contestant.rating,
@@ -63,7 +66,8 @@ module.exports = {
                   var d = (rating-users[i].id_user.rating)/2;
                   var contestant = {
                       id_user : users[i].id_user.id,
-                      rating : users[i].id_user.rating+d
+                      rating : users[i].id_user.rating+d,
+                      highest_rating : users[i].id_user.highest_rating
                   }
                   new_rating.push(contestant);
               }
@@ -92,121 +96,115 @@ module.exports = {
     },
     scoreboard : function(req,res,next){
         var probs = [];
-        Scoreboard.findOne({'id_contest' : req.param('id')}, function(err,scoreboard){
+        Contest.findOne({'id':req.param('id')}, function(err,contest){
             if(err) return next(err);
-            if(!scoreboard) return res.redirect('/');
-            Contest.findOne({'id':req.param('id')}, function(err,contest){
-                if(err) return next(err);
-                if(!contest) return res.redirect('/');
-                var datenow = new Date();
-                var dateopen = new Date(contest.datetimeopen).getTime();
-                var dateclose = new Date(contest.datetimeclose).getTime();
-                //open_time
-                var seconds_left_to_open = (dateopen - datenow) / 1000;
-                days_to_open = parseInt(seconds_left_to_open / 86400);
-                seconds_left_to_open = seconds_left_to_open % 86400;
-                hours_to_open = parseInt(seconds_left_to_open / 3600);
-                seconds_left_to_open = seconds_left_to_open % 3600;
-                minutes_to_open = parseInt(seconds_left_to_open / 60);
-                seconds_to_open = parseInt(seconds_left_to_open % 60);
-                //close_time
-                var seconds_left_to_close = (dateclose - datenow) / 1000;
-                days_to_close = parseInt(seconds_left_to_close / 86400);
-                seconds_left_to_close = seconds_left_to_close % 86400;
-                hours_to_close = parseInt(seconds_left_to_close / 3600);
-                seconds_left_to_close = seconds_left_to_close % 3600;
-                minutes_to_close = parseInt(seconds_left_to_close / 60);
-                seconds_to_close = parseInt(seconds_left_to_close % 60);
-                var contest_start = true;
-                if(days_to_open>0){
-                   contest_start = false;
-                } else if(days_to_open < 0){
+            if(!contest) return res.redirect('/');
+            var datenow = new Date();
+            var dateopen = new Date(contest.datetimeopen).getTime();
+            var dateclose = new Date(contest.datetimeclose).getTime();
+            //open_time
+            var seconds_left_to_open = (dateopen - datenow) / 1000;
+            days_to_open = parseInt(seconds_left_to_open / 86400);
+            seconds_left_to_open = seconds_left_to_open % 86400;
+            hours_to_open = parseInt(seconds_left_to_open / 3600);
+            seconds_left_to_open = seconds_left_to_open % 3600;
+            minutes_to_open = parseInt(seconds_left_to_open / 60);
+            seconds_to_open = parseInt(seconds_left_to_open % 60);
+            //close_time
+            var seconds_left_to_close = (dateclose - datenow) / 1000;
+            days_to_close = parseInt(seconds_left_to_close / 86400);
+            seconds_left_to_close = seconds_left_to_close % 86400;
+            hours_to_close = parseInt(seconds_left_to_close / 3600);
+            seconds_left_to_close = seconds_left_to_close % 3600;
+            minutes_to_close = parseInt(seconds_left_to_close / 60);
+            seconds_to_close = parseInt(seconds_left_to_close % 60);
+            var contest_start = true;
+            if(days_to_open>0){
+               contest_start = false;
+            } else if(days_to_open < 0){
+               contest_start = true;
+            } else if(days_to_open==0){
+               if(hours_to_open<=0 && minutes_to_open<=0 && seconds_to_open<=0)
                    contest_start = true;
-                } else if(days_to_open==0){
-                   if(hours_to_open<=0 && minutes_to_open<=0 && seconds_to_open<=0)
-                       contest_start = true;
-                   else
-                       contest_start = false;
-                }
-                var contest_end = false;
-                if(days_to_close>0){
-                   contest_end = false;
-                } else if(days_to_close < 0){
-                   contest_end = true;
-                } else if(days_to_close==0){
-                   if(hours_to_close<=0 && minutes_to_close<=0 && seconds_to_close<=0)
-                      contest_end = true;
-                   else
-                      contest_end = false;
-                }
-                var show_approval = false;
-                if(!contest_start){
-                   show_approval = false;
-                } else {
-                   if(contest_end){
-                      show_approval = true;
-                   } else {
-                      show_approval = false;
-                   }
-                }
-                ProblemContest.find({'id_contest':req.param('id')}, function(err,problems){
-                    Problem.find(function(err,allproblem){
-                         for(var i=0;i<problems.length;i++){
-                            var elPos = allproblem.map(function(x) {return x.id; }).indexOf(problems[i].id_problem);
-                            probs.push(allproblem[elPos]);
-                         }
-                         if (contest.freeze) {
-                            UserContest.find({'id_contest' : req.param('id')})
-                             .populate('id_user')
-                             .sort('solvefreeze DESC')
-                             .sort('scorefreeze ASC')
-                             .exec(function(err,users){
-                                University.find(function(err,universities){
-                                    Submission.find({'id_contest':req.param('id')})
-                                    .populate('id_user')
-                                    .populate('id_problem')
-                                    .exec(function(err,submissions){
-                                       if(err) return next(err);
-                                       return res.view({
-                                            show_approval : show_approval,
-                                            universities : universities,
-                                            scoreboard : scoreboard,
-                                            submissions : submissions,
-                                            contest : contest,
-                                            problems : probs,
-                                            users : users
-                                        }); 
-                                    });
+               else
+                   contest_start = false;
+            }
+            var contest_end = false;
+            if(days_to_close>0){
+               contest_end = false;
+            } else if(days_to_close < 0){
+               contest_end = true;
+            } else if(days_to_close==0){
+               if(hours_to_close<=0 && minutes_to_close<=0 && seconds_to_close<=0)
+                  contest_end = true;
+               else
+                  contest_end = false;
+            }
+            var show_approval = false;
+            if(!contest_start){
+               show_approval = false;
+            } else {
+               if(contest_end){
+                  show_approval = true;
+               } else {
+                  show_approval = false;
+               }
+            }
+            ProblemContest.find({'id_contest':req.param('id')}, function(err,problems){
+                Problem.find(function(err,allproblem){
+                     for(var i=0;i<problems.length;i++){
+                        var elPos = allproblem.map(function(x) {return x.id; }).indexOf(problems[i].id_problem);
+                        probs.push(allproblem[elPos]);
+                     }
+                     if (contest.freeze) {
+                        UserContest.find({'id_contest' : req.param('id')})
+                         .populate('id_user')
+                         .sort('solvefreeze DESC')
+                         .sort('scorefreeze ASC')
+                         .exec(function(err,users){
+                            University.find(function(err,universities){
+                                Submission.find({'id_contest':req.param('id')})
+                                .populate('id_user')
+                                .populate('id_problem')
+                                .exec(function(err,submissions){
+                                   if(err) return next(err);
+                                   return res.view({
+                                        show_approval : show_approval,
+                                        universities : universities,
+                                        submissions : submissions,
+                                        contest : contest,
+                                        problems : probs,
+                                        users : users
+                                    }); 
                                 });
-                             })
-                         } else {
-                             UserContest.find({'id_contest' : req.param('id')})
-                             .populate('id_user')
-                             .sort('solve DESC')
-                             .sort('score ASC')
-                             .exec(function(err,users){
-                                University.find(function(err,universities){
-                                    Submission.find({'id_contest':req.param('id')})
-                                    .populate('id_user')
-                                    .populate('id_problem')
-                                    .exec(function(err,submissions){
-                                       if(err) return next(err);
-                                       return res.view({
-                                            show_approval : show_approval,
-                                            universities : universities,
-                                            scoreboard : scoreboard,
-                                            submissions : submissions,
-                                            contest : contest,
-                                            problems : probs,
-                                            users : users
-                                        }); 
-                                    });
+                            });
+                         })
+                     } else {
+                         UserContest.find({'id_contest' : req.param('id')})
+                         .populate('id_user')
+                         .sort('solve DESC')
+                         .sort('score ASC')
+                         .exec(function(err,users){
+                            University.find(function(err,universities){
+                                Submission.find({'id_contest':req.param('id')})
+                                .populate('id_user')
+                                .populate('id_problem')
+                                .exec(function(err,submissions){
+                                   if(err) return next(err);
+                                   return res.view({
+                                        show_approval : show_approval,
+                                        universities : universities,
+                                        submissions : submissions,
+                                        contest : contest,
+                                        problems : probs,
+                                        users : users
+                                    }); 
                                 });
-                             })
-                         }
-                    });
-                    
+                            });
+                         })
+                     }
                 });
+                
             });
         });
     },
@@ -262,10 +260,7 @@ module.exports = {
                id_contest : contest.id,
                board : [],
            }
-           Scoreboard.create(obj,function(err,scoreboard){
-              if(err) return next(err);
-              return res.redirect('/contest/list');
-           });
+           return res.redirect('/contest/list');
         });
     },
     list : function(req,res,next) {

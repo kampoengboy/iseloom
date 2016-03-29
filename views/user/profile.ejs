@@ -1,10 +1,13 @@
 <div class="container" style="background-color:white">
 	<div class="row">
 	    <div class="col-md-9"><h1><%= user.username %> <small><%= user.name %></small></h1></div>
-	    <div class="col-md-3 text-right"><h2><%= user.rating %></h2></div>
+	    <div class="col-md-3 text-right"><h2><%= user.rating %><sup><small>Highest : <%=user.highest_rating%></small></sup></h2></div>
 	</div>
     <hr >
     <h3><%= user.university.name %></h3>
+    <div class="row">
+    	<span class="col-md-2">Registered : </span><span class="col-md-2" id="regitered"></span>
+    </div>
 	<% if(userRating) { %>
 	    <div style="width:70%">
 			<div>
@@ -47,5 +50,10 @@
 				responsive: true
 			});
 		});
+
+		var monthNames = ["January", "February", "March", "April", "May", "June",
+		  "July", "August", "September", "October", "November", "December"
+		];
+		$("#regitered").html("<%=user.createdAt.getDate()%>"+" "+monthNames["<%=user.createdAt.getMonth()%>"]+" "+"<%=user.createdAt.getFullYear()%>");
 	</script>
 <% } %>

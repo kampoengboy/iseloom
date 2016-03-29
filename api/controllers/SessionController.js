@@ -77,6 +77,7 @@ module.exports = {
                         username : req.param('username'),
                         name : req.param('name'),
                         rating : 1500,
+                        highest_rating : 1500,
                         gender : req.param('gender'),
                         university : university.id,
                 }

@@ -266,7 +266,7 @@ module.exports = {
     ranklist: function(req,res,next) {
         Promise.all([
             User.find().sort('rating DESC').populate('university'),
-            University.find()
+            University.find(),
         ]).spread(function(Users, Universities){
             users = Users;
             universities = Universities;

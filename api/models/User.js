@@ -23,6 +23,7 @@ module.exports = {
           defaultsTo : false
       },
       rating : 'integer',
+      highest_rating : 'integer',
       university : {
           model : 'university'
       }
