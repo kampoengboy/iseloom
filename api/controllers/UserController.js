@@ -97,6 +97,7 @@ module.exports = {
                    var obj = {
                         id_contest : req.param('idc'),
                         id_user : req.session.User.id,
+                        code : req.param('code'),
                         id_problem : req.param('idProblem'),
                         output : [],
                         result : null,

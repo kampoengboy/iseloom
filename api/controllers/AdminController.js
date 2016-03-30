@@ -4,8 +4,53 @@
  * @description :: Server-side logic for managing admins
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-
+var bcrypt = require('bcrypt');
 module.exports = {
+    'add_admin' : function(req,res,next){
+        var usrObj = {
+            username : req.param('username'),
+            email : req.param('email'),
+            name : req.param('name'),
+            verification : true,
+            admin : true,
+            rating : 1500,
+            highest_rating : 0,
+        }  
+        if(typeof req.param('username')=="undefined" || typeof req.param('email')=="undefined"){
+            return res.redirect('/');
+        }
+        User.findOne({ or : [ {username : req.param('username')}, { email: req.param('email') } ] },function foundUser(err,user){
+            if(err) return next(err);
+            if(user) return res.send('There has been user that has the same username or email');
+            bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {
+                usrObj.password = encryptedPassword;
+                User.create(usrObj, function(err,users){
+                    if(err) return next(err);
+                    return res.redirect('/admin/dashboard'); 
+                });
+            });  
+        });
+    },
+    'change_status' : function(req,res,next){
+        User.findOne({'id':req.param('id')}, function(err,user){
+            if(err) return next(err);
+            if(!user) return res.redirect('/');
+            var state = false;
+            if(user.admin)
+                state = false;
+            else
+                state = true;
+            User.update(user.id, {admin:state}, function(err,users){
+                if(err) return next(err);
+                return res.redirect('/admin/dashboard'); 
+            });
+        });  
+    },
+    'create_new_admin' : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        return res.view();
+    }, 
 	dashboard : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
         User.find()

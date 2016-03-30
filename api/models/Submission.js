@@ -17,6 +17,7 @@ module.exports = {
       id_user : {
           model : 'user'
       },
+      code : 'string',
       output : 'array',
       result : {
           type : 'integer',
