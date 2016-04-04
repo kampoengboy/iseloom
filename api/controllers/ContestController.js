@@ -94,6 +94,20 @@ module.exports = {
             }) 
         });  
     },
+    'get_submission' : function(req,res,next){
+        Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
+        .populate('id_contest')
+        .populate('id_problem')
+        .sort('createdAt DESC')
+        .exec(
+        function(err,submission){
+            if(err) return next(err);
+            if(!submission) return res.json({submissions:[]});
+            return res.json({
+                submissions : submission
+            }) 
+        });  
+    },
     'subscribe_scoreboard' : function(req,res,next){
         Submission.watch(req);     
     },

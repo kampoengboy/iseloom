@@ -1,4 +1,4 @@
-<div class="container" style="background-color:white">
+<div class="container" style="background-color:white" ng-app="submission" ng-controller="MainCtrl">
     <h3 class="text-center">My Submissions</h3>
     <h4 id="clock" class="text-center"></h4>
     <table class="table table-bordered table-hover table-striped">
@@ -10,31 +10,18 @@
         </thead>
         <tbody>
            <% if(submissions.length > 0) { %>
-             <% var idx = 1 %>
-                  <% _.each(submissions, function(submission){%>
-                      <tr>
-                          <td><%=idx%></td>
-                          <td><%=submission.id_problem.valName%></td>
-                          <td><%=submission.createdAt%></td>
-                          <% var res = true; %>
-                          <% if(submission.output.length==0) {%>
-                            <td>COMPILING</td>
-                          <% } else { %>
-                            <% for(var i=0;i<submission.output.length;i++) {%>
-                                <% if(submission.output[i].result!=1){ %>
-                                        <% res = false; %>
-                                        <% break; %>
-                                <% } %>
-                            <% } %>
-                            <% if(res) { %>
-                            <td style="background-color:#00FF33">CORRECT</td>
-                            <% } else {%>
-                            <td style="background-color:#FF0000; color:white;">WRONG ANSWER</td>
-                            <% } %> 
-                          <% } %>
-                      </tr>
-                      <% idx++ %>
-                  <%})%>
+                  <tr ng-repeat="submission in submissions">
+                      <td>{{$index+1}}</td>
+                      <td>{{submission.id_problem}}</td>
+                      <td>{{submission.time}}</td>
+                      <td ng-if="submission.output==0">COMPILING</td>
+                      <td ng-if="submission.output>=1 && submission.result==1" style="background-color:#00FF33">
+                           CORRECT
+                      </td>
+                      <td ng-if="submission.output>=1 && submission.result==0" style="background-color:#FF0000; color:white;">
+                           WRONG ANSWER
+                      </td>
+                  </tr>
             <% } else { %>
               <tr>
                 <td colspan="4">No Submission.</td>
@@ -43,3 +30,4 @@
         </tbody>
     </table>
 </div>
+<script src="/scripts/submission.js"></script>
