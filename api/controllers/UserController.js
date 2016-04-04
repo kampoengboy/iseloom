@@ -7,6 +7,22 @@
 var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
+    testingaja : function(req,res,next){
+        // var data = {
+        //     name: req.param('name'),
+        //     message: req.param('message')
+        // };
+        // User.create(data).exec(function created(err, message){
+        //     User.publishCreate({id:message.id, name:message.name, message:message.message});
+        // });
+        var id = '56a9bafbb84196e4168c8090';
+        User.update({username:'mikez'}, {name:'Michael'}).exec(function(err,user){
+            User.publishCreate({id:id, name:'Michael'});
+        });
+    },
+    subscribe : function(req,res,next){
+        User.watch(req);  
+    },
     'profile' : function(req,res,next){
         User.findOne({where: { username:  req.param('id')}}).populate('university').exec(function (err, user){
             if(err) return next(err);
@@ -195,6 +211,7 @@ module.exports = {
                                         } else {
                                             Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
                                         }
+                                        Submission.publishCreate({id:submission.id,message:"done"});
                                     }
                                 },
                             });

@@ -1,4 +1,4 @@
-<div class="container" style="background-color:white">
+<div class="container" style="background-color:white" ng-app="scoreboard" ng-controller="MainCtrl">
 <% if(flash) { %>
 <% if(flash.err) { %>
       <div>
@@ -52,61 +52,26 @@
         <tbody>
             <% if(users.length > 0) { %>
            <% var idx = 1 %>
-                  <% _.each(users, function(user){%>
-                      <tr>
-                          <td><%=idx%></td>
-                          <% var elPos = universities.map(function(x) {return x.id; }).indexOf(user.id_user.university); %>
-                          <td><%=user.id_user.name%></td>
-                          <td><%=universities[elPos].name%></td>
-                          <td>
-                            <% if(contest.freeze) { %>
-                              <%=user.solvefreeze%>
-                            <% } else { %>
-                              <%=user.solve%>
-                            <% } %>
-                          </td>
-                          <td>
-                            <% if(contest.freeze) { %>
-                              <%=user.scorefreeze%>
-                            <% } else { %>
-                              <%=user.score%>
-                            <% } %>
-                          </td>
-                          <% _.each(problems, function(problem) { %>
-                               <% var res = false; %>
-                               <% var tried = 0; %>
-                               <% var min = 0; %>
-                               <% for(var i=0;i<submissions.length;i++) {%>
-                                  <% if(contest.freeze && ((contest.datetimeclose - submissions[i].createdAt) < contest.freezetime * 60000)) { %>
-                                  <% } else { %>
-                                    <% if(submissions[i].id_user.id==user.id_user.id && submissions[i].id_problem.id==problem.id && !res) { %>
-                                        <% if (submissions[i].result != null) { %>
-                                          <% tried = tried + 1 %>
-                                          <% if (submissions[i].result) {%>
-                                            <% min = submissions[i].minute %>
-                                            <% res = true; %>
-                                          <% } %>
-                                        <% } %>
-                                    <% } %>
-                                  <% } %>
-                               <% } %>
-                              <% if(!tried) { %>
-                               <td></td>
-                              <% } else { %>
-                                <% if(res) { %>
-                                   <td style="background-color:#00FF33" class="text-right"><%=tried %> (<% if (tried > 1) { %><%=(tried-1)*20+"+"%><% } %><%=min%>)</td>
-                                <% } else {%>
-                                   <td style="background-color:#FF0000; color:white;" class="text-right"><%=tried %></td>
-                                <% } %>
-                              <% } %>
-                          <% }) %>
-                      </tr>
-                      <% idx++ %>
-                  <%})%>
+                  <tr ng-repeat="user in users">
+                        <td>{{$index+1}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.university}}</td>
+                        <td>{{user.solved}}</td>
+                        <td>{{user.score}}</td>
+                        <td ng-repeat="problem in user.problem" style="background-color:{{problem.bg_color}}; color:{{problem.color}}">
+                            <span ng-if="problem.tried==0"></span>
+                            <span ng-if="problem.tried>=1">
+                                <span ng-if="problem.res==true">{{problem.tried}} <span ng-if="problem.tried==1">({{problem.min}})</span><span ng-if="problem.tried>1">({{(problem.tried-1)*20}}+{{problem.min}})</span></span>
+                                <span ng-if="problem.res==false">{{problem.tried}}</span>
+                            </span>
+                        </td>
+                  </tr>
             <% } %>
         </tbody>
     </table>
 </div>
+<script src="/js/dependencies/angular.min.js"></script>
+<script src="/scripts/scoreboard.js"></script>
 <script>
     var d = new Date('<%=contest.datetimeclose%>');
     var clock_div_name = '#clock';
