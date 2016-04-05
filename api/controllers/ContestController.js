@@ -14,6 +14,38 @@ module.exports = {
     'done_contest' : function(req,res,next){
 
     },
+    submissiondetail : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Submission.findOne({'id':req.param('id')})
+        .populate('id_user')
+        .populate('id_problem')
+        .populate('id_contest')
+        .exec(function(err,submission){
+            if(err) return next(err);
+            if(!submission) return res.redirect('/');
+            return res.view({submission:submission}); 
+        });
+    },
+    allsubmission : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Contest.findOne({'id':req.param('id')}, function(err,contest){
+            if(err) return next(err);
+            if(!contest) return res.redirect('/'); 
+            return res.view({contest:contest});
+        });
+    },
+    'get_allsubmission' : function(req,res,next){
+        Submission.find({'id_contest':req.param('id')})
+        .populate('id_user')
+        .populate('id_contest')
+        .populate('id_problem')
+        .sort('createdAt DESC')
+        .exec(function(err,submissions){
+            return res.json({submissions : submissions}); 
+        });
+    },
     'apply_rating' : function(req,res,next){
           UserContest.find({'id_contest' : req.param('id')})
           .populate('id_user')

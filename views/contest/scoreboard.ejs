@@ -28,8 +28,9 @@
         <% if(session.User.admin) { %>
             <% if(!contest.approve && show_approval) { %>
                 <a href="/contest/apply_rating/<%=contest.id%>" class="btn btn-success">Approve Contest</a>
-                <br><br>
             <% } %>
+            <a href="/contest/allsubmission/<%=contest.id%>" class="btn btn-info">See All Submissions</a>
+            <br><br>
         <% } %>
     <% } %>
     <table class="table table-bordered table-hover table-striped">
