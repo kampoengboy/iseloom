@@ -109,32 +109,9 @@ module.exports = {
                         data.seed = 0;
                         data.delta = 0;
                         data.id_user = users[i].id_user.id;
-                        contestant.push(data);
-                    //   for(var j=0;j<users.length;j++){
-                    //       if(i==j) continue;
-                    //       else {
-                    //           var Ra = users[i].id_user.rating;
-                    //           var Rb = users[j].id_user.rating;
-                    //           var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
-                    //           E+=e;
-                    //       }
-                    //   }
-                    //   var seed = E + 1;
-                    //   //console.log(seed);
-                    //   var midRank = Math.sqrt((i+1)*seed);
-                    // //   var k = 16;
-                    // //   if(users[i].id_user.rating<2100) k = 32;
-                    // //   else if(users[i].id_user.rating>=2100 && users[i].id_user.rating<=2400) k = 24;
-                    // //   var rating = users[i].id_user.rating + k * (seed - (i+1));
-                    //   var rating = getRatingtoRank(seed,i+1);
-                    //   var d = (rating-users[i].id_user.rating)/2;
-                    //   console.log(d);
-                    //   var contestant = {
-                    //       id_user : users[i].id_user.id,
-                    //       rating : users[i].id_user.rating+d,
-                    //       highest_rating : users[i].id_user.highest_rating
-                    //   }
-                    //   new_rating.push(contestant);
+                        if(users[i].solve>0){
+                            contestant.push(data);
+                        }
                 }
                 for(var i=0;i<contestant.length;i++){
                     contestant[i].seed = 1;
@@ -178,13 +155,9 @@ module.exports = {
                             id_user : contestant[i].id_user,
                             rating : contestant[i].rating + contestant[i].delta,
                     }
-                    //   if(dummy.rating < contestant[i].rating) dummy.highest_rating = contestant[i].rating;
-                    //   else dummy.highest_rating = dummy.rating;
                     dummy.highest_rating = dummy.rating;
                     new_rating.push(dummy);
                 }
-                //   console.log(contestant);
-                //   console.log(new_rating);
                 for(var i=0;i<new_rating.length;i++){
                     update_rating(new_rating[i]);
                 }
