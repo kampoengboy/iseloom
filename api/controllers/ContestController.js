@@ -47,135 +47,151 @@ module.exports = {
         });
     },
     'apply_rating' : function(req,res,next){
-          UserContest.find({'id_contest' : req.param('id')})
-          .populate('id_user')
-          .sort('solve DESC')
-          .sort('score ASC')
-          .exec(function(err,users){
-              if(err) return next(err);
-              function update_rating(contestant){
-                  User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
-                     if(contestant.highest_rating < contestant.rating) {
-                        User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
-                     }
-                     var valObj = {
-                        id_user : contestant.id_user,
-                        rating : contestant.rating,
-                        date : new Date().toJSON().slice(0,10)
-                     }
-                     UserRating.create(valObj, function(err,userrating){}); 
-                  });
-              }
-              function getRatingtoRank(contestants,rank){
-                  var left = 1;
-                  var right = 8000;
-                  while(right-left>1){
-                      var mid = (left+right)/2;
-                      if(getSeed(contestants,mid) < rank) right = mid;
-                      else left = mid;
-                  }
-                  return left;
-              }
-              function getSeed(contestants, rating){
-                  var extracontestant = {
-                      party : 0,
-                      rank : 0,
-                      points : 0,
-                      rating : rating
-                  }
-                  var result = 0;
-                  for(var i=0;i<contestants.length;i++){
-                    var Ra = contestants[i].rating;
-                    var Rb = extracontestant.rating;
-                    var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
-                    result += e;
-                  }
-                  return result;
-              }
-              var E = 0;
-              var contestant = [];
-              var new_rating = [];
-              for(var i=0;i<users.length;i++){
-                    var data = {};
-                    data.party = users.length;
-                    data.rank = i+1;
-                    data.points = users[i].score;
-                    data.rating = users[i].id_user.rating;
-                    data.needRating = 0;
-                    data.seed = 0;
-                    data.delta = 0;
-                    data.id_user = users[i].id_user.id;
-                    contestant.push(data);
-                //   for(var j=0;j<users.length;j++){
-                //       if(i==j) continue;
-                //       else {
-                //           var Ra = users[i].id_user.rating;
-                //           var Rb = users[j].id_user.rating;
-                //           var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
-                //           E+=e;
-                //       }
-                //   }
-                //   var seed = E + 1;
-                //   //console.log(seed);
-                //   var midRank = Math.sqrt((i+1)*seed);
-                // //   var k = 16;
-                // //   if(users[i].id_user.rating<2100) k = 32;
-                // //   else if(users[i].id_user.rating>=2100 && users[i].id_user.rating<=2400) k = 24;
-                // //   var rating = users[i].id_user.rating + k * (seed - (i+1));
-                //   var rating = getRatingtoRank(seed,i+1);
-                //   var d = (rating-users[i].id_user.rating)/2;
-                //   console.log(d);
-                //   var contestant = {
-                //       id_user : users[i].id_user.id,
-                //       rating : users[i].id_user.rating+d,
-                //       highest_rating : users[i].id_user.highest_rating
-                //   }
-                //   new_rating.push(contestant);
-              }
-              for(var i=0;i<contestant.length;i++){
-                  contestant[i].seed = 1;
-                  for(var j=0;j<contestant.length;j++){
-                      if(i==j) continue;
-                      else {
-                          var Ra = contestant[i].rating;
-                          var Rb = contestant[j].rating;
-                          var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
-                          contestant[i].seed += e;
-                      }
-                  }
-              }
-              for(var i=0;i<contestant.length;i++){
-                  var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
-                  contestant[i].needRating = getRatingtoRank(contestant,midRank);
-                  contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
-              }
-              contestant.sort(function(a, b) {
-                    return b.rating - a.rating;
-              });
-              var sum = 0;
-              for(var i=0;i<contestant.length;i++){
-                  sum+=contestant[i].delta;
-              }
-              var inc = (-1*sum) / contestant.length - 1;
-              for(var i=0;i<contestant.length;i++){
-                  contestant[i].delta += inc;
-              }
-              for(var i=0;i<contestant.length;i++){
-                  var dummy = {
-                        id_user : contestant[i].id_user,
-                        rating : contestant[i].rating + contestant[i].delta,
-                  }
-                //   if(dummy.rating < contestant[i].rating) dummy.highest_rating = contestant[i].rating;
-                //   else dummy.highest_rating = dummy.rating;
-                  dummy.highest_rating = dummy.rating;
-                  new_rating.push(dummy);
-              }
-              for(var i=0;i<new_rating.length;i++){
-                  update_rating(new_rating[i]);
-              }
-              Contest.update({'id':req.param('id')}, {'approve':true,'stop':true}, function(err,contestsss){});
-              return res.redirect('/contest/scoreboard/'+req.param('id'));
+        Contest.findOne({'id':req.param('id')}, function(err,contest){
+            if(err) return next(err);
+            if(!contest) return res.redirect('/');
+            if(contest.approve) {console.log('yes'); return res.redirect('/contest/scoreboard/'+req.param('id'));}
+             UserContest.find({'id_contest' : req.param('id')})
+            .populate('id_user')
+            .sort('solve DESC')
+            .sort('score ASC')
+            .exec(function(err,users){
+                if(err) return next(err);
+                function update_rating(contestant){
+                    User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
+                        if(contestant.highest_rating < contestant.rating) {
+                            User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
+                        }
+                        var valObj = {
+                            id_user : contestant.id_user,
+                            rating : contestant.rating,
+                            date : new Date().toJSON().slice(0,10)
+                        }
+                        UserRating.create(valObj, function(err,userrating){}); 
+                    });
+                }
+                function getRatingtoRank(contestants,rank){
+                    var left = 1;
+                    var right = 8000;
+                    while(right-left>1){
+                        var mid = (left+right)/2;
+                        if(getSeed(contestants,mid) < rank) right = mid;
+                        else left = mid;
+                    }
+                    return left;
+                }
+                function getSeed(contestants, rating){
+                    var extracontestant = {
+                        party : 0,
+                        rank : 0,
+                        points : 0,
+                        rating : rating
+                    }
+                    var result = 0;
+                    for(var i=0;i<contestants.length;i++){
+                        var Ra = contestants[i].rating;
+                        var Rb = extracontestant.rating;
+                        var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                        result += e;
+                    }
+                    return result;
+                }
+                var E = 0;
+                var contestant = [];
+                var new_rating = [];
+                for(var i=0;i<users.length;i++){
+                        var data = {};
+                        data.party = users.length;
+                        data.rank = i+1;
+                        data.points = users[i].score;
+                        data.rating = users[i].id_user.rating;
+                        data.needRating = 0;
+                        data.seed = 0;
+                        data.delta = 0;
+                        data.id_user = users[i].id_user.id;
+                        contestant.push(data);
+                    //   for(var j=0;j<users.length;j++){
+                    //       if(i==j) continue;
+                    //       else {
+                    //           var Ra = users[i].id_user.rating;
+                    //           var Rb = users[j].id_user.rating;
+                    //           var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                    //           E+=e;
+                    //       }
+                    //   }
+                    //   var seed = E + 1;
+                    //   //console.log(seed);
+                    //   var midRank = Math.sqrt((i+1)*seed);
+                    // //   var k = 16;
+                    // //   if(users[i].id_user.rating<2100) k = 32;
+                    // //   else if(users[i].id_user.rating>=2100 && users[i].id_user.rating<=2400) k = 24;
+                    // //   var rating = users[i].id_user.rating + k * (seed - (i+1));
+                    //   var rating = getRatingtoRank(seed,i+1);
+                    //   var d = (rating-users[i].id_user.rating)/2;
+                    //   console.log(d);
+                    //   var contestant = {
+                    //       id_user : users[i].id_user.id,
+                    //       rating : users[i].id_user.rating+d,
+                    //       highest_rating : users[i].id_user.highest_rating
+                    //   }
+                    //   new_rating.push(contestant);
+                }
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].seed = 1;
+                    for(var j=0;j<contestant.length;j++){
+                        if(i==j) continue;
+                        else {
+                            var Ra = contestant[i].rating;
+                            var Rb = contestant[j].rating;
+                            var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                            contestant[i].seed += e;
+                        }
+                    }
+                }
+                for(var i=0;i<contestant.length;i++){
+                    var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
+                    contestant[i].needRating = getRatingtoRank(contestant,midRank);
+                    contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
+                }
+                contestant.sort(function(a, b) {
+                        return b.rating - a.rating;
+                });
+                var sum = 0;
+                for(var i=0;i<contestant.length;i++){
+                    sum+=contestant[i].delta;
+                }
+                var inc = (-1*sum) / contestant.length - 1;
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].delta += inc;
+                }
+                var sum = 0;
+                var zeroSumCount = Math.min(4 * Math.round(Math.sqrt(contestant.length)),contestant.length);
+                for(var i=0;i<zeroSumCount;i++){
+                    sum += contestant[i].delta;
+                }
+                var inc = Math.min( Math.max( (-1 * sum) / zeroSumCount , -10) , 0);
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].delta += inc;
+                }
+                for(var i=0;i<contestant.length;i++){
+                    var dummy = {
+                            id_user : contestant[i].id_user,
+                            rating : contestant[i].rating + contestant[i].delta,
+                    }
+                    //   if(dummy.rating < contestant[i].rating) dummy.highest_rating = contestant[i].rating;
+                    //   else dummy.highest_rating = dummy.rating;
+                    dummy.highest_rating = dummy.rating;
+                    new_rating.push(dummy);
+                }
+                //   console.log(contestant);
+                //   console.log(new_rating);
+                for(var i=0;i<new_rating.length;i++){
+                    update_rating(new_rating[i]);
+                }
+                Contest.update({'id':req.param('id')}, {'approve':true,'stop':true}, function(err,contestsss){});
+                return res.redirect('/contest/scoreboard/'+req.param('id'));
           });
+        });   
     },
     submission : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
