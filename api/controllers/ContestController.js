@@ -109,7 +109,7 @@ module.exports = {
                         data.seed = 0;
                         data.delta = 0;
                         data.id_user = users[i].id_user.id;
-                        if(users[i].solve>0){
+                        if(users[i].tried){
                             contestant.push(data);
                         }
                 }
