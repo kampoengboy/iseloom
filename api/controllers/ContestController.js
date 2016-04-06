@@ -106,9 +106,9 @@ module.exports = {
                         // data.rank = i+1;
                         data.points = users[i].score;
                         data.rating = users[i].id_user.rating;
-                        if(i!=users.length-1){
-                            if(users[i].solve==users[i+1].solve){
-                                if(users[i].score==users[i+1].score){
+                        if(i==users.length-1){
+                            if(users[i-1].solve==users[i].solve){
+                                if(users[i-1].score==users[i].score){
                                     data.rank = rank;
                                 }
                                 else {
@@ -120,8 +120,8 @@ module.exports = {
                                 data.rank = rank;
                             }
                         } else {
-                            if(users[i-1].solve==users[i].solve){
-                                if(users[i-1].score==users[i].score){
+                            if(users[i].solve==users[i+1].solve){
+                                if(users[i].score==users[i+1].score){
                                     data.rank = rank;
                                 }
                                 else {
