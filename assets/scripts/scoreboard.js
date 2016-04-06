@@ -48,7 +48,7 @@ angular.module('scoreboard', [])
                     var min = 0;
                     var tmp = {};
                     for(var k=0;k<submissions.length;k++){
-                        if(contest.freeze && ((contest.datetimeclose - submissions[k].createdAt) < contest.freezetime * 60000)) {
+                        if(contest.freeze && ((new Date(contest.datetimeclose).getTime() - new Date(submissions[k].createdAt).getTime()) < contest.freezetime * 60000)) {
                             
                         } else {
                             if(submissions[k].id_user.id==contestants[i].id_user.id && submissions[k].id_problem.id==problems[j].id && !res){
