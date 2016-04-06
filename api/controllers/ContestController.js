@@ -106,32 +106,36 @@ module.exports = {
                         // data.rank = i+1;
                         data.points = users[i].score;
                         data.rating = users[i].id_user.rating;
-                        if(i==users.length-1){
-                            if(users[i-1].solve==users[i].solve){
-                                if(users[i-1].score==users[i].score){
-                                    data.rank = rank;
-                                }
-                                else {
+                        if(users.length>1){
+                            if(i==users.length-1){
+                                if(users[i-1].solve==users[i].solve){
+                                    if(users[i-1].score==users[i].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        rank++;
+                                        data.rank = rank;
+                                    }
+                                } else {
                                     rank++;
                                     data.rank = rank;
                                 }
                             } else {
-                                rank++;
-                                data.rank = rank;
+                                if(users[i].solve==users[i+1].solve){
+                                    if(users[i].score==users[i+1].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        rank++;
+                                        data.rank = rank;
+                                    }
+                                } else {
+                                    rank++;
+                                    data.rank = rank;
+                                }
                             }
                         } else {
-                            if(users[i].solve==users[i+1].solve){
-                                if(users[i].score==users[i+1].score){
-                                    data.rank = rank;
-                                }
-                                else {
-                                    rank++;
-                                    data.rank = rank;
-                                }
-                            } else {
-                                rank++;
-                                data.rank = rank;
-                            }
+                            data.rank = rank;
                         }
                         data.needRating = 0;
                         data.seed = 0;
