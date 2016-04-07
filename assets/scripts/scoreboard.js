@@ -22,6 +22,8 @@ angular.module('scoreboard', [])
             var contest = res.contest;
             var show_approval = res.show_approval;
             var users = [];
+            var index = 0, totalindex = 0;
+            var tempsolved = null, tempscore = null;
             $scope.contestants = res.users;
             $scope.universities = res.universities;
             $scope.submissions = res.submissions;
@@ -41,6 +43,15 @@ angular.module('scoreboard', [])
                     data.solved = contestants[i].solve;
                     data.score = contestants[i].score;
                 }
+                totalindex++;
+                if (i == 0) {
+                    tempsolved = data.solved;
+                    tempscore = data.score;
+                    index++;
+                } else if (data.solved != tempsolved || data.score != tempscore) {
+                    index = totalindex;
+                }
+                data.index = index;
                 var problem = [];
                 for(var j=0;j<problems.length;j++){
                     var res = false;

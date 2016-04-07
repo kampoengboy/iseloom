@@ -54,7 +54,7 @@
             <% if(users.length > 0) { %>
            <% var idx = 1 %>
                   <tr ng-repeat="user in users">
-                        <td>{{$index+1}}</td>
+                        <td>{{user.index}}</td>
                         <td>{{user.name}}</td>
                         <td>{{user.university}}</td>
                         <td>{{user.solved}}</td>
