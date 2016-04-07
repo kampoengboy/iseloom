@@ -14,6 +14,10 @@ module.exports = {
        id_contest : {
            model : 'contest'
        },
+       tried : {
+           type : 'boolean',
+           defaultsTo : false  
+       },
        solve : {
            type : 'integer',
            defaultsTo : 0

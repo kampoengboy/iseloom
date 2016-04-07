@@ -99,17 +99,49 @@ module.exports = {
                 var E = 0;
                 var contestant = [];
                 var new_rating = [];
+                var rank = 1;
                 for(var i=0;i<users.length;i++){
                         var data = {};
                         data.party = users.length;
-                        data.rank = i+1;
+                        // data.rank = i+1;
                         data.points = users[i].score;
                         data.rating = users[i].id_user.rating;
+                        if(users.length>1){
+                            if(i==users.length-1){
+                                if(users[i-1].solve==users[i].solve){
+                                    if(users[i-1].score==users[i].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        rank++;
+                                        data.rank = rank;
+                                    }
+                                } else {
+                                    rank++;
+                                    data.rank = rank;
+                                }
+                            } else {
+                                if(users[i].solve==users[i+1].solve){
+                                    if(users[i].score==users[i+1].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        rank++;
+                                        data.rank = rank;
+                                    }
+                                } else {
+                                    rank++;
+                                    data.rank = rank;
+                                }
+                            }
+                        } else {
+                            data.rank = rank;
+                        }
                         data.needRating = 0;
                         data.seed = 0;
                         data.delta = 0;
                         data.id_user = users[i].id_user.id;
-                        if(users[i].solve>0){
+                        if(users[i].tried){
                             contestant.push(data);
                         }
                 }
