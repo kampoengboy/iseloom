@@ -32,7 +32,19 @@
                 <tr>
                     <td><%=idx%></td>
                     <td><%=university.name%></td>
-                    <td></td>
+                    <% var rating = 0 %>
+                    <% var count = 0 %>
+                    <% for (var i=0;i<users.length;i++) { %>
+                        <% if(users[i].university.id == university.id) { %>
+                            <% rating = rating + users[i].rating; %>
+                            <% count++; %>
+                        <% } %>
+                    <% } %>
+                    <% if(rating == 0) { %>
+                        <td>0</td>
+                    <% } else { %>
+                        <td><%= rating/count%></td>
+                    <% } %>
                 </tr>
                 <% idx++ %>
               <%})%>

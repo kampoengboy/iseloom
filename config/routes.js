@@ -41,6 +41,7 @@ module.exports.routes = {
     controller: 'post',
     action: 'upload_file'
   },
+  '/search' : 'UserController.search',
   '/ranklists' : 'UserController.ranklist',
   '/ranklists/university' : 'UserController.rankUniversity',
   /***************************************************************************

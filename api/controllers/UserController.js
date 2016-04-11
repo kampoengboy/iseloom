@@ -7,6 +7,45 @@
 var Promise = require('bluebird');
 var Http = require('machinepack-http');
 module.exports = {
+    search : function(req,res,next){
+        var q = "";
+        if(typeof req.param('q')!="undefined")
+            q = req.param('q');
+        User.find({verification:true,admin:false})
+        .populate('university')
+        .exec(function(err,users){
+            if(err) return next(err);
+            if(q=="") return res.view({result : [],q:""});
+            var result = [];
+            q = q.toLowerCase();
+            for(var i=0;i<users.length;i++){
+                //search username
+                var username = users[i].username.toLowerCase();
+                var found = false;
+                for(var j=0;j<=username.length-q.length;j++){
+                    var strtmp = username.substring(j,q.length);
+                    if(strtmp == q){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) result.push(users[i]);
+                else {
+                //search name
+                    var name = users[i].name.toLowerCase();;
+                    for(var j=0;j<=name.length-q.length;j++){
+                        var strtmp = name.substring(j,q.length);
+                        if(strtmp == q){
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(found) result.push(users[i]); 
+                }
+            }
+            return res.view({result : result, q:q});  
+        });  
+    },
     testingaja : function(req,res,next){
         // var data = {
         //     name: req.param('name'),
@@ -307,15 +346,18 @@ module.exports = {
     },
     rankUniversity: function(req,res,next) {
         Promise.all([
-            University.find()
-        ]).spread(function(Universities){
+            University.find(),
+            User.find({'verification':true,admin:false}).populate('university')
+        ]).spread(function(Universities,Users){
             universities = Universities;
+            users = Users;
         })
         .catch(function(err){
             return next(err);
         })
         .done(function(){
             return res.view({
+                users : users,
                 universities : universities
             });
         });
