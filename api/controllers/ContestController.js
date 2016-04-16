@@ -87,7 +87,13 @@ module.exports = {
         });
     },
     'get_notification' : function(req,res,next){
-        
+        if(req.session.authenticated){
+            Notification.find({'id_contest':req.param('idc'),read:false,'id_user':req.session.User.id},function(err,notifications){
+                return res.json({notifications : notifications.length}); 
+            });
+        } else {
+            return res.json({notifications : 0})
+        }
     },
     submissiondetail : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
