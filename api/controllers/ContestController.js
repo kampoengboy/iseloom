@@ -14,6 +14,81 @@ module.exports = {
     'done_contest' : function(req,res,next){
 
     },
+    'make_clarification' : function(req,res,next){
+        var usrObj = {
+            id_user : req.session.User.id,
+            question : req.param('question'),
+            id_contest : req.param('idc')
+        }
+        Clarification.create(usrObj,function(err,clarification){
+            if(err) return next(err);
+            UserContest.find({'id_contest':req.param('idc')})
+            .populate('id_user')
+            .exec(function(err,users){
+                for(var i=0;i<users.length;i++){
+                    if(users[i].id_user.id == req.session.User.id) continue;
+                    var obj = {
+                        id_user : users[i].id_user.id,
+                        id_contest : clarification.id_contest,
+                    }
+                    Notification.create(obj, function(err,notifications){});
+                }
+                User.find({'admin':true}, function(err,userss){
+                    for(var i=0;i<userss.length;i++){
+                        var obj = {
+                            id_user : userss[i].id,
+                            id_contest : clarification.id_contest,
+                        }
+                        Notification.create(obj, function(err,notifications){});
+                    }
+                    return res.redirect('/contest/clarification/'+req.param('idc'));   
+                });
+            });
+        });
+    },
+    'answer_clarification' : function(req,res,next){
+        var usrObj = {
+            answer : req.param('answer'),
+            id_admin : req.session.User.id
+        }
+        Clarification.findOne({'id':req.param('idCl')},function(err,clarification){
+            Clarification.update({'id':req.param('idCl')},usrObj, function(err,clarifications){});
+            UserContest.find({'id_contest':clarification.id_contest})
+            .populate('id_user')
+            .exec(function(err,users){
+                for(var i=0;i<users.length;i++){
+                    var obj = {
+                        id_user : users[i].id_user.id,
+                        id_contest : clarification.id_contest,
+                        id_admin : req.session.User.id,
+                    }
+                    Notification.create(obj, function(err,notifications){});
+                }
+                return res.redirect('/contest/clarification/'+clarification.id_contest); 
+            });
+        });
+        
+    },
+    clarification : function(req,res,next){
+        Clarification.find({'id_contest':req.param('id')})
+        .sort('createdAt DESC')
+        .populate('id_contest')
+        .exec(function(err,clarifications){
+            if(err) return next(err);
+            Notification.update({'id_contest':req.param('id'),'id_user':req.session.User.id}, {'read':true}, function(err,notification){});
+            return res.view({clarifications : clarifications,id_contest:req.param('id')}); 
+        });  
+    },
+    'clarification_detail' : function(req,res,next){
+        Clarification.findOne(req.param('id'), function(err,clarification){
+            if(err) return next(err);
+            if(!clarification) return res.redirect('/');
+            return res.view({clarification:clarification}); 
+        });
+    },
+    'get_notification' : function(req,res,next){
+        
+    },
     submissiondetail : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
         if(!req.session.User.admin) return res.redirect('/');
