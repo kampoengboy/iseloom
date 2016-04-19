@@ -9,7 +9,6 @@
                 <div class="panel-body">
                     <p>This is the suggested problems</p>
                 </div>
-
                 <!-- Table -->
                 <table class="table table-striped table-hover">
                     <thead>
@@ -18,56 +17,21 @@
                         <th>Solved</th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>2048</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2049</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td>2050</td>
-                            <td>112</td>
-                        </tr>
+                        <% var idx = 1; %>
+                        <% _.each(problems, function(problem) { %>
+                            <tr>
+                                <% var tot = 0 %>
+                                <td><%=idx%></td>
+                                <td><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.name%></a></td>
+                                <% for(var i=0;i<submissions.length;i++) { %>
+                                    <% if(submissions[i].id_problem==problem.id && submissions[i].result==1) { %>
+                                          <% tot++ %>
+                                    <% } %>
+                                <% } %>
+                                <td><%=tot%></td>
+                            </tr>
+                            <% idx++%>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>

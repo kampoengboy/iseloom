@@ -106,9 +106,9 @@ angular.module('scoreboard', [])
             $scope.notifications = res.notifications;
         })
     }
-    setInterval(get_notification, 10000);
+    // setInterval(get_notification, 10000);
     get_scoreboard();
-    get_notification();
+    // get_notification();
     io.socket.get('/contest/subscribe_scoreboard', function(res){});
     io.socket.on('submission', function onServerSentEvent (msg) {
       switch(msg.verb) {

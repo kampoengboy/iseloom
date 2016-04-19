@@ -9,9 +9,13 @@ module.exports = {
 	index : function(req,res,next){
        Promise.all([
             User.find().sort('rating DESC').populate('university').limit(10),
+            Problem.find({publish : true}).limit(10),
+            Submission.find().sort('createdAt DESC'),
             University.find()
-        ]).spread(function(Users, Universities){
+        ]).spread(function(Users, Problems, Submissions, Universities){
             users = Users;
+            problems = Problems;
+            submissions = Submissions;
             universities = Universities;
         })
         .catch(function(err){
@@ -19,6 +23,8 @@ module.exports = {
         })
         .done(function(){
             return res.view({
+                submissions : submissions,
+                problems : problems,
                 users : users,
                 universities : universities
             });

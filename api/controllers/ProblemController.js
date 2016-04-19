@@ -13,6 +13,20 @@ module.exports = {
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
     },
+    publish : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Problem.update(req.param('id'),{publish:true}, function(err,problems){
+            return res.redirect('/problem/list');
+        }); 
+    },
+    unpublish : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.User.admin) return res.redirect('/');
+        Problem.update(req.param('id'),{publish:false}, function(err,problems){
+            return res.redirect('/problem/list');
+        }); 
+    },
     'create_problemsets' : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
         var stdin_file = req.param('file_url_1');
@@ -37,6 +51,7 @@ module.exports = {
             description : req.param('description'),
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
+            difficulty : parseInt(req.param('difficulty')),
             input : [],
             output : []
         }
@@ -115,11 +130,13 @@ module.exports = {
         var problemsPublish = [], problemNotPublish = [];
         Promise.all([
             Problem.find().where({'publish':true}),
-            Problem.find().where({'publish':false})
+            Problem.find().where({'publish':false}),
+            Submission.find()
         ])
-        .spread(function(ProblemPublish, ProblemNotPublish){
+        .spread(function(ProblemPublish, ProblemNotPublish, Submissions){
             problemsPublish = ProblemPublish;
             problemsNotPublish = ProblemNotPublish;
+            submissions = Submissions;
         })
         .catch(function(){
             return next(err);
@@ -127,7 +144,8 @@ module.exports = {
         .done(function(){
             return res.view({
                 problemsPublish : problemsPublish,
-                problemsNotPublish : problemsNotPublish
+                problemsNotPublish : problemsNotPublish,
+                submissions : submissions
             });
         });
         // .exec(function callBack(err, results) {

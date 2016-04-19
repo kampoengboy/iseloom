@@ -15,6 +15,7 @@ module.exports = {
       description : 'string',
       input : 'array',
       output : 'array',
+      difficulty : 'integer',
       publish : {
           type : 'boolean',
           defaultsTo : false

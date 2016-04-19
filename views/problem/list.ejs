@@ -9,9 +9,7 @@
         <table class="table table-bordered table-hover table-striped">
             <thead>
                   <th></th>
-                  <th colspan="4">SUBMISSIONS</th>
-                  <th colspan="3">USERS</th>
-                  <th></th>
+                  <th colspan="3">SUBMISSIONS</th>
                   <th></th>
             </thead>
           <tbody>
@@ -20,18 +18,46 @@
                 <td>TOTAL</td>
                 <td>ACC.</td>
                 <td>RATIO</td>
-                <td>FASTEST</td>
-                <td>TOTAL</td>
-                <td>ACC.</td>
-                <td>RATIO</td>
                 <td>DIFFICULTY</td>
-                <td></td>
-                <td></td>
+                <% if(session.authenticated) { %>
+                        <% if(session.User.admin) { %>
+                            <td></td>
+                        <% } %>
+                <% } %>
               </tr>
               <% var idx = 1 %>
               <% _.each(problemsPublish, function(problem){%>
                 <tr>
-                    <td><%=problem.name%></td>
+                    <% var tmp = []; %>
+                    <% var tot = 0 ; %>
+                    <% var acc = 0 ; %>
+                    <td><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.name%></a></td>
+                    <% for(var i=0;i<submissions.length;i++) { %>
+                        <% if(submissions[i].id_problem==problem.id) { %>
+                            <% tmp.push(submissions[i]) %>
+                            <% if(submissions[i].result==1) { %>
+                                   <% acc++ %>
+                            <% } %>
+                            <% tot++ %>
+                        <% } %>
+                     <% } %>
+                     <td><%=tot%></td>
+                     <td><%=acc%></td>
+                     <% var num = tot/acc %>
+                     <% num = num.toFixed(2); %>
+                     <td><%= num %></td>
+                     <% if(problem.difficulty==0) { %>
+                        <td>EASY</td>
+                     <% } else if(problem.difficulty==1) { %>
+                        <td>MEDIUM</td>
+                     <% } else { %>
+                        <td>HARD</td>
+                     <% } %>
+                     <% if(session.authenticated) { %>
+                        <% if(session.User.admin) { %>
+                            <td><a class="btn btn-danger" href="/problem/unpublish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Unpublish</a></td>
+                        <% } %>
+                     <% } %>
                 </tr>
                 <% idx++ %>
               <%})%>
@@ -52,7 +78,7 @@
                 <% _.each(problemsNotPublish, function(problem){%>
                   <tr>
                       <td><%=problem.name%></td>
-                      <td><button class="btn btn-primary"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</button> <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-success"> Preview</a></td>
+                      <td><a class="btn btn-primary" href="/problem/publish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</a> <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-success"> Preview</a></td>
                   </tr>
                   <% idx++ %>
                 <%})%>
