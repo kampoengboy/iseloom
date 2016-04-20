@@ -8,6 +8,7 @@
 var AdmZip = require('adm-zip');
 var fs = require('fs');
 var Promise = require('bluebird');
+var ObjectId = require('mongodb').ObjectID;
 module.exports = {
     create : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
@@ -127,16 +128,28 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
-        var problemsPublish = [], problemNotPublish = [];
+        var problemsPublish = [], problemNotPublish = [], problemSubs = [];
         Promise.all([
             Problem.find().where({'publish':true}),
             Problem.find().where({'publish':false}),
-            Submission.find()
+            Submission.find().groupBy('id_problem').sum('result')
         ])
-        .spread(function(ProblemPublish, ProblemNotPublish, Submissions){
+        .spread(function(ProblemPublish, ProblemNotPublish, SubmissionsSolved){
+            submissions = 'aa';
             problemsPublish = ProblemPublish;
             problemsNotPublish = ProblemNotPublish;
-            submissions = Submissions;
+            SubmissionsSolved.forEach(function(data) {
+                //INI itu data.id_problem si id dari problem yang mau difilter submissionnya yang dengan id problem itu ada berapa banyak
+                var abc = new ObjectId(data.id_problem);
+                console.log(abc);
+                //saat count ini entah napa taruh data.id_problem atau di objectID kan pun tetap sama dia return semua subsmission
+                //ini bukan salah count nya, w da ganti pake find where atau apa itu juga dia kasi semua subsmission
+                Submission.count({id_problem:abc}).exec(function (err, problemSubsTotal) {
+                    problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
+                    //cek didalam karna belum promise
+                    console.log(problemSubs);
+                });
+            });
         })
         .catch(function(){
             return next(err);
