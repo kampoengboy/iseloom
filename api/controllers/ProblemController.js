@@ -140,15 +140,15 @@ module.exports = {
             problemsNotPublish = ProblemNotPublish;
             SubmissionsSolved.forEach(function(data) {
                 //INI itu data.id_problem si id dari problem yang mau difilter submissionnya yang dengan id problem itu ada berapa banyak
-                var abc = new ObjectId(data.id_problem);
+                var abc = data.id_problem;
                 console.log(abc);
                 //saat count ini entah napa taruh data.id_problem atau di objectID kan pun tetap sama dia return semua subsmission
                 //ini bukan salah count nya, w da ganti pake find where atau apa itu juga dia kasi semua subsmission
-                Submission.count({id_problem:abc}).exec(function (err, problemSubsTotal) {
+                Submission.count({'id_problem':abc.toString()}).exec(function (err, problemSubsTotal) {
                     problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
                     //cek didalam karna belum promise
                     console.log(problemSubs);
-                });
+                }); 
             });
         })
         .catch(function(){
