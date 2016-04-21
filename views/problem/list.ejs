@@ -32,20 +32,13 @@
                     <% var tot = 0 ; %>
                     <% var acc = 0 ; %>
                     <td><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.name%></a></td>
-                    <% for(var i=0;i<submissions.length;i++) { %>
-                        <% if(submissions[i].id_problem==problem.id) { %>
-                            <% tmp.push(submissions[i]) %>
-                            <% if(submissions[i].result==1) { %>
-                                   <% acc++ %>
-                            <% } %>
-                            <% tot++ %>
-                        <% } %>
-                     <% } %>
-                     <td><%=tot%></td>
-                     <td><%=acc%></td>
-                     <% var num = tot/acc %>
-                     <% num = num.toFixed(2); %>
-                     <td><%= num %></td>
+                    <td>
+                      <% if(problemSubs.hasOwnProperty("<%= problem.id %>")) { %>
+                        <%= problemSubs[problem.id].total %>
+                      <% } else { %>
+                        0
+                      <% } %>
+                    </td>
                      <% if(problem.difficulty==0) { %>
                         <td>EASY</td>
                      <% } else if(problem.difficulty==1) { %>
