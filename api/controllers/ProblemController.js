@@ -128,30 +128,63 @@ module.exports = {
     },
     list : function(req,res,next) {
         var problemsPublish = [], problemNotPublish = [], problemSubs = [];
-        Promise.all([
-            Problem.find().where({'publish':true}),
-            Problem.find().where({'publish':false}),
-            Submission.find().groupBy('id_problem').sum('result')
-        ])
-        .spread(function(ProblemPublish, ProblemNotPublish, SubmissionsSolved){
-            problemsPublish = ProblemPublish;
-            problemsNotPublish = ProblemNotPublish;
-            SubmissionsSolved.forEach(function(data) {
-                Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
-                    problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
+        function add(subs, problemsPublish, problemsNotPublish, n){
+            problemSubs.push(subs);
+            if(problemSubs.length==n)
+            {
+                return res.view({
+                    problemsPublish : problemsPublish,
+                    problemsNotPublish : problemsNotPublish,
+                    problemSubs : problemSubs
                 });
-            });
-        })
-        .catch(function(){
-            return next(err);
-        })
-        .done(function(){
-            return res.view({
-                problemsPublish : problemsPublish,
-                problemsNotPublish : problemsNotPublish,
-                problemSubs : problemSubs
-            });
+            }
+        }
+        Problem.find()
+        .where({publish:true})
+        .exec(function(err,problemPublish){
+            Problem.find()
+            .where({publish:false})
+            .exec(function(err,problemNotPublish){
+                   Submission.find()
+                   .groupBy('id_problem')
+                   .sum('result')
+                   .exec(function(err, SubmissionsSolved){
+                       SubmissionsSolved.forEach(function(data) {
+                            Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
+                                problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
+                                add(problemSubs[data.id_problem],problemPublish, problemNotPublish, SubmissionsSolved.length);
+                            });
+                        });
+                   });
+            });    
         });
+        // Promise.all([
+        //     Problem.find().where({'publish':true}),
+        //     Problem.find().where({'publish':false}),
+        //     Submission.find().groupBy('id_problem').sum('result'),
+        //     tmp
+        // ])
+        // .spread(function(ProblemPublish, ProblemNotPublish, SubmissionsSolved, Tmp){
+        //     problemsPublish = ProblemPublish;
+        //     problemsNotPublish = ProblemNotPublish;
+        //     SubmissionsSolved.forEach(function(data) {
+        //         Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
+        //             problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
+        //             xxx(problemSubs[data.id_problem]);
+        //         });
+        //     });
+        // })
+        // .catch(function(){
+        //     return next(err);
+        // })
+        // .done(function(){
+        //     console.log(tmp);
+        //     return res.view({
+        //         problemsPublish : problemsPublish,
+        //         problemsNotPublish : problemsNotPublish,
+        //         problemSubs : problemSubs
+        //     });
+        // });
         // .exec(function callBack(err, results) {
         //     if (err) return next(err);
         //     problemsPublish = results;

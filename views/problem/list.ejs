@@ -33,7 +33,7 @@
                     <% var acc = 0 ; %>
                     <td><a href="/problem/preview?prob=<%=problem.valName%>"><%=problem.name%></a></td>
                     <td>
-                      <% if(problemSubs.hasOwnProperty("<%= problem.id %>")) { %>
+                      <% if(problemSubs.hasOwnProperty(problem.id)) { %>
                         <%= problemSubs[problem.id].total %>
                       <% } else { %>
                         0
