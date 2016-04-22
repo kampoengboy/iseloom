@@ -39,6 +39,20 @@
                         0
                       <% } %>
                     </td>
+                    <td>
+                      <% if(problemSubs.hasOwnProperty(problem.id)) { %>
+                        <%= problemSubs[problem.id].acc %>
+                      <% } else { %>
+                        0
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if(problemSubs.hasOwnProperty(problem.id)) { %>
+                        <%= Math.round(problemSubs[problem.id].acc/problemSubs[problem.id].total*100) %>%
+                      <% } else { %>
+                        0%
+                      <% } %>
+                    </td>
                      <% if(problem.difficulty==0) { %>
                         <td>EASY</td>
                      <% } else if(problem.difficulty==1) { %>

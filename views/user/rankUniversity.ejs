@@ -8,14 +8,6 @@
           <a href="/ranklists/university"><button type="button" class="btn btn-default active">University ranklist</button></a>
         </div>
       </div>
-      <div class="col-md-3">
-        <select class="form-control">
-          <option value="" disabled selected hidden>Ranklist for university</option>
-          <% _.each(universities, function(university) {%>
-            <option <%=university.val_name%>><%=university.name%></option>
-          <% }) %>
-        </select>
-      </div>
     </div>
     <br>
     <br>
@@ -24,6 +16,7 @@
           <thead>
                   <th>#</th>
                   <th>University</th>
+                  <th>Users</th>
                   <th>Rating</th>
           </thead>
           <tbody>
@@ -32,23 +25,11 @@
                 <tr>
                     <td><%=idx%></td>
                     <td><%=university.name%></td>
-                    <% var rating = 0 %>
-                    <% var count = 0 %>
-                    <% for (var i=0;i<users.length;i++) { %>
-                        <% if(users[i].university.id == university.id) { %>
-                            <% rating = rating + users[i].rating; %>
-                            <% count++; %>
-                        <% } %>
-                    <% } %>
-                    <% if(rating == 0) { %>
-                        <td>0</td>
-                    <% } else { %>
-                        <td><%= rating/count%></td>
-                    <% } %>
+                    <td><%=university.member%></td>
+                    <td><%= university.rating/university.member %></td>
                 </tr>
                 <% idx++ %>
               <%})%>
-
           </tbody>
         </table>
     </div>

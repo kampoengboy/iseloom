@@ -127,10 +127,10 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
-        var problemsPublish = [], problemNotPublish = [], problemSubs = [];
-        function add(subs, problemsPublish, problemsNotPublish, n){
-            problemSubs.push(subs);
-            if(problemSubs.length==n)
+        var problemsPublish = [], problemNotPublish = [], problemSubs = [], indexLoop = 0;
+        function add(problemsPublish, problemsNotPublish, n){
+            indexLoop++;
+            if(indexLoop==n)
             {
                 return res.view({
                     problemsPublish : problemsPublish,
@@ -152,7 +152,7 @@ module.exports = {
                        SubmissionsSolved.forEach(function(data) {
                             Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
                                 problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
-                                add(problemSubs[data.id_problem],problemPublish, problemNotPublish, SubmissionsSolved.length);
+                                add(problemPublish, problemNotPublish, SubmissionsSolved.length);
                             });
                         });
                    });

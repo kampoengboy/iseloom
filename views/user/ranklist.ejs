@@ -8,14 +8,6 @@
           <a href="/ranklists/university"><button type="button" class="btn btn-default">University ranklist</button></a>
         </div>
       </div>
-      <div class="col-md-3">
-        <select class="form-control" id="filterUniversity">
-          <option value="" disabled selected hidden>Ranklist for university</option>
-          <% _.each(universities, function(university) {%>
-            <option value="<%=university.val_name%>"><%=university.name%></option>
-          <% }) %>
-        </select>
-      </div>
     </div>
     <br>
     <br>

@@ -322,19 +322,16 @@ module.exports = {
     },
     ranklist: function(req,res,next) {
         Promise.all([
-            User.find().sort('rating DESC').populate('university'),
-            University.find(),
-        ]).spread(function(Users, Universities){
+            User.find().sort('rating DESC').populate('university')
+        ]).spread(function(Users){
             users = Users;
-            universities = Universities;
         })
         .catch(function(err){
             return next(err);
         })
         .done(function(){
             return res.view({
-                users : users,
-                universities : universities
+                users : users
             });
         });
         // User.find().populate('university').exec(function(err,users){
@@ -345,22 +342,46 @@ module.exports = {
         // });
     },
     rankUniversity: function(req,res,next) {
-        Promise.all([
-            University.find(),
-            User.find({'verification':true,admin:false}).populate('university')
-        ]).spread(function(Universities,Users){
-            universities = Universities;
-            users = Users;
-        })
-        .catch(function(err){
-            return next(err);
-        })
-        .done(function(){
-            return res.view({
-                users : users,
-                universities : universities
+        var universities = [], indexLoop = 0;
+        function add(n){
+            indexLoop++;
+            if(indexLoop==n)
+            {
+                universities.sort(function(a,b) {
+                    return parseFloat(b.rating/b.member) - parseFloat(a.rating/a.member);
+                });
+                return res.view({
+                    universities : universities
+                });
+            }
+        }
+        //University yang tidak ada user harusnya tidak keluar
+        User.find({'verification':true,admin:false}).groupBy('university').sum('rating').exec(function(err,ratingUniv) {
+            ratingUniv.forEach(function(data) {
+                University.findOne({'id':data.university.toString()}).exec(function(err, university) {
+                    User.count({'university':data.university.toString(),'verification':true,admin:false}).exec(function(err, userCount) {
+                        universities.push({'id':university.id,'name':university.name, 'rating':data.rating, 'member':userCount});
+                        add(ratingUniv.length);
+                    });
+                });
             });
         });
+        // Promise.all([
+        //     University.find(),
+        //     User.find({'verification':true,admin:false}).groupBy('university').sum('rating')
+        // ]).spread(function(Universities,Users){
+        //     universities = Universities;
+        //     users = Users;
+        // })
+        // .catch(function(err){
+        //     return next(err);
+        // })
+        // .done(function(){
+        //     return res.view({
+        //         users : users,
+        //         universities : universities
+        //     });
+        // });
     }
 };
 
