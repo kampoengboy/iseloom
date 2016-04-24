@@ -1,0 +1,31 @@
+<div class="container" style="background-color:white">
+    <legend><h2><%=university.name%></h2></legend>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Rating</th>
+          </thead>
+          <tbody>
+              <% var idx = 1 %>
+              <% _.each(users, function(user){%>
+                <tr>
+                    <td><%=idx%></td>
+                    <td><a href="/user/profile/<%=user.username%>"><%=user.name%></a></td>
+                    <td><%= user.rating %></td>
+                </tr>
+                <% idx++ %>
+              <%})%>
+          </tbody>
+        </table>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="btn-group" role="group" aria-label="...">
+          <a href="/ranklists/university"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"> Back</span></button></a>
+        </div>
+      </div>
+    </div>
+    <br/>
+</div>

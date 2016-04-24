@@ -5,7 +5,7 @@
       <div class="col-md-4">
         <div class="btn-group" role="group" aria-label="...">
           <a href="/ranklists"><button type="button" class="btn btn-default">User ranklist</button></a>
-          <a href="/ranklists/university"><button type="button" class="btn btn-default active">University ranklist</button></a>
+          <a href="/ranklists/university"><button type="button" class="btn btn-default active btn-disabled" disabled>University ranklist</button></a>
         </div>
       </div>
     </div>
@@ -24,7 +24,7 @@
               <% _.each(universities, function(university){%>
                 <tr>
                     <td><%=idx%></td>
-                    <td><%=university.name%></td>
+                    <td><a href="/ranklists/university/<%=university.value%>"><%=university.name%></a></td>
                     <td><%=university.member%></td>
                     <td><%= university.rating/university.member %></td>
                 </tr>

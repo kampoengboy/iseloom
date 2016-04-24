@@ -360,7 +360,7 @@ module.exports = {
             ratingUniv.forEach(function(data) {
                 University.findOne({'id':data.university.toString()}).exec(function(err, university) {
                     User.count({'university':data.university.toString(),'verification':true,admin:false}).exec(function(err, userCount) {
-                        universities.push({'id':university.id,'name':university.name, 'rating':data.rating, 'member':userCount});
+                        universities.push({'value':university.val_name,'name':university.name, 'rating':data.rating, 'member':userCount});
                         add(ratingUniv.length);
                     });
                 });
@@ -382,6 +382,15 @@ module.exports = {
         //         universities : universities
         //     });
         // });
+    },
+    universityProfile: function(req,res,next) {
+        University.findOne({'val_name':req.param('val')}).exec(function(err, university) {
+            User.find({'university':university.id,'verification':true,'admin':false}).sort('rating DESC').exec(function(err,users) {
+                return res.view({
+                    university: university,
+                    users: users
+                });
+            });
+        });
     }
 };
-

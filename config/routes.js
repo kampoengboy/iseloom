@@ -44,6 +44,7 @@ module.exports.routes = {
   '/search' : 'UserController.search',
   '/ranklists' : 'UserController.ranklist',
   '/ranklists/university' : 'UserController.rankUniversity',
+  '/ranklists/university/:val' : 'UserController.universityProfile',
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
