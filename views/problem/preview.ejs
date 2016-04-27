@@ -30,9 +30,10 @@
     <% if(st) { %>
         <input type="hidden" value="<%=idc%>" name="idc">
     <% } %>
+    <input type="hidden" value="1" name="type" />
     </form> 
     <br><br>
-    <!--<h5>Write your code below</h5>
+    <h3>Write your code below</h3>
     <form action="/user/compile" method="POST">
     <textarea style="border:1px solid black; height:400px" name="code" placeholder="Write your code"></textarea>
     <br><br>
@@ -42,7 +43,8 @@
     <% if(st) { %>
     <input type="hidden" value="<%=idc%>" name="idc">
     <% } %>
-    </form>-->
+    <input type="hidden" value="2" name="type" />
+    </form>
 </div>
 <script>
 function getFileExtension(filename)

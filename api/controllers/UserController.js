@@ -81,17 +81,23 @@ module.exports = {
     compile : function(req,res,next){
         if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0)
             return res.redirect('/');
-         var tmp_file = req.param('file_url_1');
-         var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
-         buf = new Buffer(file,'base64');
-         var namefile = 'file-'+req.session.User.id+'.txt';
-         fs.writeFile(namefile,buf,function(err,data){
-             if(err) return next(err);
-             var text = fs.readFileSync(namefile,'utf8')
-             fs.unlink(namefile);
-             if(text.length==0){
-                 return res.redirect('/');
-             }  
+         var text = "";
+         if(req.param('type')=='1'){
+            var tmp_file = req.param('file_url_1');
+            var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
+            buf = new Buffer(file,'base64');
+            var namefile = 'file-'+req.session.User.id+'.txt';
+            fs.writeFile(namefile,buf,function(err,data){});
+            text = fs.readFileSync(namefile,'utf8')
+            fs.unlink(namefile);
+            if(text.length==0){
+               return res.redirect('/');
+            }  
+         }
+         else{
+             if(typeof req.param('code')=="undefined") return res.redirect('/');
+             text = req.param('code');
+         }
          Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
             if(!problem) return res.redirect('/');
             var compile_output = [];
@@ -416,7 +422,7 @@ module.exports = {
                 });
             }
         });
-      });
+
     },
     ranklist: function(req,res,next) {
         Promise.all([
