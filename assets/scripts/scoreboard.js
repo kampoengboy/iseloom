@@ -65,7 +65,7 @@ angular.module('scoreboard', [])
                             if(submissions[k].id_user.id==contestants[i].id_user.id && submissions[k].id_problem.id==problems[j].id && !res){
                                 if(submissions[k].result != null ) { 
                                     tried = tried + 1;
-                                    if(submissions[k].result) {
+                                    if(submissions[k].result==1) {
                                         min = submissions[k].minute;
                                         res = true;
                                     }
