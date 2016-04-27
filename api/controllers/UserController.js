@@ -6,6 +6,7 @@
  */
 var Promise = require('bluebird');
 var Http = require('machinepack-http');
+var fs = require('fs');
 module.exports = {
     search : function(req,res,next){
         var q = "";
@@ -78,9 +79,21 @@ module.exports = {
         });
     },
     compile : function(req,res,next){
-        if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0 || typeof req.param('code')=="undefined" || req.param('code').length==0)
+        if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0)
             return res.redirect('/');
-        Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
+         var tmp_file = req.param('file_url_1');
+         var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
+         buf = new Buffer(file,'base64');
+         var namefile = 'file-'+req.session.User.id+'.txt';
+         fs.writeFile(namefile,buf,function(err,data){
+             if(err) return next(err);
+             var text = fs.readFileSync(namefile,'utf8')
+             console.log (text);
+             fs.unlink(namefile);
+             if(text.length==0){
+                 return res.redirect('/');
+             }  
+         Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
             if(!problem) return res.redirect('/');
             var compile_output = [];
             var submit_on_contest = false;
@@ -174,7 +187,7 @@ module.exports = {
                                 url: '/compile',
                                 baseUrl: 'http://api.mikelrn.com',
                                 method: 'POST',
-                                params: {language:7,code:req.param('code'),stdin:input,memory_limit:problem.memorylimit},
+                                params: {language:7,code:text,stdin:input,memory_limit:problem.memorylimit},
                                 formData: false,
                                 headers: {},
                             }).exec({
@@ -344,7 +357,7 @@ module.exports = {
             }
             
         });
-        
+      });
     },
     ranklist: function(req,res,next) {
         Promise.all([
