@@ -6,6 +6,7 @@
  */
 var Promise = require('bluebird');
 var Http = require('machinepack-http');
+var fs = require('fs');
 module.exports = {
     search : function(req,res,next){
         var q = "";
@@ -78,13 +79,24 @@ module.exports = {
         });
     },
     compile : function(req,res,next){
-        if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0 || typeof req.param('code')=="undefined" || req.param('code').length==0)
+        if(typeof req.param('idProblem')=="undefined" || req.param('idProblem').length==0)
             return res.redirect('/');
-        Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
+         var tmp_file = req.param('file_url_1');
+         var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
+         buf = new Buffer(file,'base64');
+         var namefile = 'file-'+req.session.User.id+'.txt';
+         fs.writeFile(namefile,buf,function(err,data){
+             if(err) return next(err);
+             var text = fs.readFileSync(namefile,'utf8')
+             fs.unlink(namefile);
+             if(text.length==0){
+                 return res.redirect('/');
+             }  
+         Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
             if(!problem) return res.redirect('/');
             var compile_output = [];
             var submit_on_contest = false;
-            if(typeof req.param('idc')!="undefined" && req.param('idc').length!=0) {
+            if(typeof req.param('idc')!="undefined") {
                 submit_on_contest = true;  
             }
             if(submit_on_contest){
@@ -152,9 +164,10 @@ module.exports = {
                    var obj = {
                         id_contest : req.param('idc'),
                         id_user : req.session.User.id,
-                        code : req.param('code'),
+                        code : text,
                         id_problem : req.param('idProblem'),
                         output : [],
+                        is_contest : true,
                         result : null,
                         minute : null,
                    }
@@ -162,7 +175,7 @@ module.exports = {
                    .exec(function(err,allsubs){
                         var has_solve = false;
                         for(var i=0;i<allsubs.length;i++){
-                            if(allsubs[i].result){
+                            if(allsubs[i].result==1){
                                 has_solve = true;
                                 break;
                             }
@@ -174,7 +187,7 @@ module.exports = {
                                 url: '/compile',
                                 baseUrl: 'http://api.mikelrn.com',
                                 method: 'POST',
-                                params: {language:7,code:req.param('code'),stdin:input},
+                                params: {language:7,code:text,stdin:input,memory_limit:problem.memorylimit},
                                 formData: false,
                                 headers: {},
                             }).exec({
@@ -209,23 +222,49 @@ module.exports = {
                                 // OK.
                                 success: function (result){
                                 var ans = JSON.parse(result.body);
+                                var flag = ans.flag;
+                                if(flag==1 || flag==2 || flag==3){
+                                    
+                                } else {
+                                    var tmp_time = ans.time.split('\n');
+                                    var time = parseFloat(tmp_time[0]);
+                                }
+                                // console.log(ans);
+                                // console.log(time);
                                 //var out = sub.output;
                                     var usr = {
                                         idx : i,
                                         out : ans.output,
                                         ans : problem.output[i]
                                     }
-                                    if(ans.output!=problem.output[i]){
-                                        usr.result = 0
-                                    } else {
-                                        usr.result = 1
+                                    if(flag==0) {
+                                        if(time>problem.timelimit+5){
+                                            usr.result = 2;
+                                        } else {
+                                            if(ans.output!=problem.output[i]){
+                                                usr.result = 0
+                                            } else {
+                                                usr.result = 1
+                                            }
+                                        }
+                                    } else if(flag==1){
+                                        //timeout
+                                        usr.result = 2
+                                    } else if(flag==2){
+                                        //memory limit
+                                        usr.result = 3;
+                                    } else if(flag==3){
+                                        //error
+                                        usr.result = 4;
                                     }
                                     out.push(usr);
                                     if(out.length==n){
                                         var correct = true;
+                                        var code_flag = 1;
                                         for (var j=0;j<out.length;j++) {
                                             if (out[j].result != 1) {
                                                 correct = false;
+                                                code_flag = out[j].result;
                                                 break;
                                             }
                                         }
@@ -236,7 +275,7 @@ module.exports = {
                                                 id_user : req.session.User.id
                                             }
                                             if(!has_solve) { 
-                                                UserContest.findOne(user_contest, function(err,usercontest){
+                                                UserContest.findOne({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id } ] }, function(err,usercontest){
                                                     Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idProblem')}, {'result' : 0} ] }).exec(function(err,wrongsubs){
                                                         var solve = usercontest.solve + 1;
                                                         var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000) + (wrongsubs.length * 20);
@@ -248,9 +287,9 @@ module.exports = {
                                                 });
                                             }
                                         } else {
-                                            Submission.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
+                                            Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
                                         }
-                                        Submission.publishCreate({id:submission.id,message:"done"});
+                                        Submission.publishCreate({id:submission.id,message:0});
                                     }
                                 },
                             });
@@ -265,21 +304,21 @@ module.exports = {
             }
             else {
                 var obj = {
-                    id_user : req.session.User.id,
-                    code : req.param('code'),
-                    id_problem : req.param('idProblem'),
-                    output : [],
-                    result : null,
-                    datetime : new Date()
-               }
-                SubmissionGlobal.create(obj,function(err,submission){
+                        id_user : req.session.User.id,
+                        code : text,
+                        id_problem : req.param('idProblem'),
+                        output : [],
+                        result : null,
+                        minute : null,
+                }
+                Submission.create(obj,function(err,submission){
                     var out = [];
                     function compile(input,i,n){
                         Http.sendHttpRequest({
                         url: '/compile',
                         baseUrl: 'http://api.mikelrn.com',
                         method: 'POST',
-                        params: {language:7,code:req.param('code'),stdin:input},
+                        params: {language:7,code:text,stdin:input,memory_limit:problem.memorylimit},
                         formData: false,
                         headers: {},
                     }).exec({
@@ -313,37 +352,59 @@ module.exports = {
                         },
                         // OK.
                         success: function (result){
-                           var ans = JSON.parse(result.body);
+                            var ans = JSON.parse(result.body);
+                            var flag = ans.flag;
+                            if(flag==1 || flag==2 || flag==3){
+                                        
+                            } else {
+                            var tmp_time = ans.time.split('\n');
+                            var time = parseFloat(tmp_time[0]);
+                            }
+                            // console.log(ans);
+                            // console.log(time);
                             //var out = sub.output;
                             var usr = {
                                 idx : i,
                                 out : ans.output,
                                 ans : problem.output[i]
                             }
-                            if(ans.output!=problem.output[i]){
-                                usr.result = 0
-                            } else {
-                                usr.result = 1
+                            if(flag==0) {
+                                if(time>problem.timelimit+5){
+                                usr.result = 2;
+                                } else {
+                                if(ans.output!=problem.output[i]){
+                                    usr.result = 0
+                                } else {
+                                    usr.result = 1
+                                }
+                                }
+                            } else if(flag==1){
+                                //timeout
+                                usr.result = 2
+                            } else if(flag==2){
+                                //memory limit
+                                usr.result = 3;
+                            } else if(flag==3){
+                                //error
+                                usr.result = 4;
                             }
                             out.push(usr);
                             if(out.length==n){
                                 var correct = true;
+                                var code_flag = 1;
                                 for (var j=0;j<out.length;j++) {
                                     if (out[j].result != 1) {
                                         correct = false;
+                                        code_flag = out[j].result;
                                         break;
                                     }
                                 }
                                 if (correct) {
-                                    SubmissionGlobal.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});
-                                    var user_contest = {
-                                        id_contest : req.param('idc'),
-                                        id_user : req.session.User.id
-                                    }
+                                    Submission.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});    
                                 } else {
-                                    SubmissionGlobal.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
+                                    Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
                                 }
-                                SubmissionGlobal.publishCreate({id:submission.id,message:"done"});
+                                Submission.publishCreate({id:submission.id,message:1});
                             }
                         },
                     });
@@ -354,9 +415,8 @@ module.exports = {
                     return res.redirect('back');
                 });
             }
-            
         });
-        
+      });
     },
     ranklist: function(req,res,next) {
         Promise.all([

@@ -21,11 +21,15 @@ module.exports = {
       output : 'array',
       result : {
           type : 'integer',
-          defaultsTo : false
+          defaultsTo : 0
+      },
+      is_contest : {
+          type:'boolean',
+          defaultsTo : false  
       },
       minute : {
           type : 'integer',
-          defaultsTo : false
+          defaultsTo : 0
       }
   }
 };

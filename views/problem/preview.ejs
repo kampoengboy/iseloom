@@ -3,9 +3,9 @@
     <h5 class="text-center">Time Limit : <%=problem.timelimit%> s</h5>
     <h5 class="text-center">Memory Limit : <%=problem.memorylimit%> MB</h5>
     <% if(session.authenticated) { %>
-    <% if(!session.User.admin && st == 1) { %> 
-        <a class="btn btn-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>">My Submission</a>
-    <% } %>
+      <% if(!session.User.admin && st == 1) { %> 
+          <a class="btn btn-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>">My Submission</a>
+      <% } %>
     <% } %>
     <br><br>
     <%- problem.description %>
@@ -13,7 +13,22 @@
 <% if(session.authenticated) { %>
 <br>
 <div class="container" style="background-color:white">
-    <h5>Write your code below</h5>
+    <h3>Submit your code</h3>
+    <br><br>
+    <form action="/user/compile" method="POST">
+    <input type="file" id="file1" onchange="previewFile1()">
+    <input type="hidden" name="file_name_1" id="filename1">
+    <input type="hidden" name="file_url_1" id="fileurl1">
+    <br><br>
+    <button type="submit" class="btn btn-success">Send</button>
+    <br>
+    <input type="hidden" value="<%=problem.id%>" name="idProblem">
+    <% if(st) { %>
+        <input type="hidden" value="<%=idc%>" name="idc">
+    <% } %>
+    </form> 
+    <br><br>
+    <!--<h5>Write your code below</h5>
     <form action="/user/compile" method="POST">
     <textarea style="border:1px solid black; height:400px" name="code" placeholder="Write your code"></textarea>
     <br><br>
@@ -23,6 +38,50 @@
     <% if(st) { %>
     <input type="hidden" value="<%=idc%>" name="idc">
     <% } %>
-    </form>
+    </form>-->
 </div>
+<script>
+function getFileExtension(filename)
+{
+  var ext = /^.+\.([^.]+)$/.exec(filename);
+  return ext == null ? "" : ext[1];
+}
+function previewFile1(){
+  var file1    = document.getElementById('file1').files[0];
+  var reader  = new FileReader();
+  var file_url_1 = document.querySelector('#fileurl1');
+  var file_name_1 = document.querySelector('#filename1');
+  reader.onloadend = function () {
+      file_url_1.value = reader.result;
+  }
+  if (file1) {
+      if(file1.size>=10000000)
+      {
+          $('#file1').val("");
+          alert("File must not exceeded 10 MB.");
+          file_name_1.value = "";
+          file_url_1.value = "";
+          return;
+      }
+      else {
+        file_name_1.value = file1.name;
+        var ext = getFileExtension(file1.name);
+        if(ext!="")
+            ext = ext.toLowerCase();
+        if(ext=='c' || ext=='cpp'){
+            reader.readAsDataURL(file1); //reads the data as a URL
+        } else {
+            $('#file1').val("");
+            alert("File must have c / cpp extension.");
+            file_name_1.value = "";
+            file_url_1.value = "";
+            return;
+        }
+      }
+    } else {
+      file_name_1.value = "";
+      file_url_1.value = "";
+  }
+}
+</script>
 <% } %>

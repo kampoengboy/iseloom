@@ -34,7 +34,9 @@ angular.module('submission', [])
     io.socket.on('submission', function onServerSentEvent (msg) {
       switch(msg.verb) {
         case 'created':
-         get_submission();
+        if(msg.data.message==0) {
+            get_submission();
+         }
          break;
         default: return;
       }
