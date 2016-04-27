@@ -490,11 +490,5 @@ module.exports = {
                 });
             });
         });
-    },
-    submissions: function(req, res, next) {
-        if(!req.session.authenticated || !req.session.User.admin) return res.redirect('/login');
-        User.findOne({'username':req.session.User.username}).exec(function(err, user) {
-
-        });
     }
 };
