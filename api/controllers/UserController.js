@@ -87,17 +87,23 @@ module.exports = {
             var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
             buf = new Buffer(file,'base64');
             var namefile = 'file-'+req.session.User.id+'.txt';
-            fs.writeFile(namefile,buf,function(err,data){});
-            text = fs.readFileSync(namefile,'utf8')
-            fs.unlink(namefile);
-            if(text.length==0){
-               return res.redirect('/');
-            }  
+            fs.writeFile(namefile,buf,function(err,data){
+                if(err) return next(err);
+                var text = fs.readFileSync(namefile,'utf8');
+                fs.unlink(namefile);
+                if(text.length==0){
+                    return res.redirect('/');
+                }
+                do_compile(text); 
+            });     
          }
-         else{
+         else
+         {
              if(typeof req.param('code')=="undefined") return res.redirect('/');
              text = req.param('code');
+             do_compile(text);
          }
+         function do_compile(text) {
          Problem.findOne({'id':req.param('idProblem')}, function(err,problem){
             if(!problem) return res.redirect('/');
             var compile_output = [];
@@ -422,7 +428,7 @@ module.exports = {
                 });
             }
         });
-
+      }
     },
     ranklist: function(req,res,next) {
         Promise.all([
