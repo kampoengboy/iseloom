@@ -27,6 +27,9 @@
                       <td ng-if="submission.output>=1 && submission.result==3" style="background-color:#FF0000; color:white;">
                            MEMORY LIMIT EXCEEDED
                       </td>
+                      <td ng-if="submission.output>=1 && submission.result==4" style="background-color:#FF0000; color:white;">
+                           SUBMISSION ERROR
+                      </td>
                   </tr>
             <% } else { %>
               <tr>

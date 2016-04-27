@@ -242,7 +242,7 @@ module.exports = {
                                         usr.result = 3;
                                     } else if(flag==3){
                                         //error
-                                        usr.result=0;
+                                        usr.result = 4;
                                     }
                                     out.push(usr);
                                     if(out.length==n){
