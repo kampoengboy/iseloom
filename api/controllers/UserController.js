@@ -88,7 +88,6 @@ module.exports = {
          fs.writeFile(namefile,buf,function(err,data){
              if(err) return next(err);
              var text = fs.readFileSync(namefile,'utf8')
-             console.log (text);
              fs.unlink(namefile);
              if(text.length==0){
                  return res.redirect('/');
@@ -97,7 +96,7 @@ module.exports = {
             if(!problem) return res.redirect('/');
             var compile_output = [];
             var submit_on_contest = false;
-            if(typeof req.param('idc')!="undefined" && req.param('idc').length!=0) {
+            if(typeof req.param('idc')!="undefined") {
                 submit_on_contest = true;  
             }
             if(submit_on_contest){
@@ -165,9 +164,10 @@ module.exports = {
                    var obj = {
                         id_contest : req.param('idc'),
                         id_user : req.session.User.id,
-                        code : req.param('code'),
+                        code : text,
                         id_problem : req.param('idProblem'),
                         output : [],
+                        is_contest : true,
                         result : null,
                         minute : null,
                    }
@@ -289,7 +289,7 @@ module.exports = {
                                         } else {
                                             Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
                                         }
-                                        Submission.publishCreate({id:submission.id,message:"done"});
+                                        Submission.publishCreate({id:submission.id,message:0});
                                     }
                                 },
                             });
@@ -303,59 +303,118 @@ module.exports = {
                 });
             }
             else {
-                function compile(input,i){
-                    Http.sendHttpRequest({
-                    url: '/compile',
-                    baseUrl: 'http://api.mikelrn.com',
-                    method: 'POST',
-                    params: {language:7,code:req.param('code'),stdin:input},
-                    formData: false,
-                    headers: {},
-                }).exec({
-                    // An unexpected error occurred.
-                    error: function (err){
-                        console.log(err);
-                    },
-                    // 404 status code returned from server
-                    notFound: function (result){
-                        console.log(result);
-                    },
-                    // 400 status code returned from server
-                    badRequest: function (result){
-                        console.log(result);
-                    },
-                    // 403 status code returned from server
-                    forbidden: function (result){
-                        console.log(result);
-                    },
-                    // 401 status code returned from server
-                    unauthorized: function (result){
-                        console.log(result);
-                    },
-                    // 5xx status code returned from server (this usually means something went wrong on the other end)
-                    serverError: function (result){
-                        console.log(result);
-                    },
-                    // Unexpected connection error: could not send or receive HTTP request.
-                    requestFailed: function (err){
-                        console.log(err);
-                    },
-                    // OK.
-                    success: function (result){
-                        var ans = JSON.parse(result.body);
-                        if(ans.output==problem.output[i])
-                            console.log("CORRECT");
-                        else
-                            console.log("WRONG ANSWER");
-                    },
+                var obj = {
+                        id_user : req.session.User.id,
+                        code : text,
+                        id_problem : req.param('idProblem'),
+                        output : [],
+                        result : null,
+                        minute : null,
+                }
+                Submission.create(obj,function(err,submission){
+                    var out = [];
+                    function compile(input,i,n){
+                        Http.sendHttpRequest({
+                        url: '/compile',
+                        baseUrl: 'http://api.mikelrn.com',
+                        method: 'POST',
+                        params: {language:7,code:text,stdin:input,memory_limit:problem.memorylimit},
+                        formData: false,
+                        headers: {},
+                    }).exec({
+                        // An unexpected error occurred.
+                        error: function (err){
+                            console.log(err);
+                        },
+                        // 404 status code returned from server
+                        notFound: function (result){
+                            console.log(result);
+                        },
+                        // 400 status code returned from server
+                        badRequest: function (result){
+                            console.log(result);
+                        },
+                        // 403 status code returned from server
+                        forbidden: function (result){
+                            console.log(result);
+                        },
+                        // 401 status code returned from server
+                        unauthorized: function (result){
+                            console.log(result);
+                        },
+                        // 5xx status code returned from server (this usually means something went wrong on the other end)
+                        serverError: function (result){
+                            console.log(result);
+                        },
+                        // Unexpected connection error: could not send or receive HTTP request.
+                        requestFailed: function (err){
+                            console.log(err);
+                        },
+                        // OK.
+                        success: function (result){
+                            var ans = JSON.parse(result.body);
+                            var flag = ans.flag;
+                            if(flag==1 || flag==2 || flag==3){
+                                        
+                            } else {
+                            var tmp_time = ans.time.split('\n');
+                            var time = parseFloat(tmp_time[0]);
+                            }
+                            // console.log(ans);
+                            // console.log(time);
+                            //var out = sub.output;
+                            var usr = {
+                                idx : i,
+                                out : ans.output,
+                                ans : problem.output[i]
+                            }
+                            if(flag==0) {
+                                if(time>problem.timelimit+5){
+                                usr.result = 2;
+                                } else {
+                                if(ans.output!=problem.output[i]){
+                                    usr.result = 0
+                                } else {
+                                    usr.result = 1
+                                }
+                                }
+                            } else if(flag==1){
+                                //timeout
+                                usr.result = 2
+                            } else if(flag==2){
+                                //memory limit
+                                usr.result = 3;
+                            } else if(flag==3){
+                                //error
+                                usr.result = 4;
+                            }
+                            out.push(usr);
+                            if(out.length==n){
+                                var correct = true;
+                                var code_flag = 1;
+                                for (var j=0;j<out.length;j++) {
+                                    if (out[j].result != 1) {
+                                        correct = false;
+                                        code_flag = out[j].result;
+                                        break;
+                                    }
+                                }
+                                if (correct) {
+                                    Submission.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});    
+                                } else {
+                                    Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
+                                }
+                                Submission.publishCreate({id:submission.id,message:1});
+                            }
+                        },
+                    });
+                    }
+                    for(var i=0;i<problem.input.length;i++){
+                        compile(problem.input[i],i,problem.input.length);
+                    }
+                    return res.redirect('/problem/submissions/'+problem.id);
                 });
-                }
-                for(var i=0;i<problem.input.length;i++){
-                    compile(problem.input[i],i);
-                }
-                return res.redirect('back');
             }
-            
         });
       });
     },

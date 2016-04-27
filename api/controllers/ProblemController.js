@@ -9,6 +9,20 @@ var AdmZip = require('adm-zip');
 var fs = require('fs');
 var Promise = require('bluebird');
 module.exports = {
+    submissiondetail : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        Submission.findOne({'id':req.param('id')})
+        .populate('id_user')
+        .populate('id_problem')
+        .exec(function(err,submission){
+            if(err) return next(err);
+            if(!submission) return res.redirect('/');
+            if(req.session.User.id != submission.id_user.id){
+                return res.redirect('/');
+            }
+            return res.view({submission:submission}); 
+        });
+    },
     create : function(req,res,next){
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
@@ -19,6 +33,27 @@ module.exports = {
         Problem.update(req.param('id'),{publish:true}, function(err,problems){
             return res.redirect('/problem/list');
         }); 
+    },
+    get_submissions : function(req,res,next){
+       Submission.find({'is_contest':false,'id_problem':req.param('id'), 'id_user':req.session.User.id})
+        .populate('id_problem')
+        .populate('id_user')
+        .sort('createdAt DESC')
+        .exec(function(err,submissions){
+             if(err) return next(err); 
+             return res.json({submissions:submissions});
+        }); 
+    },
+    submissions : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        Submission.find({'is_contest':false,'id_problem':req.param('id'), 'id_user':req.session.User.id})
+        .populate('id_problem')
+        .populate('id_user')
+        .sort('createdAt DESC')
+        .exec(function(err,submissions){
+             if(err) return next(err); 
+             return res.view({submissions:submissions});
+        });  
     },
     unpublish : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');

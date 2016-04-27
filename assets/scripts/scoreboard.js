@@ -113,7 +113,9 @@ angular.module('scoreboard', [])
     io.socket.on('submission', function onServerSentEvent (msg) {
       switch(msg.verb) {
         case 'created':
-         get_scoreboard();
+         if(msg.data.message==0) {
+            get_scoreboard();
+         }
          break;
         default: return;
       }

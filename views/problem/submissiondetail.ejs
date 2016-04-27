@@ -1,0 +1,33 @@
+<div class="container" style="background-color:white">
+    <h2 class="text-center">My Submission</h2>
+    <hr>
+    <h4>Code</h4>
+    <pre>
+        <%=submission.code%>
+    </pre>
+    <br>
+    <hr>
+    <h4>Status</h4>
+    <% if(submission.result) { %>
+            <h3 style="color:green">CORRECT</h3>
+        <% } else { %>
+            <h3 style="color:red">WRONG ANSWER</h3>
+    <% } %>
+    <br>
+    <hr>
+    <h4>Test Cases</h4>
+    <br>
+    <% for(var i=0;i<submission.output.length;i++) { %>
+        <h4>Output <%=i+1%></h4>
+        <pre><%=submission.output[i].out%></pre>
+        <h4>Answer <%=i+1%></h4>
+        <pre><%=submission.output[i].ans%></pre>
+        <h4>Status <%=i+1%></h4>
+         <% if(submission.output[i].out==submission.output[i].ans) { %>
+            <h3 style="color:green">CORRECT</h3>
+        <% } else { %>
+            <h3 style="color:red">WRONG ANSWER</h3>
+        <% } %>
+        <br>
+    <% } %>
+</div>

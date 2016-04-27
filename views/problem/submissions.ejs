@@ -1,25 +1,24 @@
-<div class="container" style="background-color:white" ng-app="allsubmission" ng-controller="MainCtrl">
-    <h3 class="text-center">All submission for Contest <%=contest.name%> </h3>
+<div class="container" style="background-color:white" ng-app="submission" ng-controller="MainCtrl">
+    <h3 class="text-center">My Submissions</h3>
+    <h4 id="clock" class="text-center"></h4>
     <table class="table table-bordered table-hover table-striped">
         <thead>
             <th>#</th>
             <th>ID Problem</th>
-            <th>Contestant</th>
             <th>Time</th>
             <th>Result</th>
-            <th></th>
         </thead>
         <tbody>
-            <tr ng-repeat="submission in submissions">
+           <% if(submissions.length > 0) { %>
+                  <tr ng-repeat="submission in submissions">
                       <td>{{$index+1}}</td>
                       <td>{{submission.id_problem}}</td>
-                      <td>{{submission.contestant}}</td>
                       <td>{{submission.time}}</td>
                       <td ng-if="submission.output==0">COMPILING</td>
                       <td ng-if="submission.output>=1 && submission.result==1" style="background-color:#00FF33">
                            CORRECT
                       </td>
-                       <td ng-if="submission.output>=1 && submission.result==0" style="background-color:#FF0000; color:white;">
+                      <td ng-if="submission.output>=1 && submission.result==0" style="background-color:#FF0000; color:white;">
                            WRONG ANSWER
                       </td>
                       <td ng-if="submission.output>=1 && submission.result==2" style="background-color:#FF0000; color:white;">
@@ -31,9 +30,14 @@
                       <td ng-if="submission.output>=1 && submission.result==4" style="background-color:#FF0000; color:white;">
                            SUBMISSION ERROR
                       </td>
-                      <td><a href="/contest/submissiondetail/{{submission.id_submission}}" class="btn btn-success">Preview Submission</a></td>
-            </tr>
+                      <td><a href="/problem/submissiondetail/{{submission.id_submission}}" class="btn btn-success">Preview Submission</a></td>
+                  </tr>
+            <% } else { %>
+              <tr>
+                <td colspan="4">No Submission.</td>
+              </tr>
+            <% } %>
         </tbody>
-     </table>
+    </table>
 </div>
-<script src="/scripts/allsubmission.js"></script>
+<script src="/scripts/problem_submission.js"></script>
