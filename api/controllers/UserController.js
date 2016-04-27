@@ -418,7 +418,7 @@ module.exports = {
                     for(var i=0;i<problem.input.length;i++){
                         compile(problem.input[i],i,problem.input.length);
                     }
-                    return res.redirect('/problem/submissions/'+problem.id);
+                    return res.redirect('back');
                 });
             }
         });

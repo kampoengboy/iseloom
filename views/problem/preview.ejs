@@ -3,13 +3,9 @@
     <h5 class="text-center">Time Limit : <%=problem.timelimit%> s</h5>
     <h5 class="text-center">Memory Limit : <%=problem.memorylimit%> MB</h5>
     <% if(session.authenticated) { %>
-    <% if(!session.User.admin) { %> 
-        <% if(typeof idc=="undefined") { %>
-            <a class="btn btn-info" href="/problem/submissions/<%=problem.id%>">My Submission</a>
-        <% } else { %>
-            <a class="btn btn-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>">My Submission</a>
-        <% } %>
-    <% } %>
+      <% if(!session.User.admin && st == 1) { %> 
+          <a class="btn btn-info" href="/contest/submission?idc=<%=idc%>&idp=<%=problem.id%>">My Submission</a>
+      <% } %>
     <% } %>
     <br><br>
     <%- problem.description %>
