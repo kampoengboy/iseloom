@@ -8,10 +8,12 @@
     <div class="row">
     	<span class="col-md-2">Registered : </span><span class="col-md-2" id="regitered"></span>
     </div>
-	<% if(userRating) { %>
+	<% if(userRating && userRating.length > 0) { %>
 	    <div style="width:70%">
 			<div>
 				<canvas id="canvas" height="300" width="600"></canvas>
+				<div class="text-center horizontaltext_content">Date</div>
+				<div class="text-center verticaltext_content">Rating</div>
 			</div>
 		</div>
 	<% } %>
@@ -19,7 +21,29 @@
 
 <% if(userRating) { %>
 	<script>
-		var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+		Chart.types.Line.extend({
+		    name: "LineAlt",
+		    draw: function () {
+		        Chart.types.Line.prototype.draw.apply(this, arguments);
+		        
+		        var ctx = this.chart.ctx;
+		        ctx.save();
+		        // text alignment and color
+		        ctx.textAlign = "center";
+		        ctx.textBaseline = "bottom";
+		        ctx.fillStyle = this.options.scaleFontColor;
+		        // position
+		        var x = this.scale.xScalePaddingLeft * 0.4;
+		        var y = this.chart.height / 2;
+		        // change origin
+		        ctx.translate(x, y)
+		        // rotate text
+		        ctx.rotate(-90 * Math.PI / 180);
+		        ctx.fillText(this.datasets[0].label, 0, 0);
+		        ctx.restore();
+		    }
+		});
+
 		var lineChartData = {
 			labels : [
 				<% _.each(userRating, function(rating){ %>

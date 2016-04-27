@@ -421,3 +421,15 @@ a.fork {
   right: 0;
   border: 0;
 }
+
+canvas {
+  margin-left: 50px;
+}
+
+.verticaltext_content {
+  position: relative;
+  transform: rotate(-90deg);
+  right:80px;
+  bottom:230px;
+  width:200px;
+}

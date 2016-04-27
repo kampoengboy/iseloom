@@ -264,57 +264,95 @@ module.exports = {
                 });
             }
             else {
-                function compile(input,i){
-                    Http.sendHttpRequest({
-                    url: '/compile',
-                    baseUrl: 'http://api.mikelrn.com',
-                    method: 'POST',
-                    params: {language:7,code:req.param('code'),stdin:input},
-                    formData: false,
-                    headers: {},
-                }).exec({
-                    // An unexpected error occurred.
-                    error: function (err){
-                        console.log(err);
-                    },
-                    // 404 status code returned from server
-                    notFound: function (result){
-                        console.log(result);
-                    },
-                    // 400 status code returned from server
-                    badRequest: function (result){
-                        console.log(result);
-                    },
-                    // 403 status code returned from server
-                    forbidden: function (result){
-                        console.log(result);
-                    },
-                    // 401 status code returned from server
-                    unauthorized: function (result){
-                        console.log(result);
-                    },
-                    // 5xx status code returned from server (this usually means something went wrong on the other end)
-                    serverError: function (result){
-                        console.log(result);
-                    },
-                    // Unexpected connection error: could not send or receive HTTP request.
-                    requestFailed: function (err){
-                        console.log(err);
-                    },
-                    // OK.
-                    success: function (result){
-                        var ans = JSON.parse(result.body);
-                        if(ans.output==problem.output[i])
-                            console.log("CORRECT");
-                        else
-                            console.log("WRONG ANSWER");
-                    },
+                var obj = {
+                    id_user : req.session.User.id,
+                    code : req.param('code'),
+                    id_problem : req.param('idProblem'),
+                    output : [],
+                    result : null,
+                    datetime : new Date()
+               }
+                SubmissionGlobal.create(obj,function(err,submission){
+                    var out = [];
+                    function compile(input,i,n){
+                        Http.sendHttpRequest({
+                        url: '/compile',
+                        baseUrl: 'http://api.mikelrn.com',
+                        method: 'POST',
+                        params: {language:7,code:req.param('code'),stdin:input},
+                        formData: false,
+                        headers: {},
+                    }).exec({
+                        // An unexpected error occurred.
+                        error: function (err){
+                            console.log(err);
+                        },
+                        // 404 status code returned from server
+                        notFound: function (result){
+                            console.log(result);
+                        },
+                        // 400 status code returned from server
+                        badRequest: function (result){
+                            console.log(result);
+                        },
+                        // 403 status code returned from server
+                        forbidden: function (result){
+                            console.log(result);
+                        },
+                        // 401 status code returned from server
+                        unauthorized: function (result){
+                            console.log(result);
+                        },
+                        // 5xx status code returned from server (this usually means something went wrong on the other end)
+                        serverError: function (result){
+                            console.log(result);
+                        },
+                        // Unexpected connection error: could not send or receive HTTP request.
+                        requestFailed: function (err){
+                            console.log(err);
+                        },
+                        // OK.
+                        success: function (result){
+                           var ans = JSON.parse(result.body);
+                            //var out = sub.output;
+                            var usr = {
+                                idx : i,
+                                out : ans.output,
+                                ans : problem.output[i]
+                            }
+                            if(ans.output!=problem.output[i]){
+                                usr.result = 0
+                            } else {
+                                usr.result = 1
+                            }
+                            out.push(usr);
+                            if(out.length==n){
+                                var correct = true;
+                                for (var j=0;j<out.length;j++) {
+                                    if (out[j].result != 1) {
+                                        correct = false;
+                                        break;
+                                    }
+                                }
+                                if (correct) {
+                                    SubmissionGlobal.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});
+                                    var user_contest = {
+                                        id_contest : req.param('idc'),
+                                        id_user : req.session.User.id
+                                    }
+                                } else {
+                                    SubmissionGlobal.update({'id':submission.id}, {'output':out, 'result':0},function(err,su){});
+                                }
+                                SubmissionGlobal.publishCreate({id:submission.id,message:"done"});
+                            }
+                        },
+                    });
+                    }
+                    for(var i=0;i<problem.input.length;i++){
+                        compile(problem.input[i],i,problem.input.length);
+                    }
+                    return res.redirect('back');
                 });
-                }
-                for(var i=0;i<problem.input.length;i++){
-                    compile(problem.input[i],i);
-                }
-                return res.redirect('back');
             }
             
         });
@@ -391,6 +429,12 @@ module.exports = {
                     users: users
                 });
             });
+        });
+    },
+    submissions: function(req, res, next) {
+        if(!req.session.authenticated || !req.session.User.admin) return res.redirect('/login');
+        User.findOne({'username':req.session.User.username}).exec(function(err, user) {
+
         });
     }
 };
