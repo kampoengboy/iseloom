@@ -180,7 +180,7 @@ module.exports = {
             Problem.find()
             .where({publish:false})
             .exec(function(err,problemNotPublish){
-                   Submission.find()
+                   Submission.find({'result':1})
                    .groupBy('id_problem')
                    .sum('result')
                    .exec(function(err, SubmissionsSolved){
