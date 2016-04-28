@@ -424,7 +424,7 @@ module.exports = {
                     for(var i=0;i<problem.input.length;i++){
                         compile(problem.input[i],i,problem.input.length);
                     }
-                    return res.redirect('back');
+                    return res.redirect('/submissions');
                 });
             }
         });
@@ -504,6 +504,7 @@ module.exports = {
         });
     },
     submissions: function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
         User.findOne({'username':req.session.User.username}).exec(function(err, user) {
             Submission.find({'id_user':user.id, 'is_contest':false}).populate('id_problem').sort('createdAt DESC').exec(function(err, subs) {
                 return res.view({
