@@ -515,7 +515,7 @@ module.exports = {
     'get_submissions' : function(req,res,next){
         User.findOne({'username':req.session.User.username}).exec(function(err, user) {
             Submission.find({'id_user':user.id, 'is_contest':false}).populate('id_problem').sort('createdAt DESC').exec(function(err, subs) {
-                return res.view({
+                return res.json({
                     subs: subs
                 });
             });

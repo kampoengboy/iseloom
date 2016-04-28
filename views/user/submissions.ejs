@@ -10,9 +10,9 @@
         </thead>
         <tbody>
            <% if(subs.length > 0) { %>
-                  <tr ng-repeat="submission in subs">
+                  <tr ng-repeat="submission in submissions">
                       <td>{{$index+1}}</td>
-                      <td>{{submission.id_problem}}</td>
+                      <td>{{submission.problem}}</td>
                       <td>{{submission.time}}</td>
                       <td ng-if="submission.output==0">COMPILING</td>
                       <td ng-if="submission.output>=1 && submission.result==1" style="background-color:#00FF33">
