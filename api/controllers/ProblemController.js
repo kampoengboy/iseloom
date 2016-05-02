@@ -24,7 +24,7 @@ module.exports = {
         });
     },
     create : function(req,res,next){
-        if(!req.session.User.admin) return res.redirect('/');
+        if(!req.session.authenticated) return res.redirect('/');
         return res.view();  
     },
     publish : function(req,res,next){
@@ -63,7 +63,7 @@ module.exports = {
         }); 
     },
     'create_problemsets' : function(req,res,next){
-        if(!req.session.User.admin) return res.redirect('/');
+        if(!req.session.authenticated) return res.redirect('/');
         var stdin_file = req.param('file_url_1');
         var stdin_name = req.param('file_name_1');
         var stdout_file = req.param('file_url_2');
@@ -80,6 +80,9 @@ module.exports = {
             res.redirect('/problem/create');
             return;
         }
+        var publish = true;
+        if(req.session.User.admin)
+            publish = false;
         var usrObj = {
             name : req.param('name'),
             valName : req.param('problemID'),
@@ -87,8 +90,10 @@ module.exports = {
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
             difficulty : parseInt(req.param('difficulty')),
+            id_maker : req.session.User.id,
             input : [],
-            output : []
+            output : [],
+            publish : publish
         }
         Problem.findOne({'valName':req.param('problemID')}, function(err,problem1){
            if(err) return next(err);
@@ -186,8 +191,18 @@ module.exports = {
                    .exec(function(err, SubmissionsSolved){
                        SubmissionsSolved.forEach(function(data) {
                             Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
-                                problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
-                                add(problemPublish, problemNotPublish, SubmissionsSolved.length);
+                                if(req.session.authenticated) {
+                                    Submission.findOne({'id_problem':data.id_problem.toString(),'result':1,'id_user':req.session.User.id}, function(err, hasacc){
+                                        if(hasacc)
+                                            problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal,'state':1};
+                                        else
+                                            problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal,'state':0}; 
+                                        add(problemPublish, problemNotPublish, SubmissionsSolved.length);
+                                    });
+                                } else {
+                                     problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal};
+                                     add(problemPublish, problemNotPublish, SubmissionsSolved.length);
+                                }
                             });
                         });
                    });

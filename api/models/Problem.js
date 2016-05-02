@@ -8,6 +8,9 @@
 module.exports = {
 
   attributes: {
+      id_maker : {
+          model : 'user'
+      },
       name : 'string',
       valName : 'string',
       memorylimit : 'integer',
