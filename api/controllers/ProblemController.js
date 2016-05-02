@@ -27,6 +27,119 @@ module.exports = {
         if(!req.session.authenticated) return res.redirect('/');
         return res.view();  
     },
+    edit : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/'); 
+        Problem.findOne({'id':req.param('id')}, function(err,problem){
+            if(err) return next(err);
+            if(!problem) return res.redirect('/');
+            if(req.session.User.admin || req.session.User.id==problem.id_maker){
+                return res.view({problem : problem});
+            } else {
+                return res.redirect('/');
+            }
+        });
+    },
+    'edit_problem' : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        Problem.findOne({'id':req.param('id')}, function(err,problem){
+            if(err) return next(err);
+            if(!problem) return res.redirect('/');
+            if(req.session.User.admin || req.session.User.id == problem.id_maker){
+                var stdin_file = req.param('file_url_1');
+                var stdin_name = req.param('file_name_1');
+                var stdout_file = req.param('file_url_2');
+                var stdout_name = req.param('file_name_2');
+                stdin_file = stdin_file.replace('data:application/zip;base64,', "");
+                stdin_file = stdin_file.replace('data:application/x-rar;base64,', "");
+                stdout_file= stdout_file.replace('data:application/zip;base64,', "");
+                stdout_file = stdout_file.replace('data:application/x-rar;base64,', "");
+                if(stdin_name.length!=0 && stdout_name.length!=0){
+                    if(stdin_name==stdout_name){
+                        var sameNameError = ['File name for Testcase Input and Output should be different.']
+                        req.session.flash = {
+                            err: sameNameError,
+                        }
+                        res.redirect('/problem/create');
+                        return;
+                    }
+                    if(stdin_file.length!=0){
+                        //for input file
+                        var stdin = [];
+                        buf = new Buffer(stdin_file,'base64');
+                        fs.writeFile(stdin_name,buf, function(err,data){
+                            if(err) return next(err);
+                            var zip = new AdmZip(stdin_name);
+                            var zipEntries = zip.getEntries(); // an array of ZipEntry records
+                            zipEntries.forEach(function(zipEntry) {
+                                if(!zipEntry.isDirectory && zipEntry.entryName.split('/')[0]!="__MACOSX" && zipEntry.entryName.split('/')[zipEntry.entryName.split('/').length-1]!=".DS_Store"){
+                                    stdin.push(zipEntry.getData().toString('utf-8'));
+                                }
+                            });
+                            Problem.update(problem.id, {input:stdin}, function(err,prob){}); 
+                            fs.unlink(stdin_name);
+                        });
+                    }
+                    if(stdout_file.length!=0){
+                        //for output file
+                        var stdout = [];
+                        buf2 = new Buffer(stdout_file,'base64');
+                        fs.writeFile(stdout_name,buf2, function(err,data){
+                            if(err) return next(err);
+                            var zip2 = new AdmZip(stdout_name);
+                            var zipEntries2 = zip2.getEntries(); // an array of ZipEntry records
+                            zipEntries2.forEach(function(zipEntry2) {
+                                if(!zipEntry2.isDirectory && zipEntry2.entryName.split('/')[0]!="__MACOSX" && zipEntry2.entryName.split('/')[zipEntry2.entryName.split('/').length-1]!=".DS_Store"){
+                                    stdout.push(zipEntry2.getData().toString('utf-8'));
+                                }
+                            });
+                            Problem.update(problem.id, {output:stdout}, function(err,prob){}); 
+                            fs.unlink(stdout_name);
+                        });
+                    }
+                }
+                var obj = {
+                    name : req.param('name'),
+                    valName : req.param('problemID'),
+                    description : req.param('description'),
+                    timelimit : req.param('timelimit'),
+                    memorylimit : req.param('memorylimit'),
+                    difficulty : parseInt(req.param('difficulty')),
+                    id_maker : req.session.User.id,    
+                }
+                Problem.update(problem.id,obj,function(err,prob){
+                    if(err) return res.redirect('/');
+                    var createSuccess = ['Problem Set ', obj.name, ' has been edited.'];
+                    req.session.flash = {
+                        success: createSuccess
+                    }
+                    return res.redirect('back');
+                });
+            } else {
+                return res.redirect('/');
+            }
+        });
+    },
+    remove_problem : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
+        Problem.findOne({'id':req.param('id')}, function(err,problem){
+            if(err) return next(err);
+            if(!problem) return res.redirect('/');
+            if(req.session.User.admin || req.session.User.id == problem.id_maker){
+                ProblemContest.findOne({'id_problem':problem.id}, function(err,problemContest){
+                    if(err) return next(err);
+                    if(problemContest) return res.send('The problem has been set to contest. Cannot be deleted');
+                    else {
+                        Submission.destroy({'id_problem':problem.id}, function(err, submssions){});
+                        UserProblem.destroy({'id_problem':problem.id}, function(err, userproblem){});
+                        Problem.destroy({'id':problem.id}, function(err,problems){});
+                        return res.redirect('/');
+                    }
+                });
+            } else {
+                return res.redirect('/');
+            }
+        });  
+    },
     publish : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
         if(!req.session.User.admin) return res.redirect('/');

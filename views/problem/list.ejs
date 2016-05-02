@@ -77,7 +77,19 @@
                      <% } %>
                      <% if(session.authenticated) { %>
                         <% if(session.User.admin) { %>
-                            <td><a class="btn btn-danger" href="/problem/unpublish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Unpublish</a></td>
+                            <td>
+                              <a class="btn btn-success" href="/problem/unpublish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Unpublish</a>
+                              <a class="btn btn-warning" href="/problem/edit/<%=problem.id%>">Edit</a>
+                              <a class="btn btn-danger" href="/problem/remove_problem/<%=problem.id%>">Remove</a>
+                            </td>
+                            <td></td>
+                        <% } else { %>
+                            <% if(session.User.id == problem.id_maker) { %>
+                              <td>
+                                <a class="btn btn-warning" href="/problem/edit/<%=problem.id%>">Edit</a>
+                                <a class="btn btn-danger" href="/problem/remove_problem/<%=problem.id%>">Remove</a>
+                              </td>
+                            <% } %>
                         <% } %>
                      <% } %>
                 </tr>
@@ -100,7 +112,12 @@
                 <% _.each(problemsNotPublish, function(problem){%>
                   <tr>
                       <td><%=problem.name%></td>
-                      <td><a class="btn btn-primary" href="/problem/publish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</a> <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-success"> Preview</a></td>
+                      <td>
+                         <a class="btn btn-primary" href="/problem/publish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</a>
+                         <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-success"> Preview</a>
+                         <a class="btn btn-warning">Edit</a>
+                         <a class="btn btn-danger">Remove</a>
+                      </td>
                   </tr>
                   <% idx++ %>
                 <%})%>

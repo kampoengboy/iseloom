@@ -1,0 +1,204 @@
+<div class="container" style="background-color:white">
+  <% if(flash) { %>
+    <% if(flash.err) { %>
+          <div>
+          <br><br>
+          <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            <% Object.keys(flash.err).forEach(function(error) { %>
+                  <%= flash.err[error] %>
+            <% }) %>
+          </div>
+          </div>
+    <% } else if (flash.success){ %>
+      <div>
+      <br><br>
+      <div class="alert alert-success" role="alert">
+        <span class="sr-only">Success:</span>
+        <% Object.keys(flash.success).forEach(function(success) { %>
+              <%= flash.success[success] %>
+        <% }) %>
+      </div>
+      </div>
+    <% } %>
+  <% } %>
+    <h3 class="text-center">Edit a Problem Set</h3>
+    <form action="/problem/edit_problem/<%=problem.id%>" method="POST">
+    <div class="form-group">
+          <label class="control-label col-md-2 required">Name: </label>
+          <div class="col-md-10">
+          <input type="text" id="name" name="name" value="<%=problem.name%>" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br><br>
+    <div class="form-group">
+          <label class="control-label col-md-2 required">Problem ID: </label>
+          <div class="col-md-10">
+          <input type="text" id="problemID" name="problemID" value="<%=problem.valName%>" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br><br>
+    <b style="margin-left:15px">Description : </b>
+    <br><br>
+    <div style="border: 1px solid black">
+    <div class="clearfix"></div>
+    <textarea name="description" id="ck"><%=problem.description%></textarea>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Difficulty : </label>
+          <div class="col-lg-8">
+          <select class="form-control" name="difficulty">
+            <% if(problem.difficulty==0) { %>
+                <option value="0" selected>EASY</option>
+            <% } else { %>
+                <option value="0">EASY</option>
+            <% } %>
+            <% if(problem.difficulty==1) { %>
+                <option value="1" selected>MEDIUM</option>
+            <% } else { %>
+                <option value="1">MEDIUM</option>
+            <% } %>
+            <% if(problem.difficulty==1) { %>
+                <option value="2" selected>HARD</option>
+            <% } else { %>
+                <option value="2">HARD</option>
+            <% } %>
+          </select>
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Time Limit (in Seconds): </label>
+          <div class="col-lg-8">
+          <input type="text" id="timelimit" name="timelimit" value="<%=problem.timelimit%>" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Memory Limit (in MB): </label>
+          <div class="col-lg-8">
+          <input type="text" id="memorylimit" name="memorylimit" value="<%=problem.memorylimit%>" required="required" class="form-control" >
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases Input : </label>
+          <div class="col-lg-8">
+          <input type="file" id="file1" onchange="previewFile1()"/>
+          </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases Output : </label>
+          <div class="col-lg-8">
+          <input type="file" id="file2" onchange="previewFile2()"/>
+          </div>
+    </div>
+    <br><br>
+    <!--<div class="form-group">
+          <label class="control-label col-lg-4 required">Testcases : </label>
+          <div class="col-lg-8">
+          <select class="form-control" style="width: 100%;" onchange="func()" id="tc">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+          </div>
+    </div>
+    <div class="form-group">
+          <label class="control-label col-lg-8 required">Testcases : </label>
+          <div class="col-lg-8">
+          <textarea
+          </div>
+    </div>-->
+    <input type="hidden" name="file_name_1" id="filename1">
+    <input type="hidden" name="file_url_1" id="fileurl1">
+    <input type="hidden" name="file_name_2" id="filename2">
+    <input type="hidden" name="file_url_2" id="fileurl2">
+    <div class="form-group">
+    <button type="submit" class="btn btn-success form-control">Edit TestCase</button>
+    </div>
+    </form>
+    <br><br>
+</div>
+<script>
+
+
+function previewFile1(){
+  var file1    = document.getElementById('file1').files[0];
+  var reader  = new FileReader();
+  var file_url_1 = document.querySelector('#fileurl1');
+  var file_name_1 = document.querySelector('#filename1');
+  reader.onloadend = function () {
+      file_url_1.value = reader.result;
+  }
+  if (file1) {
+       if(file1.type!="application/zip" && file1.type!="application/x-rar")
+       {
+         $('#file1').val("");
+         alert("File yang diupload harus dalam bentuk RAR ataupun ZIP.");
+         file_name_1.value = "";
+         file_url_1.value = "";
+         return;
+       }
+      if(file1.size>=10000000)
+      {
+          $('#file1').val("");
+          alert("File yang diupload tidak boleh lebih dari 10 MB.");
+          file_name_1.value = "";
+          file_url_1.value = "";
+          return;
+      }
+      else {
+        file_name_1.value = file1.name;
+        reader.readAsDataURL(file1); //reads the data as a URL
+      }
+    } else {
+      file_name_1.value = "";
+      file_url_1.value = "";
+  }
+}
+function previewFile2(){
+  var file2    = document.getElementById('file2').files[0];
+  var reader  = new FileReader();
+  var file_url_2 = document.querySelector('#fileurl2');
+  var file_name_2 = document.querySelector('#filename2');
+  reader.onloadend = function () {
+      file_url_2.value = reader.result;
+  }
+  if (file2) {
+       if(file2.type!="application/zip" && file2.type!="application/x-rar")
+       {
+         $('#file2').val("");
+         alert("File yang diupload harus dalam bentuk RAR ataupun ZIP.");
+         file_name_2.value = "";
+         file_url_2.value = "";
+         return;
+       }
+      if(file2.size>=10000000)
+      {
+          $('#file2').val("");
+          alert("File yang diupload tidak boleh lebih dari 10 MB.");
+          file_name_2.value = "";
+          file_url_2.value = "";
+          return;
+      }
+      else {
+        file_name_2.value = file2.name;
+        reader.readAsDataURL(file2); //reads the data as a URL
+      }
+    } else {
+      file_name_2.value = "";
+      file_url_2.value = "";
+  }
+}
+function func(){
+  var tmp_tc = document.getElementById('tc');
+  var num_tc = tmp_tc.options[tmp_tc.selectedIndex].value;
+  console.log(num_tc);
+}
+  CKEDITOR.replace('ck');
+</script>
