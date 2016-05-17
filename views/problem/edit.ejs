@@ -70,6 +70,21 @@
     </div>
     <br><br>
     <div class="form-group">
+          <label class="control-label col-lg-4 required">Category : </label>
+          <div class="col-lg-8">
+          <select class="form-control" name="category" multiple>
+              <% _.each(categories, function(category) {%>
+                  <% if(problem.category.indexOf(category.name)!=-1) { %>
+                      <option value="<%=category.name%>" selected><%=category.name%></option>
+                  <% } else { %>
+                      <option value="<%=category.name%>"><%=category.name%></option>
+                  <% } %>
+              <% }) %>
+          </select>
+          </div>
+    </div>
+    <br><br><br><br>
+    <div class="form-group">
           <label class="control-label col-lg-4 required">Time Limit (in Seconds): </label>
           <div class="col-lg-8">
           <input type="text" id="timelimit" name="timelimit" value="<%=problem.timelimit%>" required="required" class="form-control" >

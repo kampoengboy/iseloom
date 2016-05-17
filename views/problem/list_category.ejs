@@ -1,0 +1,26 @@
+<div class="container" style="background-color:white">
+    <br>
+    <h3>Category</h3>
+    <a href="/problem/add_category" class="btn btn-success">Add Category</a>
+    <br><br>
+     <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                 <th>#</th>
+                 <th>Name</th>
+                 <th></th>
+            </thead>
+          <tbody>
+              <% var idx = 1 %>
+              <% _.each(categories, function(category){ %>
+                    <tr>
+                        <td><%=idx%></td>
+                        <td><%=category.name%></td>
+                        <td><a href="/problem/edit_category/<%=category.id%>" class="btn btn-warning">Edit</a> <a href="/problem/remove_category/<%=category.id%>" class="btn btn-danger">Remove</a></td>
+                        <% idx++ %>
+                    </tr>
+              <% }) %>
+          </tbody>
+        </table>
+    </div>
+</div>

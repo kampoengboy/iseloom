@@ -1,0 +1,17 @@
+<div class="container" style="background-color:white">
+    <br>
+    <h3>Edit Category</h3>
+    <hr>
+    <form action="/problem/update_category/<%=category.id%>" method="POST">
+    <div class="form-group">
+          <label class="control-label col-md-2 required">Name: </label>
+          <div class="col-md-10">
+          <input type="text" id="name" name="name" required="required" value="<%=category.name%>"class="form-control" >
+          </div>
+    </div>
+    <br><br><br>
+    <div class="form-group">
+    <button type="submit" class="btn btn-success form-control">Edit Category</button>
+    </div>
+    </form>
+</div>

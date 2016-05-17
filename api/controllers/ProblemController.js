@@ -9,6 +9,54 @@ var AdmZip = require('adm-zip');
 var fs = require('fs');
 var Promise = require('bluebird');
 module.exports = {
+    'list_category' : function(req,res,next){
+        Category.find(function(err,categories){
+            if(err) return next(err);
+            return res.view({categories : categories}); 
+        });  
+    },
+    'add_category' : function(req,res,next){
+        return res.view();  
+    },
+    'create_category' : function(req,res,next){
+        var obj = {
+            name : req.param('name')
+        }
+        Category.create(obj, function(err,category){
+            if(err) return next(err);
+            return res.redirect('/problem/list_category'); 
+        });  
+    },
+    'edit_category' : function(req,res,next){
+        Category.findOne({'id':req.param('id')}, function(err,category){
+            if(err) return next(err);
+            if(!category) return res.redirect('/');
+            return res.view({category : category});
+        }); 
+    },
+    'update_category' : function(req,res,next){
+         var obj = {
+            name : req.param('name')
+        }
+        Category.findOne({'id':req.param('id')}, function(err,category){
+            if(err) return next(err);
+            if(!category) return res.redirect('/');
+            Category.update(category.id,obj, function(err,category){
+                if(err) return next(err);
+                return res.redirect('/problem/list_category'); 
+            }); 
+        }); 
+    },
+    'remove_category' : function(req,res,next){
+        Category.findOne({'id':req.param('id')}, function(err,category){
+            if(err) return next(err);
+            if(!category) return res.redirect('/');
+            Category.destroy(category.id,function(err,category){
+                if(err) return next(err);
+                return res.redirect('/problem/list_category'); 
+            }); 
+        }); 
+    },
     submissiondetail : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
         Submission.findOne({'id':req.param('id')})
@@ -25,18 +73,23 @@ module.exports = {
     },
     create : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
-        return res.view();  
+        Category.find(function(err,categories){
+            return res.view({categories : categories});  
+        }); 
     },
     edit : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/'); 
         Problem.findOne({'id':req.param('id')}, function(err,problem){
             if(err) return next(err);
             if(!problem) return res.redirect('/');
-            if(req.session.User.admin || req.session.User.id==problem.id_maker){
-                return res.view({problem : problem});
-            } else {
-                return res.redirect('/');
-            }
+            Category.find(function(err,categories){
+                if(err) return next(err);
+                if(req.session.User.admin || req.session.User.id==problem.id_maker){
+                    return res.view({problem : problem, categories : categories});
+                } else {
+                    return res.redirect('/');
+                }
+            });
         });
     },
     'edit_problem' : function(req,res,next){
@@ -97,12 +150,20 @@ module.exports = {
                         });
                     }
                 }
+                var category = [];
+                if(typeof req.param('category')=="string"){
+                    category.push(req.param('category'));
+                } else if(typeof req.param('category')=="object"){
+                    var tmp = req.param('category');
+                    category = tmp;
+                }
                 var obj = {
                     name : req.param('name'),
                     valName : req.param('problemID'),
                     description : req.param('description'),
                     timelimit : req.param('timelimit'),
                     memorylimit : req.param('memorylimit'),
+                    category : category,
                     difficulty : parseInt(req.param('difficulty')),
                     id_maker : req.session.User.id,    
                 }
@@ -196,6 +257,13 @@ module.exports = {
         var publish = true;
         if(req.session.User.admin)
             publish = false;
+        var category = [];
+        if(typeof req.param('category')=="string"){
+            category.push(req.param('category'));
+        } else if(typeof req.param('category')=="object"){
+            var tmp = req.param('category');
+            category = tmp;
+        }
         var usrObj = {
             name : req.param('name'),
             valName : req.param('problemID'),
@@ -203,6 +271,7 @@ module.exports = {
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
             difficulty : parseInt(req.param('difficulty')),
+            category : category,
             id_maker : req.session.User.id,
             input : [],
             output : [],
