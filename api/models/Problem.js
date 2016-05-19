@@ -8,7 +8,7 @@
 module.exports = {
 
   attributes: {
-      id_maker : {
+      id_user : { //pembuat soal
           model : 'user'
       },
       name : 'string',
