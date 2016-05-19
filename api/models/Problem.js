@@ -11,6 +11,9 @@ module.exports = {
       id_user : { //pembuat soal
           model : 'user'
       },
+      id_category : {
+          model : 'category'
+      },
       name : 'string',
       valName : 'string',
       memorylimit : 'integer',
