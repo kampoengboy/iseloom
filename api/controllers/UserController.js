@@ -8,6 +8,178 @@ var Promise = require('bluebird');
 var Http = require('machinepack-http');
 var fs = require('fs');
 module.exports = {
+    testingsaja : function(req,res,next){
+                function getRatingtoRank(contestants,rank){
+                    var left = 1;
+                    var right = 8000;
+                    while(right-left>1){
+                        var mid = (left+right)/2;
+                        if(getSeed(contestants,mid) < rank) right = mid;
+                        else left = mid;
+                    }
+                    return left;
+                }
+                function getSeed(contestants, rating){
+                    var extracontestant = {
+                        party : 0,
+                        rank : 0,
+                        points : 0,
+                        rating : rating
+                    }
+                    var result = 0;
+                    for(var i=0;i<contestants.length;i++){
+                        var Ra = contestants[i].rating;
+                        var Rb = extracontestant.rating;
+                        var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                        result += e;
+                    }
+                    return result;
+                }
+                var E = 0;
+                var contestant = [];
+                var new_rating = [];
+                var rank = 1;
+                var users = [];
+                var obj1 = {
+                    solve : 4,
+                    score : 120,
+                    rating : 1500
+                }
+                users.push(obj1);
+                var obj2 = {
+                    solve : 3,
+                    score : 100,
+                    rating : 1500
+                }
+                users.push(obj2);
+                var obj3 = {
+                    solve : 3,
+                    score : 90,
+                    rating : 1500
+                }
+                users.push(obj3);
+                var obj4 = {
+                    solve : 3,
+                    score : 90,
+                    rating : 1500
+                }
+                users.push(obj4);
+                var obj5 = {
+                    solve : 2,
+                    score : 90,
+                    rating : 1500
+                }
+                users.push(obj5);
+                console.log(users);
+                for(var i=0;i<users.length;i++){
+                        var data = {};
+                        data.party = users.length;
+                        // data.rank = i+1;
+                        data.points = users[i].score;
+                        data.rating = users[i].rating;
+                        if(users.length>1){
+                            if(i==users.length-1){
+                                if(users[i-1].solve==users[i].solve){
+                                    if(users[i-1].score==users[i].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        
+                                        data.rank = rank;
+                                        rank++;
+                                    }
+                                } else {
+                                    
+                                    data.rank = rank;
+                                    rank++;
+                                }
+                            } else {
+                                if(users[i].solve==users[i+1].solve){
+                                    if(users[i].score==users[i+1].score){
+                                        data.rank = rank;
+                                    }
+                                    else {
+                                        
+                                        data.rank = rank;
+                                        rank++;
+                                    }
+                                } else {
+                                    
+                                    data.rank = rank;
+                                    rank++;
+                                }
+                            }
+                        } else {
+                            data.rank = rank;
+                        }
+                        data.needRating = 0;
+                        data.seed = 0;
+                        data.delta = 0;
+                        // if(users[i].tried){
+                        //     contestant.push(data);
+                        // }
+                        contestant.push(data);
+                }
+                console.log('========');
+                console.log(contestant);
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].seed = 1;
+                    for(var j=0;j<contestant.length;j++){
+                        if(i==j) continue;
+                        else {
+                            var Ra = contestant[i].rating;
+                            var Rb = contestant[j].rating;
+                            var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                            contestant[i].seed += e;
+                        }
+                    }
+                }
+                console.log('========');
+                console.log(contestant);
+                for(var i=0;i<contestant.length;i++){
+                    var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
+                    contestant[i].needRating = getRatingtoRank(contestant,midRank);
+                    contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
+                }
+                console.log('========');
+                console.log(contestant);
+                contestant.sort(function(a, b) {
+                        return b.rating - a.rating;
+                });
+                var sum = 0;
+                for(var i=0;i<contestant.length;i++){
+                    sum+=contestant[i].delta;
+                }
+                var inc = (-1*sum) / contestant.length - 1;
+                console.log("=========");
+                console.log(inc);
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].delta += inc;
+                }
+                console.log("========")
+                console.log(contestant);
+                var sum = 0;
+                var zeroSumCount = Math.min(4 * Math.round(Math.sqrt(contestant.length)),contestant.length);
+                for(var i=0;i<zeroSumCount;i++){
+                    sum += contestant[i].delta;
+                }
+                var inc = Math.min( Math.max( (-1 * sum) / zeroSumCount , -10) , 0);
+                console.log("========");
+                console.log(inc);
+                for(var i=0;i<contestant.length;i++){
+                    contestant[i].delta += inc;
+                }
+                console.log("========")
+                console.log(contestant);
+                for(var i=0;i<contestant.length;i++){
+                    var dummy = {
+                            rating : contestant[i].rating + contestant[i].delta,
+                    }
+                    dummy.highest_rating = dummy.rating;
+                    new_rating.push(dummy);
+                }
+                console.log(new_rating);
+    },
     search : function(req,res,next){
         var q = "";
         if(typeof req.param('q')!="undefined")
