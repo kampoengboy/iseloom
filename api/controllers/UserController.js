@@ -30,7 +30,7 @@ module.exports = {
                     for(var i=0;i<contestants.length;i++){
                         var Ra = contestants[i].rating;
                         var Rb = extracontestant.rating;
-                        var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                        var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
                         result += e;
                     }
                     return result;
@@ -84,7 +84,6 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        
                                         data.rank = rank;
                                         rank++;
                                     }
@@ -129,7 +128,7 @@ module.exports = {
                         else {
                             var Ra = contestant[i].rating;
                             var Rb = contestant[j].rating;
-                            var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                            var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
                             contestant[i].seed += e;
                         }
                     }
@@ -152,6 +151,7 @@ module.exports = {
                 }
                 var inc = (-1*sum) / contestant.length - 1;
                 console.log("=========");
+                console.log(sum);
                 console.log(inc);
                 for(var i=0;i<contestant.length;i++){
                     contestant[i].delta += inc;
@@ -159,12 +159,13 @@ module.exports = {
                 console.log("========")
                 console.log(contestant);
                 var sum = 0;
-                var zeroSumCount = Math.min(4 * Math.round(Math.sqrt(contestant.length)),contestant.length);
+                var zeroSumCount = Math.min((4 * Math.round(Math.sqrt(contestant.length))),contestant.length);
                 for(var i=0;i<zeroSumCount;i++){
                     sum += contestant[i].delta;
                 }
-                var inc = Math.min( Math.max( (-1 * sum) / zeroSumCount , -10) , 0);
+                var inc = Math.min( Math.max( ((-1 * sum) / zeroSumCount) , -10) , 0);
                 console.log("========");
+                console.log(sum);
                 console.log(inc);
                 for(var i=0;i<contestant.length;i++){
                     contestant[i].delta += inc;

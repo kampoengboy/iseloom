@@ -172,7 +172,7 @@ module.exports = {
                     for(var i=0;i<contestants.length;i++){
                         var Ra = contestants[i].rating;
                         var Rb = extracontestant.rating;
-                        var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                        var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
                         result += e;
                     }
                     return result;
@@ -194,12 +194,14 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        rank++;
+                                        
                                         data.rank = rank;
+                                        rank++;
                                     }
                                 } else {
-                                    rank++;
+                                    
                                     data.rank = rank;
+                                    rank++;
                                 }
                             } else {
                                 if(users[i].solve==users[i+1].solve){
@@ -207,12 +209,14 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        rank++;
+                                        
                                         data.rank = rank;
+                                        rank++;
                                     }
                                 } else {
-                                    rank++;
+                                    
                                     data.rank = rank;
+                                    rank++;
                                 }
                             }
                         } else {
@@ -234,7 +238,7 @@ module.exports = {
                         else {
                             var Ra = contestant[i].rating;
                             var Rb = contestant[j].rating;
-                            var e = 1.0 / Math.pow(10,( 1 + (Rb-Ra) / 400.0 ));
+                            var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
                             contestant[i].seed += e;
                         }
                     }
