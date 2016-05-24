@@ -139,6 +139,7 @@ module.exports = {
                     var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
                     contestant[i].needRating = getRatingtoRank(contestant,midRank);
                     contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
+                    contestant[i].delta = parseFloat(contestant[i].delta.toFixed(4));
                 }
                 console.log('========');
                 console.log(contestant);
@@ -149,7 +150,7 @@ module.exports = {
                 for(var i=0;i<contestant.length;i++){
                     sum+=contestant[i].delta;
                 }
-                var inc = (-1*sum) / contestant.length - 1;
+                var inc = (-1*sum) / (contestant.length - 1);
                 console.log("=========");
                 console.log(sum);
                 console.log(inc);

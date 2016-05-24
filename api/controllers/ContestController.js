@@ -255,7 +255,7 @@ module.exports = {
                 for(var i=0;i<contestant.length;i++){
                     sum+=contestant[i].delta;
                 }
-                var inc = (-1*sum) / contestant.length - 1;
+                var inc = (-1*sum) / (contestant.length - 1);
                 for(var i=0;i<contestant.length;i++){
                     contestant[i].delta += inc;
                 }
