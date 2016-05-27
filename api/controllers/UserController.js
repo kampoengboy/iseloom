@@ -259,7 +259,7 @@ module.exports = {
          if(req.param('type')=='1'){
             var tmp_file = req.param('file_url_1');
             var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
-            var file = tmp_file.replace('data:;base64,',"");
+            file = file.replace('data:;base64,',"");
             buf = new Buffer(file,'base64');
             var namefile = 'file-'+req.session.User.id+'.txt';
             fs.writeFile(namefile,buf,function(err,data){
