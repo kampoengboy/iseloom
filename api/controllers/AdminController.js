@@ -12,6 +12,7 @@ module.exports = {
             email : req.param('email'),
             name : req.param('name'),
             verification : true,
+            activation : true,
             admin : true,
             rating : 1500,
             highest_rating : 0,

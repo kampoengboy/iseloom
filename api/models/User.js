@@ -18,6 +18,10 @@ module.exports = {
           type: 'boolean',
           defaultsTo : false
       },
+      activation : {
+          type: 'boolean',
+          defaultsTo : false
+      },
       admin : {
           type: 'boolean',
           defaultsTo : false

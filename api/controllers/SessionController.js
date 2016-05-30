@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var bcrypt = require('bcrypt');
+var nodemailer = require('nodemailer');
 module.exports = {
 	register : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');
@@ -91,10 +92,24 @@ module.exports = {
                            }
                            User.update(user1.id, usr, function userUpdated(err) {
                                 if (err) return next(err);
-                                var requireLoginError = ['You have success to register. Please wait for the administrator to check and verify your account.'];
+                                var requireLoginError = ['You have success to register. Please check your email for verification.'];
                                 req.session.flash = {
                                    success: requireLoginError
                                 }
+                                var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
+                                var mailOptions = {
+                                    from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
+                                    to: user1.email, // list of receivers 
+                                    subject: 'Activate Your Iseloom Account', // Subject line 
+                                    text: 'Hi '+user1.name+'Thanks for signing up for Iseloom.Please activate your account by clicking the link below.</br>http://localhost:1337/activate/'+encryptedId,
+                                    html: '<b>Hi '+user1.name+'</b>'+'</br></br>Thanks for signing up for Iseloom.</br>Please activate your account by clicking the link below.</br>http://localhost:1337/activate/'+encryptedId // html body 
+                                };
+                                transporter.sendMail(mailOptions, function(error, info){
+                                    if(error){
+                                        return console.log(error);
+                                    }
+                                    console.log('Message sent: ' + info.response);
+                                });
                                 res.redirect('/login');
                                 return;
                             });
@@ -144,8 +159,16 @@ module.exports = {
 					res.redirect('/login');
 					return;
 				}
+                if(!user.activation) {
+                    var usernamePasswordMismatchError = ['Your account has not yet activated. Please check your email to activate your account.'];
+                    req.session.flash = {
+                        err: usernamePasswordMismatchError,
+                    }
+                    res.redirect('/login');
+                    return;
+                }
                 if(!user.verification) {
-                    var usernamePasswordMismatchError = ['Your account has not yet activated by administrator. Please contact the administrator to activate your account'];
+                    var usernamePasswordMismatchError = ['Your account has not yet verified by administrator. Please contact the administrator.'];
 					req.session.flash = {
 						err: usernamePasswordMismatchError,
 					}
@@ -174,6 +197,32 @@ module.exports = {
 				res.redirect('/');
             }
         });
+    },
+    'activation' : function(req,res,next) {
+        User.findOne({ 'encryptedId' : req.param('id') }, function foundUser(err, user) {
+            if(err) return next(err);
+            if(!user) {
+                var noAccountError = [
+                 'Account not found!'
+                ]
+                req.session.flash = {
+                    err: noAccountError,
+                }
+                res.redirect('/login');
+                return;
+            } else {
+                User.update({'encryptedId' : req.param('id')}, {'activation':true}, function(err,user){
+                    var activateSuccess = [
+                     'Your account has been activated!'
+                    ]
+                    req.session.flash = {
+                        success: activateSuccess,
+                    }
+                    res.redirect('/login');
+                    return;
+                });
+            }
+        })
     }
 };
 
