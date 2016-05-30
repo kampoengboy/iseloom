@@ -63,13 +63,12 @@ module.exports = {
       User.findOne({ or : [ {username : req.param('username')}, { email: req.param('email') } ] },function foundUser(err,user){
            if(err) return next(err);
            if(user){
-               if(req.param('password')!=req.param('confirmationpassword')){
-                    var requireLoginError = ['Your requested email or username has been taken by another users. Please give another one.'];
-                    req.session.flash = {
-                            err: requireLoginError
-                    }
-                    return res.redirect('/register');
+                var requireLoginError = ['Your requested email or username has been taken by another users. Please give another one.'];
+                req.session.flash = {
+                        err: requireLoginError
                 }
+                res.redirect('/register');
+                return;
            }
            if(!user){
                University.findOne({'val_name':req.param('university')}, function(err,university){
@@ -86,33 +85,37 @@ module.exports = {
                     usrObj.password = encryptedPassword;
                     User.create(usrObj, function (err, user1) {
                         if(err) return next(err);
-                        bcrypt.hash(user1.id, 10, function IDEncrypted(err, encryptedId) {
-                           var usr = {
-                                encryptedId : encryptedId
-                           }
-                           User.update(user1.id, usr, function userUpdated(err) {
-                                if (err) return next(err);
-                                var requireLoginError = ['You have success to register. Please check your email for verification.'];
-                                req.session.flash = {
-                                   success: requireLoginError
-                                }
-                                var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
-                                var mailOptions = {
-                                    from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
-                                    to: user1.email, // list of receivers 
-                                    subject: 'Activate Your Iseloom Account', // Subject line 
-                                    text: 'Hi '+user1.name+'Thanks for signing up for Iseloom.Please activate your account by clicking the link below.</br>http://localhost:1337/activate/'+encryptedId,
-                                    html: '<b>Hi '+user1.name+'</b>'+'</br></br>Thanks for signing up for Iseloom.</br>Please activate your account by clicking the link below.</br>http://localhost:1337/activate/'+encryptedId // html body 
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                    if(error){
-                                        return console.log(error);
+                        bcrypt.hash(user1.id, 10, function IDEncrypted(err, encryptedId) {                            while(encryptedId.indexOf('/') > -1) {
+                                var encryptedId = encryptedId.replace('/','');
+                            }
+                            if(encryptedId.indexOf('/') == -1) {
+                                var usr = {
+                                    encryptedId : encryptedId
+                               }
+                               User.update(user1.id, usr, function userUpdated(err) {
+                                    if (err) return next(err);
+                                    var requireLoginError = ['You have success to register. Please check your email for verification.'];
+                                    req.session.flash = {
+                                       success: requireLoginError
                                     }
-                                    console.log('Message sent: ' + info.response);
+                                    var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
+                                    var mailOptions = {
+                                        from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
+                                        to: user1.email, // list of receivers 
+                                        subject: 'Activate Your Iseloom Account', // Subject line 
+                                        text: 'Hi '+user1.name+'Thanks for signing up for Iseloom.Please activate your account by clicking the link below.</br>'+req.baseUrl+'/activate/'+encryptedId,
+                                        html: '<b>Hi '+user1.name+'</b>'+'</br></br>Thanks for signing up for Iseloom.</br>Please activate your account by clicking the link below.</br>'+req.baseUrl+'/activate/'+encryptedId // html body 
+                                    };
+                                    transporter.sendMail(mailOptions, function(error, info){
+                                        if(error){
+                                            return console.log(error);
+                                        }
+                                        console.log('Message sent: ' + info.response);
+                                    });
+                                    res.redirect('/login');
+                                    return;
                                 });
-                                res.redirect('/login');
-                                return;
-                            });
+                            }
                         });
                     })
                 });
