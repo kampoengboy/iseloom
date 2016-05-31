@@ -7,6 +7,7 @@
 var Promise = require('bluebird');
 var Http = require('machinepack-http');
 var fs = require('fs');
+var nodemailer = require('nodemailer');
 module.exports = {
     testingsaja : function(req,res,next){
                 function getRatingtoRank(contestants,rank){
@@ -699,5 +700,49 @@ module.exports = {
     },
     'subscribe_submissions' : function(req,res,next){
         Submission.watch(req);     
+    },
+    'resend_email' : function(req,res,next) {
+        if(req.session.authenticated) return res.redirect('/');
+        User.findOne({'email':req.param('email')}).exec(function(err, user) {
+            if(!user) {
+                var noUserError = ['No user found!'];
+                  req.session.flash = {
+                        err: noUserError
+                  }
+                return res.redirect('/login');
+            }
+            else if(user && user.activation && !user.verification) {
+                var alreadyConfirmError = ['You have already confirm via email. Wait for admin to validate your account.'];
+                  req.session.flash = {
+                        err: alreadyConfirmError
+                  }
+                return res.redirect('/login');
+            }
+            else if(user && user.activation && user.verification) {
+                var canLoginError = ['You have already confirm and validate. You can login now!'];
+                  req.session.flash = {
+                        err: canLoginError
+                  }
+                return res.redirect('/login');
+            }
+            var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
+            var mailOptions = {
+                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
+                to: user.email, // list of receivers 
+                subject: 'Resend Activation Iseloom Account', // Subject line 
+                text: "Hola "+user.name+"\r\n\r\nPlease activate your account by clicking the link below.\r\n\r\n"+req.baseUrl+'/activate/'+user.encryptedId,
+                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+user.encryptedId+"'><button>Click Here!</button></a>" // html body 
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if(error){
+                    return console.log(error);
+                }
+            });
+            var emailSentSuccess = ['Email confirmation has been sent.'];
+              req.session.flash = {
+                    success: emailSentSuccess
+              }
+            return res.redirect('/login');
+        });
     }
 };

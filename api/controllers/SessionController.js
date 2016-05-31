@@ -17,7 +17,14 @@ module.exports = {
     },
     login : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');
-        return res.view();
+        var not_confirm = false;
+        if(req.session.notConfirm) {
+            req.session.destroy();
+            not_confirm = true;
+        }
+        return res.view({
+            not_confirm:not_confirm
+        });
     },
     'regis_user' : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');
@@ -85,7 +92,8 @@ module.exports = {
                     usrObj.password = encryptedPassword;
                     User.create(usrObj, function (err, user1) {
                         if(err) return next(err);
-                        bcrypt.hash(user1.id, 10, function IDEncrypted(err, encryptedId) {                            while(encryptedId.indexOf('/') > -1) {
+                        bcrypt.hash(user1.id, 10, function IDEncrypted(err, encryptedId) {
+                            while(encryptedId.indexOf('/') > -1) {
                                 var encryptedId = encryptedId.replace('/','');
                             }
                             if(encryptedId.indexOf('/') == -1) {
@@ -103,14 +111,13 @@ module.exports = {
                                         from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
                                         to: user1.email, // list of receivers 
                                         subject: 'Activate Your Iseloom Account', // Subject line 
-                                        text: "Hi "+user1.name+"\r\n\r\nThanks for signing up for Iseloom.\r\nPlease activate your account by clicking the link below.\r\n\r\n"+req.baseUrl+'/activate/'+encryptedId,
-                                        html: "<h1>Hi "+user1.name+"</h1>"+"<p>Thanks for signing up for Iseloom.</p><p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+encryptedId+"'><button>Click Here!</button></a>" // html body 
+                                        text: "Hola "+user1.name+"\r\n\r\nThanks for signing up for Iseloom.\r\nPlease activate your account by clicking the link below.\r\n\r\n"+req.baseUrl+'/activate/'+encryptedId,
+                                        html: "<h1>Hola "+user1.name+"</h1>"+"<p>Thanks for signing up for Iseloom.</p><p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+encryptedId+"'><button>Click Here!</button></a>" // html body 
                                     };
                                     transporter.sendMail(mailOptions, function(error, info){
                                         if(error){
                                             return console.log(error);
                                         }
-                                        console.log('Message sent: ' + info.response);
                                     });
                                     res.redirect('/login');
                                     return;
@@ -163,10 +170,11 @@ module.exports = {
 					return;
 				}
                 if(!user.activation && !user.admin) {
-                    var usernamePasswordMismatchError = ['Your account has not yet activated. Please check your email to activate your account.'];
+                    var usernamePasswordMismatchError = ["Your account has not yet activated. Please check your email to activate your account."];
                     req.session.flash = {
                         err: usernamePasswordMismatchError,
                     }
+                    req.session.notConfirm = true;
                     res.redirect('/login');
                     return;
                 }
