@@ -103,8 +103,8 @@ module.exports = {
                                         from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
                                         to: user1.email, // list of receivers 
                                         subject: 'Activate Your Iseloom Account', // Subject line 
-                                        text: 'Hi '+user1.name+'Thanks for signing up for Iseloom.Please activate your account by clicking the link below.</br>'+req.baseUrl+'/activate/'+encryptedId,
-                                        html: '<b>Hi '+user1.name+'</b>'+'</br></br>Thanks for signing up for Iseloom.</br>Please activate your account by clicking the link below.</br>'+req.baseUrl+'/activate/'+encryptedId // html body 
+                                        text: "Hi "+user1.name+"\r\n\r\nThanks for signing up for Iseloom.\r\nPlease activate your account by clicking the link below.\r\n\r\n"+req.baseUrl+'/activate/'+encryptedId,
+                                        html: "<h1>Hi "+user1.name+"</h1>"+"<p>Thanks for signing up for Iseloom.</p><p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+encryptedId+"'><button>Click Here!</button></a>" // html body 
                                     };
                                     transporter.sendMail(mailOptions, function(error, info){
                                         if(error){
@@ -162,7 +162,7 @@ module.exports = {
 					res.redirect('/login');
 					return;
 				}
-                if(!user.activation) {
+                if(!user.activation && !user.admin) {
                     var usernamePasswordMismatchError = ['Your account has not yet activated. Please check your email to activate your account.'];
                     req.session.flash = {
                         err: usernamePasswordMismatchError,

@@ -23,7 +23,8 @@ module.exports.policies = {
       'login' : ['flash']
   },
   'admin' : {
-      'dashboard' : ['flash','sessionAuth']
+      'dashboard' : ['flash','sessionAuth'],
+      'create_new_admin' : ['flash']
   },
   'problem' : {
       'create' : ['flash','sessionAuth'],

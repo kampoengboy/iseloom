@@ -22,7 +22,13 @@ module.exports = {
         }
         User.findOne({ or : [ {username : req.param('username')}, { email: req.param('email') } ] },function foundUser(err,user){
             if(err) return next(err);
-            if(user) return res.send('There has been user that has the same username or email');
+            if(user) {
+                var addAdminError = ['There has been user that has the same username or email.'];
+                req.session.flash = {
+                    err: addAdminError
+                }
+                return res.redirect('/admin/create_new_admin');
+            }
             bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {
                 usrObj.password = encryptedPassword;
                 User.create(usrObj, function(err,users){

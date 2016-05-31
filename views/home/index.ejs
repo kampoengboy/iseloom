@@ -1,6 +1,6 @@
 <div class="container" style="background-color:white;">
-    <h2>Welcome to Iseloom Problem Archive
-    <h5>In this site, you can find hundreds of programming problems. If you're new here, just <a href="/register">register</a> and start solving!</h5>
+    <h2>Welcome <% if(session.authenticated) { %><%=session.User.name%><% } else { %>to Iseloom Problem Archive<% } %>
+    <h5>In this site, you can find hundreds of programming problems.<% if(!session.authenticated) { %> If you're new here, just <a href="/register">register</a> and start solving!<% } %></h5>
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">

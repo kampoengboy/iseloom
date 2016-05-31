@@ -1,3 +1,28 @@
+<div id="body" class="container">
+<% if(flash) { %>
+<% if(flash.err) { %>
+      <div>
+      <br><br>
+      <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <% Object.keys(flash.err).forEach(function(error) { %>
+              <%= flash.err[error] %>
+        <% }) %>
+      </div>
+      </div>
+<% } else if (flash.success){ %>
+  <div>
+  <br><br>
+  <div class="alert alert-success" role="alert">
+    <span class="sr-only">Success:</span>
+    <% Object.keys(flash.success).forEach(function(success) { %>
+          <%= flash.success[success] %>
+    <% }) %>
+  </div>
+  </div>
+<% } %>
+<% } %>
 <div id="body" class="container" style="">
   <div class="panel panel-default" style="">
     <div class="panel-heading">
