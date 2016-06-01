@@ -46,7 +46,8 @@ module.exports.routes = {
   '/ranklists/university' : 'UserController.rankUniversity',
   '/ranklists/university/:val' : 'UserController.universityProfile',
   '/submissions' : 'UserController.submissions',
-  '/activate/:id' : 'SessionController.activation'
+  '/activate/:id' : 'SessionController.activation',
+  '/reset_password/:id' : 'UserController.reset_password'
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

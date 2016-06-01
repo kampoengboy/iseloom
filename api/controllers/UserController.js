@@ -8,6 +8,7 @@ var Promise = require('bluebird');
 var Http = require('machinepack-http');
 var fs = require('fs');
 var nodemailer = require('nodemailer');
+var bcrypt = require('bcrypt');
 module.exports = {
     testingsaja : function(req,res,next){
                 function getRatingtoRank(contestants,rank){
@@ -743,6 +744,79 @@ module.exports = {
                     success: emailSentSuccess
               }
             return res.redirect('/login');
+        });
+    },
+    'forgotpass' : function(req,res,next) {
+        if(req.session.authenticated) return res.redirect('/');
+        User.findOne({'email':req.param('email')}).exec(function(err, user) {
+            if(!user) {
+                var noUserError = ['No user found!'];
+                  req.session.flash = {
+                        err: noUserError
+                  }
+                return res.redirect('/login');
+            }
+            var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
+            var mailOptions = {
+                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
+                to: user.email, // list of receivers 
+                subject: 'Reset Password Iseloom Account', // Subject line 
+                text: "Hola "+user.name+"\r\n\r\nPlease visit the link below to reset password Iseloom account.\r\n\r\n"+req.baseUrl+'/reset_password/'+user.encryptedId+'\r\n\r\nIgnore this message if you never forget password.',
+                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please click the button below to reset password Iseloom account.</p><a href='"+req.baseUrl+"/reset_password/"+user.encryptedId+"'><button>Click Here!</button></a><p>Ignore this message if you never forget password.</p>" // html body 
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if(error){
+                    return console.log(error);
+                }
+            });
+            var emailSentSuccess = ['Email reset password has been sent.'];
+              req.session.flash = {
+                    success: emailSentSuccess
+              }
+            return res.redirect('/login');
+        });
+    },
+    reset_password : function(req,res,next) {
+        if(req.session.authenticated) return res.redirect('/');
+        if(!req.param('id')) return res.redirect('/');
+        User.findOne({'encryptedId' : req.param('id')}).exec(function(err, user) {
+            if(!user) {
+                var failError = ['No account found. Contact administrator.'];
+                  req.session.flash = {
+                        err: failError
+                  }
+                return res.redirect('/login');
+            }
+            res.view({
+                user : user
+            });
+        });
+    },
+    'resetpassword' : function(req,res,next) {
+        if(req.session.authenticated) return res.redirect('/');
+        if(!req.param('id')) return res.redirect('/');
+        if(req.param('password')=="" || req.param('confirmationpassword')=="") {
+            var requireLoginError = ['Please fill the form completely.'];
+            req.session.flash = {
+                    err: requireLoginError
+            }
+            return res.redirect('/user/reset_password/'+req.param('id'));
+        }
+        if(req.param('password') != req.param('confirmationpassword')) {
+            var failError = ['Password and Confirmation Password should be the same.'];
+              req.session.flash = {
+                    err: failError
+              }
+            return res.redirect('/user/reset_password/'+req.param('id'));
+        }
+        bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {
+            User.update({'encryptedId':req.param('id')}, {'password':encryptedPassword}).exec(function(err, user) {
+                var resetSuccess = ['Password has been successfully reset. Try login with new password.'];
+                  req.session.flash = {
+                        success: resetSuccess
+                  }
+                return res.redirect('/login');
+            })
         });
     }
 };

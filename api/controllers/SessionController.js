@@ -28,7 +28,7 @@ module.exports = {
     },
     'regis_user' : function(req,res,next){
         if(req.session.authenticated) return res.redirect('/');
-        if(typeof req.param('email')=="undefined" || typeof req.param('name')=="undefined" || typeof req.param('password')=="undefined" || typeof req.param('confirmationpassword')=="undefined"){
+        if(req.param('email')=="" || req.param('name')=="" || req.param('password')=="" || req.param('confirmationpassword')==""){
             var requireLoginError = ['Please fill the form completely.'];
             req.session.flash = {
                     err: requireLoginError

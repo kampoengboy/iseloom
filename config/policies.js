@@ -34,6 +34,9 @@ module.exports.policies = {
       'create' : ['flash','sessionAuth'],
       'remove' : ['flash','sessionAuth'],
       'scoreboard' : ['flash']
+  },
+  'user' : {
+      'reset_password' : ['flash']
   }
   /***************************************************************************
   *                                                                          *
