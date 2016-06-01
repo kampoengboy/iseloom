@@ -795,7 +795,7 @@ module.exports = {
     'resetpassword' : function(req,res,next) {
         if(req.session.authenticated) return res.redirect('/');
         if(!req.param('id')) return res.redirect('/');
-        if(req.param('password')=="" || req.param('confirmationpassword')=="") {
+        if(req.param('password').trim()=="" || req.param('confirmationpassword').trim()=="") {
             var requireLoginError = ['Please fill the form completely.'];
             req.session.flash = {
                     err: requireLoginError
