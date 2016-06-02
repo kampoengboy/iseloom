@@ -27,6 +27,10 @@ module.exports = {
           type:'boolean',
           defaultsTo : false  
       },
+      is_admin : {
+          type:'boolean',
+          defaultsTo : false
+      },
       minute : {
           type : 'integer',
           defaultsTo : 0

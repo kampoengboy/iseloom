@@ -73,6 +73,7 @@
                         <% if(session.User.admin) { %>
                             <td>
                               <a class="btn btn-success" href="/problem/unpublish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Unpublish</a>
+                         <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-primary"> Preview</a>
                               <a class="btn btn-warning" href="/problem/edit/<%=problem.id%>">Edit</a>
                               <a class="btn btn-danger" href="/problem/remove_problem/<%=problem.id%>">Remove</a>
                             </td>

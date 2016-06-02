@@ -357,6 +357,7 @@ module.exports = {
                         id_problem : req.param('idProblem'),
                         output : [],
                         is_contest : true,
+                        is_admin : (req.session.User.admin ? true : false),
                         result : null,
                         minute : null,
                    }
@@ -496,6 +497,7 @@ module.exports = {
                         id_user : req.session.User.id,
                         code : text,
                         id_problem : req.param('idProblem'),
+                        is_admin : (req.session.User.admin ? true : false),
                         output : [],
                         result : null,
                         minute : null,
@@ -549,8 +551,8 @@ module.exports = {
                             var tmp_time = ans.time.split('\n');
                             var time = parseFloat(tmp_time[0]);
                             }
-                            console.log(ans);
-                            console.log(time);
+                            // console.log(ans);
+                            // console.log(time);
                             //var out = sub.output;
                             var usr = {
                                 idx : i,

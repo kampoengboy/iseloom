@@ -58,7 +58,7 @@ module.exports = {
         }); 
     },
     submissiondetail : function(req,res,next){
-        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.authenticated || !req.session.User.admin) return res.redirect('/');
         Submission.findOne({'id':req.param('id')})
         .populate('id_user')
         .populate('id_problem')
@@ -218,7 +218,7 @@ module.exports = {
         }); 
     },
     submissions : function(req,res,next){
-        if(!req.session.authenticated) return res.redirect('/');
+        if(!req.session.authenticated || !req.session.User.admin) return res.redirect('/');
         Submission.find({'is_contest':false,'id_problem':req.param('id'), 'id_user':req.session.User.id})
         .populate('id_problem')
         .populate('id_user')
@@ -326,6 +326,7 @@ module.exports = {
         });
     },
     preview : function(req,res,next){
+        if(!req.session.authenticated) return res.redirect('/');
         if(typeof req.param('prob')=="undefined" || req.param('prob').length==0)
             return res.redirect('/');
         Problem.findOne({'valName':req.param('prob')}, function(err,problem){
@@ -365,14 +366,14 @@ module.exports = {
             Problem.find()
             .where({publish:false})
             .exec(function(err,problemNotPublish){
-                   Submission.find({'result':1})
+                   Submission.find({'result':1, 'is_admin':false, 'is_contest':false})
                    .groupBy('id_problem')
                    .sum('result')
                    .exec(function(err, SubmissionsSolved){
                        SubmissionsSolved.forEach(function(data) {
-                            Submission.count({'id_problem':data.id_problem.toString()}).exec(function (err, problemSubsTotal) {
+                            Submission.count({'id_problem':data.id_problem.toString(), 'is_admin':false, 'is_contest':false}).exec(function (err, problemSubsTotal) {
                                 if(req.session.authenticated) {
-                                    Submission.findOne({'id_problem':data.id_problem.toString(),'result':1,'id_user':req.session.User.id}, function(err, hasacc){
+                                    Submission.findOne({'id_problem':data.id_problem.toString(),'result':1,'id_user':req.session.User.id, 'is_admin':false, 'is_contest':false}, function(err, hasacc){
                                         if(hasacc)
                                             problemSubs[data.id_problem] = {'acc':data.result,'total':problemSubsTotal,'state':1};
                                         else
