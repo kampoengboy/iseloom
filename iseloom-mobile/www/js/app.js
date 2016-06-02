@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ionic-material'])
+angular.module('starter', ['ionic','ionic-material','chart.js'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -61,7 +61,7 @@ angular.module('starter', ['ionic','ionic-material'])
     url: '/dash',
     views: {
       'app-dash': {
-        templateUrl: 'templates/tab-dash.html',
+        templateUrl: 'templates/contests.html',
         controller: 'DashCtrl'
       }
     }
@@ -84,30 +84,38 @@ angular.module('starter', ['ionic','ionic-material'])
               }
           }
       })
-  .state('app.chats', {
-      url: '/chats',
+  .state('app.ranklists', {
+      url: '/ranklists',
       views: {
-        'app-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
+        'app-ranklists': {
+          templateUrl: 'templates/ranklists.html',
+          controller: 'RanklistsCtrl'
         }
       }
     })
-    .state('app.chat-detail', {
-      url: '/chats/:chatId',
+    .state('app.upcoming_contest', {
+      url: '/upcoming_contest',
       views: {
-        'app-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
+        'app-contest': {
+          templateUrl: 'templates/upcoming_contest.html',
+          controller: 'UpComingContestCtrl'
         }
       }
     })
-
+    .state('app.upcoming_contest_detail', {
+      url: '/upcoming_contest_detail',
+      views: {
+        'app-contest': {
+          templateUrl: 'templates/upcoming_contest_detail.html',
+          controller: 'UpComingContestDetailCtrl'
+        }
+      }
+    })
   .state('app.account', {
     url: '/account',
     views: {
       'app-account': {
-        templateUrl: 'templates/tab-account.html',
+        templateUrl: 'templates/account.html',
         controller: 'AccountCtrl'
       }
     }

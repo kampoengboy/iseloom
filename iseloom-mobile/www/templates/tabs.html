@@ -6,19 +6,23 @@ navigation history that also transitions its views in and out.
 <ion-tabs class="tabs-icon-top tabs-color-active-positive">
 
   <!-- Dashboard Tab -->
-  <ion-tab title="Contests" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/app/dash">
+  <ion-tab title="Live Contests" icon="ion-trophy" href="#/app/dash">
     <ion-nav-view name="app-dash"></ion-nav-view>
   </ion-tab>
 
   <!-- Chats Tab -->
-  <ion-tab title="Chats" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/app/chats">
-    <ion-nav-view name="app-chats"></ion-nav-view>
+  <ion-tab title="Ranklists" icon="ion-connection-bars" href="#/app/ranklists">
+    <ion-nav-view name="app-ranklists"></ion-nav-view>
   </ion-tab>
 
-  <!-- Account Tab -->
-  <ion-tab title="Account" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/app/account">
+  <!-- Contest Tab -->
+  <ion-tab title="Upcoming Contest" icon="ion-clipboard" href="#/app/upcoming_contest">
+    <ion-nav-view name="app-contest"></ion-nav-view>
+  </ion-tab>
+
+<!-- Account Tab -->
+  <ion-tab title="Account" icon="ion-person" href="#/app/account">
     <ion-nav-view name="app-account"></ion-nav-view>
   </ion-tab>
-
 
 </ion-tabs>

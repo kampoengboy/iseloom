@@ -16,6 +16,15 @@ angular.module('starter')
 })
 .controller('RegisterCtrl', function($scope) {})
 .controller('WelcomeCtrl', function($scope) {})
+.controller('UpComingContestCtrl', function($scope) {
+  $scope.playlists = [
+    { title: 'MPC Challenge Part 2', id: 1 },
+    { title: 'Ideafuse Part 2', id: 2 },
+  ];
+})
+.controller('UpComingContestDetailCtrl', function($scope) {
+
+})
 .controller('ScoreboardCtrl', function($scope) {
   $scope.ctrl = [];
   $scope.ctrl = [
@@ -63,7 +72,7 @@ angular.module('starter')
     $state.go('welcome');
   };
 })
-.controller('ChatsCtrl', function($scope) {
+.controller('RanklistsCtrl', function($scope) {
 
 })
 
@@ -73,7 +82,10 @@ angular.module('starter')
 
 
 .controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
+  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+    $scope.series = ['Series A', 'Series B'];
+    $scope.data = [
+        [65, 59, 80, 81, 56, 55, 40],
+        [28, 48, 40, 19, 86, 27, 90]
+    ];
 });

@@ -1,0 +1,10 @@
+<ion-view view-title="Upcoming Contests">
+  <ion-content class="padding">
+    <h3 style="text-align:center; margin-top:5px">List Contests</h3>
+    <ion-list>
+      <ion-item ng-repeat="playlist in playlists" href="#/app/upcoming_contest_detail">
+        {{playlist.title}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
