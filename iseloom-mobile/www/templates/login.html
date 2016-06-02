@@ -1,0 +1,34 @@
+<ion-view view-title="Login" cache-view="false" class="customPage">
+  <ion-nav-bar class="bar-positive">
+    <ion-nav-back-button class="no-text">
+    </ion-nav-back-button>
+  </ion-nav-bar>
+    <ion-content>
+      <div>
+      <div class="list">
+        <br><br>
+        <div class="padding">
+        <form ng-submit="login(data)" novalidate="">
+          <label class="item item-input red-border" style="background-color:white;">
+            <span class="input-label">Username</span>
+            <input type="text" name="username" id="username" ng-model="data.username" ng-click="keyPressed()"tabindex="1">
+          </label>
+          <br>
+          <label class="item item-input red-border" style="background-color:white;">
+            <span class="input-label">Password</span>
+            <input type="password" id="password" name="password" ng-model="data.password" tabindex="2">
+          </label>
+          <br><br>
+          <div class="text-center" style="margin-top:-20px;">
+            <a ui-sref="lupapassword" style="font-size:15px; color:white;">Lupa Password ? </a>
+          </div>
+          <div class="padding">
+                <button type="submit" class="button button-full button-assertive ink">Login</button>
+          </div>
+        </form>
+        </div>
+      </div>
+
+      </div>
+    </ion-content>
+</ion-view>
