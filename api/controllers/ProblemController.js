@@ -164,7 +164,6 @@ module.exports = {
                     timelimit : req.param('timelimit'),
                     memorylimit : req.param('memorylimit'),
                     category : category,
-                    difficulty : parseInt(req.param('difficulty')),
                     id_maker : req.session.User.id,    
                 }
                 Problem.update(problem.id,obj,function(err,prob){
@@ -270,7 +269,6 @@ module.exports = {
             description : req.param('description'),
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
-            difficulty : parseInt(req.param('difficulty')),
             category : category,
             id_maker : req.session.User.id,
             input : [],

@@ -21,9 +21,9 @@
                 <td>TOTAL</td>
                 <td>ACC.</td>
                 <td>RATIO</td>
-                <td>DIFFICULTY</td>
-                <% if(session.authenticated) { %>
-                    <td>STATUS</td>
+                <td>CATEGORY</td>
+                <% if(session.authenticated && !session.User.admin) { %>
+                    <td>SOLVED</td>
                   <% } %>
                 <% if(session.authenticated) { %>
                         <% if(session.User.admin) { %>
@@ -59,19 +59,13 @@
                         0%
                       <% } %>
                     </td>
-                     <% if(problem.difficulty==0) { %>
-                        <td>EASY</td>
-                     <% } else if(problem.difficulty==1) { %>
-                        <td>MEDIUM</td>
-                     <% } else { %>
-                        <td>HARD</td>
-                     <% } %>
-                     <% if(session.authenticated) { %>
+                    <td><%=problem.category%></td>
+                     <% if(session.authenticated && !session.User.admin) { %>
                         <% if(problemSubs.hasOwnProperty(problem.id)) { %>
                             <% if(problemSubs[problem.id].state==1) { %>
-                                <td>SOLVED</td>
+                                <td class="bg-success"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true" title="solved"></span></td>
                             <% } else { %>
-                                <td>NOT YET SOLVED</td>
+                                <td class="bg-danger"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true" title="not solved"></span></td>
                             <% } %>
                         <% } %>
                      <% } %>
@@ -82,7 +76,6 @@
                               <a class="btn btn-warning" href="/problem/edit/<%=problem.id%>">Edit</a>
                               <a class="btn btn-danger" href="/problem/remove_problem/<%=problem.id%>">Remove</a>
                             </td>
-                            <td></td>
                         <% } else { %>
                             <% if(session.User.id == problem.id_maker) { %>
                               <td>
@@ -113,10 +106,10 @@
                   <tr>
                       <td><%=problem.name%></td>
                       <td>
-                         <a class="btn btn-primary" href="/problem/publish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</a>
-                         <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-success"> Preview</a>
-                         <a class="btn btn-warning">Edit</a>
-                         <a class="btn btn-danger">Remove</a>
+                         <a class="btn btn-success" href="/problem/publish/<%=problem.id%>"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Publish</a>
+                         <a href="/problem/preview?prob=<%=problem.valName%>"class="btn btn-primary"> Preview</a>
+                         <a class="btn btn-warning" href="/problem/edit/<%=problem.id%>">Edit</a>
+                         <a class="btn btn-danger" href="/problem/remove_problem/<%=problem.id%>">Remove</a>
                       </td>
                   </tr>
                   <% idx++ %>

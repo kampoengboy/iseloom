@@ -22,7 +22,6 @@ module.exports = {
       input : 'array',
       output : 'array',
       category : 'array',
-      difficulty : 'integer',
       publish : {
           type : 'boolean',
           defaultsTo : false

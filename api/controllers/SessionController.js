@@ -222,15 +222,20 @@ module.exports = {
                 res.redirect('/login');
                 return;
             } else {
-                User.update({'encryptedId' : req.param('id')}, {'activation':true}, function(err,user){
-                    var activateSuccess = [
-                     'Your account has been activated!'
-                    ]
-                    req.session.flash = {
-                        success: activateSuccess,
+                bcrypt.hash(user.encryptedId, 10, function IDEncrypted(err, encryptedId) {
+                    while(encryptedId.indexOf('/') > -1) {
+                        var encryptedId = encryptedId.replace('/','');
                     }
-                    res.redirect('/login');
-                    return;
+                    User.update({'encryptedId' : req.param('id')}, {'activation':true, 'encryptedId':encryptedId}, function(err,user){
+                        var activateSuccess = [
+                         'Your account has been activated!'
+                        ]
+                        req.session.flash = {
+                            success: activateSuccess,
+                        }
+                        res.redirect('/login');
+                        return;
+                    });
                 });
             }
         })

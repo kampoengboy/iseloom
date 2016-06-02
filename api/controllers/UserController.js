@@ -549,8 +549,8 @@ module.exports = {
                             var tmp_time = ans.time.split('\n');
                             var time = parseFloat(tmp_time[0]);
                             }
-                            // console.log(ans);
-                            // console.log(time);
+                            console.log(ans);
+                            console.log(time);
                             //var out = sub.output;
                             var usr = {
                                 idx : i,
@@ -810,13 +810,18 @@ module.exports = {
             return res.redirect('/user/reset_password/'+req.param('id'));
         }
         bcrypt.hash(req.param('password'), 10, function PasswordEncrypted(err, encryptedPassword) {
-            User.update({'encryptedId':req.param('id')}, {'password':encryptedPassword}).exec(function(err, user) {
-                var resetSuccess = ['Password has been successfully reset. Try login with new password.'];
-                  req.session.flash = {
-                        success: resetSuccess
-                  }
-                return res.redirect('/login');
-            })
+            bcrypt.hash(req.param('id'), 10, function IDEncrypted(err, encryptedId) {
+                while(encryptedId.indexOf('/') > -1) {
+                    var encryptedId = encryptedId.replace('/','');
+                }
+                User.update({'encryptedId':req.param('id')}, {'password':encryptedPassword, 'encryptedId':encryptedId}).exec(function(err, user) {
+                    var resetSuccess = ['Password has been successfully reset. Try login with new password.'];
+                      req.session.flash = {
+                            success: resetSuccess
+                      }
+                    return res.redirect('/login');
+                })
+            });
         });
     }
 };
