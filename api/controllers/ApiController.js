@@ -51,12 +51,12 @@ module.exports = {
         var tmp = req.param('email');
         var email = tmp.toLowerCase();
         if (!req.param('email') || !req.param('password')) {
-			return res.json({code:2, message:'Please enter the email or password'});
+			return res.json({code:2, message:'Please enter the email or password.'});
 		}
         User.findOne({ or : [ {username : email}, { email: email } ] })
         .populate('university')
         .exec(function(err,user){
-            if (err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+            if (err) return res.json({code:2, message:'Sorry, there is a problem with our server.'});
             // If no user is found...
 			if (!user) {
 				return res.json({code:2, message:'Sorry, there is no user registered with that username or email.'})
@@ -64,8 +64,11 @@ module.exports = {
             bcrypt.compare(req.param('password'), user.password, function(err, valid) {
                 if (err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
                 if (!valid) {
-					return res.json({code:2, message:'Please give a valid email, username or password'});
+					return res.json({code:2, message:'Please give a valid email, username or password.'});
 				}
+                if(user.admin) {
+                    return res.json({code:2, message:'There is temporary no feature for admin.'})
+                }
                 if(!user.activation && !user.admin) {
                     return res.json({code:2, message:'Your account has not yet activated. Please check your email to activate your account.'})
                 }

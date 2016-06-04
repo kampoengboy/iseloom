@@ -1,19 +1,4 @@
 angular.module('starter')
-.controller('LoginCtrl', function($scope,$ionicPopup,$state,$stateParams,AuthService,$ionicHistory) {
-  $scope.login = function(data){
-    AuthService.login(data.username, data.password).then(function(authenticated){
-        $ionicHistory.nextViewOptions({
-            disableBack: true
-        });
-        $state.go('app.dash');
-        }, function(err){
-        var alertPopup = $ionicPopup.alert({
-            title : 'Register Gagal',
-            template : 'Maaf, jaringan bermasalah. Silahkan mendaftarkan diri kembali.'
-        });
-    });
-  }
-})
 .controller('RegisterCtrl', function($scope,$http,$ionicPopup,$ionicLoading,$ionicHistory) {
     $scope.universities = [];
     $scope.data = {};

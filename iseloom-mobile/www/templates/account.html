@@ -33,13 +33,13 @@
         <div class="padding">
         <form ng-submit="login(data)" novalidate="">
           <label class="item item-input red-border" style="background-color:white;">
-            <span class="input-label">Username</span>
-            <input type="text" name="email" id="email" ng-model="data.email" ng-click="keyPressed()"tabindex="1">
+            <i class="icon ion-android-person placeholder-icon"></i>
+            <input type="text" name="email" id="email" ng-model="data.email" ng-click="keyPressed()"tabindex="1" placeholder="Username / Email">
           </label>
           <br>
           <label class="item item-input red-border" style="background-color:white;">
-            <span class="input-label">Password</span>
-            <input type="password" id="password" name="password" ng-model="data.password" tabindex="2">
+            <i class="icon ion-android-lock placeholder-icon"></i>
+            <input type="password" id="password" name="password" ng-model="data.password" tabindex="2" placeholder="Password">
           </label>
           <br><br>
           <div class="text-center" style="margin-top:-20px;">

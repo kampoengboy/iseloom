@@ -8,29 +8,34 @@
         <form ng-submit="register(data)">
         <div class="padding">
           <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-android-person placeholder-icon"></i>
             <input type="text" id="name" name="name" placeholder="Name" ng-model="data.name" tabindex="1">
           </label>
           <br>
           <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-email placeholder-icon"></i>
             <input type="email" id="email" name="email" placeholder="Email" ng-model="data.email" tabindex="2">
           </label>
           <br>
           <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-android-person placeholder-icon"></i>
             <input type="text" name="username" placeholder="Username" id="username" ng-model="data.username" tabindex="3">
           </label>
           <br>
           <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-android-lock placeholder-icon"></i>
             <input type="password" id="password" placeholder="Password" name="password" ng-model="data.password" tabindex="4">
           </label>
           <br>
           <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-android-lock placeholder-icon"></i>
             <input type="password" id="password" placeholder="Confirmation Password" name="password_confirmation" ng-model="data.password_confirmation" tabindex="5">
           </label>
           <br>
           <div class="list">
             <label class="item item-input item-select">
             <div class="input-label">
-              University
+              <i class="icon ion-university placeholder-icon"></i> University
             </div>
             <select name="university" ng-model="data.university">
                 <option ng-repeat="university in universities" value="{{university.val_name}}">{{university.name}}</option>
@@ -40,7 +45,7 @@
           <div class="list">
             <label class="item item-input item-select">
             <div class="input-label">
-              Gender
+              <i class="icon ion-transgender placeholder-icon"></i> Gender
             </div>
             <select name="gender" ng-model="data.gender">
               <option value="m">Male</option>
