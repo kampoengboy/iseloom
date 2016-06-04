@@ -8,7 +8,7 @@ var Promise = require('bluebird');
 module.exports = {
 	index : function(req,res,next){
        Promise.all([
-            User.find().sort('rating DESC').populate('university').limit(10),
+            User.find({'verification':true,admin:false, 'activation':true}).sort('rating DESC').populate('university').limit(10),
             Problem.find({publish : true}).limit(10),
             Submission.find({is_admin : false, is_contest : false}).sort('createdAt DESC'),
             University.find()

@@ -8,14 +8,12 @@
                   <th>Rating</th>
           </thead>
           <tbody>
-              <% var idx = 1 %>
-              <% _.each(users, function(user){%>
+              <% _.each(usersRank, function(user){%>
                 <tr>
-                    <td><%=idx%></td>
-                    <td><a href="/user/profile/<%=user.username%>"><%=user.name%></a></td>
-                    <td><%= user.rating %></td>
+                    <td><%=user.rank%></td>
+                    <td><a href="/user/profile/<%=user.user.username%>"><%=user.user.name%></a></td>
+                    <td><%= user.user.rating %></td>
                 </tr>
-                <% idx++ %>
               <%})%>
           </tbody>
         </table>

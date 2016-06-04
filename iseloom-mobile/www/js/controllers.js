@@ -237,6 +237,7 @@ angular.module('starter')
                       res.push(users[i]);
                   }
               }
+              console.log(res);
               $scope.users = res;
             }
             // For JSON responses, resp.data contains the result

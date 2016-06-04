@@ -20,14 +20,16 @@
                   <th>Rating</th>
           </thead>
           <tbody>
-              <% var idx = 1 %>
+              <% var idx = 1, tempRating = 0, idxSame = 1 %>
               <% _.each(universities, function(university){%>
+                <% if(idx == 1) { tempRating = university.rating } %>
                 <tr>
-                    <td><%=idx%></td>
+                    <td><% if(tempRating == university.rating) { %><%=idxSame%><% } else { %><%=idx%><% } %></td>
                     <td><a href="/ranklists/university/<%=university.value%>"><%=university.name%></a></td>
                     <td><%=university.member%></td>
-                    <td><%= university.rating/university.member %></td>
+                    <td><%= university.rating %></td>
                 </tr>
+                <% if(tempRating != university.rating) { tempRating = university.rating; idxSame = idx } %>
                 <% idx++ %>
               <%})%>
           </tbody>

@@ -610,25 +610,29 @@ module.exports = {
       }
     },
     ranklist: function(req,res,next) {
-        Promise.all([
-            User.find().sort('rating DESC').populate('university')
-        ]).spread(function(Users){
-            users = Users;
-        })
-        .catch(function(err){
-            return next(err);
-        })
-        .done(function(){
-            return res.view({
-                users : users
+        var usersRank = [], indexLoop = 0, tempTotal = 1, tempRank = 1, tempRating = 0;
+        function add(n){
+            indexLoop++;
+            if(indexLoop==n)
+            {
+                return res.view({
+                    usersRank : usersRank
+                });
+            }
+        }
+        User.find({'admin':false, 'verification':true, 'activation':true}).populate('university').sort('rating DESC').exec(function(err,users){
+            if(err) return next(err);
+            users.forEach(function(user) {
+                if(usersRank.length == 0) tempRating = user.rating;
+                if(user.rating != tempRating) {
+                    tempRating = user.rating;
+                    tempRank = tempTotal;
+                }
+                usersRank.push({'user':user, 'rank':tempRank});
+                tempTotal++;
+                add(users.length);
             });
         });
-        // User.find().populate('university').exec(function(err,users){
-        //     if(err) return next(err);
-        //     return res.view({
-        //         users : users 
-        //     });
-        // });
     },
     rankUniversity: function(req,res,next) {
         var universities = [], indexLoop = 0;
@@ -637,7 +641,7 @@ module.exports = {
             if(indexLoop==n)
             {
                 universities.sort(function(a,b) {
-                    return parseFloat(b.rating/b.member) - parseFloat(a.rating/a.member);
+                    return b.rating - a.rating;
                 });
                 return res.view({
                     universities : universities
@@ -645,11 +649,11 @@ module.exports = {
             }
         }
         //University yang tidak ada user harusnya tidak keluar
-        User.find({'verification':true,admin:false}).groupBy('university').sum('rating').exec(function(err,ratingUniv) {
+        User.find({'verification':true,admin:false, 'activation':true}).groupBy('university').sum('rating').exec(function(err,ratingUniv) {
             ratingUniv.forEach(function(data) {
                 University.findOne({'id':data.university.toString()}).exec(function(err, university) {
                     User.count({'university':data.university.toString(),'verification':true,admin:false}).exec(function(err, userCount) {
-                        universities.push({'value':university.val_name,'name':university.name, 'rating':data.rating, 'member':userCount});
+                        universities.push({'value':university.val_name,'name':university.name, 'rating':Math.round(data.rating/userCount), 'member':userCount});
                         add(ratingUniv.length);
                     });
                 });
@@ -673,11 +677,29 @@ module.exports = {
         // });
     },
     universityProfile: function(req,res,next) {
-        University.findOne({'val_name':req.param('val')}).exec(function(err, university) {
-            User.find({'university':university.id,'verification':true,'admin':false}).sort('rating DESC').exec(function(err,users) {
+        var usersRank = [], university = null, indexLoop = 0, tempTotal = 1, tempRank = 1, tempRating = 0;
+        function add(n){
+            indexLoop++;
+            if(indexLoop==n)
+            {
                 return res.view({
                     university: university,
-                    users: users
+                    usersRank : usersRank
+                });
+            }
+        }
+        University.findOne({'val_name':req.param('val')}).exec(function(err, universityFound) {
+            university = universityFound;
+            User.find({'university':university.id,'verification':true,'admin':false, 'activation':true}).sort('rating DESC').exec(function(err,users) {
+                users.forEach(function(user) {
+                    if(usersRank.length == 0) tempRating = user.rating;
+                    if(user.rating != tempRating) {
+                        tempRating = user.rating;
+                        tempRank = tempTotal;
+                    }
+                    usersRank.push({'user':user, 'rank':tempRank});
+                    tempTotal++;
+                    add(users.length);
                 });
             });
         });
