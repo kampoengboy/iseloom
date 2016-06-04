@@ -1,4 +1,4 @@
-<ion-view view-title="Register" name="register-view" cache-view="false" align-title="left" class="customPage">
+<ion-view view-title="Register" name="register-view" cache-view="false" align-title="left">
   <ion-nav-bar class="bar-positive">
     <ion-nav-back-button class="no-text">
     </ion-nav-back-button>
@@ -7,7 +7,6 @@
       <div>
         <form ng-submit="register(data)">
         <div class="padding">
-          <br><br>
           <label class="item item-input red-border" style="background-color:white;">
             <input type="text" id="name" name="name" placeholder="Name" ng-model="data.name" tabindex="1">
           </label>
@@ -30,20 +29,17 @@
           <br>
           <div class="list">
             <label class="item item-input item-select">
-            <div class="input-label" style="color:white">
+            <div class="input-label">
               University
             </div>
             <select name="university" ng-model="data.university">
-              <option value="mikroskil">STMIK Mikroskil</option>
-              <option value="binus">Binus University</option>
-              <option value="ugm">Universitas Gadjah Mada</option>
+                <option ng-repeat="university in universities" value="{{university.val_name}}">{{university.name}}</option>
             </select>
             </label>
           </div>
-          <br>
           <div class="list">
             <label class="item item-input item-select">
-            <div class="input-label" style="color:white">
+            <div class="input-label">
               Gender
             </div>
             <select name="gender" ng-model="data.gender">
@@ -55,7 +51,7 @@
           <br>
         </div>
         <div class="padding" style="margin-top:-20px">
-              <button type="submit" class="button button-full button-assertive ink">Register</button>
+              <button type="submit" class="button button-full button-positive ink">Register</button>
         </div>
         </form>
         <br>

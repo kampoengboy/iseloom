@@ -119,7 +119,16 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
         controller: 'AccountCtrl'
       }
     }
-  });
+  })
+   .state('app.register', {
+      url: '/register',
+      views: {
+        'app-account': {
+          templateUrl: 'templates/register.html',
+          controller: 'RegisterCtrl'
+        }
+      } 
+    });
 
   // if none of the above states are matched, use this as the fallback
     //$urlRouterProvider.otherwise('/app/dash');

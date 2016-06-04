@@ -1,25 +1,57 @@
 <ion-view view-title="Account">
-  <ion-nav-buttons side="right">
-      <button class="button button-clear icon-left ion-gear-a" ui-sref="app.options" name="button"></button>
-  </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+        <button class="button button-clear icon-left ion-gear-a ng-{{flag_nav}}" ui-sref="app.options" name="button"></button>
+    </ion-nav-buttons>
   <ion-content class="padding">
-    <b>Name : </b>
-    <br>
-    <span>Michael</span>
-    <br>
-    <b>University : </b>
-    <br>
-    <span>STMIK Mikroskil</span>
-    <br>
-    <b>Rating : </b>
-    <br>
-    <span>1500</span>
-    <br>
-    <b>Highest Rating : </b>
-    <br>
-    <span>1700</span>
-    <div class="item item-text-wrap">
-         <canvas id="line" class="chart chart-line" data="data" labels="labels" legend="true" series="series" options="{showTooltips: false}"></canvas>
+    <div ng-if="isLoggedIn==true">
+        <b>Name : </b>
+        <br>
+        <span>{{user.name}}</span>
+        <br>
+        <b>University : </b>
+        <br>
+        <span>{{user.university.name}}</span>
+        <br>
+        <b>Rating : </b>
+        <br>
+        <span>{{user.rating}}</span>
+        <br>
+        <b>Highest Rating : </b>
+        <br>
+        <span>{{user.highest_rating}}</span>
+        <br><br>
+        <div style="margin-top:30px" ng-if="loading_chart_data">
+          <ion-spinner style="margin-left:46%"></ion-spinner>
+        </div>
+        <div class="item item-text-wrap" ng-if="flag_chart">
+            <canvas id="line" class="chart chart-line" data="data" labels="labels" legend="true" options="{showTooltips: false}"></canvas>
+        </div>
+    </div>
+    <div ng-if="isLoggedIn==false">
+        <div class="list">
+        <br><br>
+        <div class="padding">
+        <form ng-submit="login(data)" novalidate="">
+          <label class="item item-input red-border" style="background-color:white;">
+            <span class="input-label">Username</span>
+            <input type="text" name="email" id="email" ng-model="data.email" ng-click="keyPressed()"tabindex="1">
+          </label>
+          <br>
+          <label class="item item-input red-border" style="background-color:white;">
+            <span class="input-label">Password</span>
+            <input type="password" id="password" name="password" ng-model="data.password" tabindex="2">
+          </label>
+          <br><br>
+          <div class="text-center" style="margin-top:-20px;">
+            <a ui-sref="lupapassword" style="font-size:15px;">Forget your Password? </a>
+          </div>
+          <div class="padding">
+                <button type="submit" class="button button-full button-positive ink">Login</button>
+          </div>
+        </form>
+        <h3 class="text-center" ui-sref="app.register">Not a Member?</h3>
+        </div>
+      </div>
     </div>
   </ion-content>
 </ion-view>
