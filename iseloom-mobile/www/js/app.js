@@ -67,7 +67,7 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
     }
   })
   .state('app.scoreboard', {
-    url: '/scoreboard/:scoreboardId',
+    url: '/scoreboard/:contestId',
     views: {
       'app-dash': {
         templateUrl: 'templates/scoreboard.html',

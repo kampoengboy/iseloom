@@ -63,45 +63,161 @@ angular.module('starter')
    }
 })
 .controller('WelcomeCtrl', function($scope) {})
-.controller('UpComingContestCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'MPC Challenge Part 2', id: 1 },
-    { title: 'Ideafuse Part 2', id: 2 },
-  ];
+.controller('UpComingContestCtrl', function($scope,$http,$ionicLoading,$ionicPopup) {
+          var url = 'http://localhost:1337/api/get_all_contest';
+          var upcoming_contests = [];
+          $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+                var contests = resp.data.contests;
+                for(var i=0;i<contests.length;i++){
+                    var now = new Date();
+                    if(now < new Date(contests[i].datetimeopen) && now<new Date(contests[i].datetimeclose)){
+                        upcoming_contests.push(contests[i]);
+                    }
+                }
+                $scope.upcoming_contests = upcoming_contests;
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+          })
 })
 .controller('UpComingContestDetailCtrl', function($scope) {
 
 })
-.controller('ScoreboardCtrl', function($scope) {
-  $scope.ctrl = [];
-  $scope.ctrl = [
-    {
-      rank : 1,
-      univ: "Mikroskil",
-      name : "Michael",
-      solve : 2,
-      score :200,
-      hw : "2 (0+20)",
-      mk : "1 (30)"
-    },
-    {
-      rank : 2,
-      univ: "Mikroskil",
-      name : "Jeffry Tandiono",
-      solve : 2,
-      score :200,
-      hw : "2 (0+20)",
-      mk : "1 (30)"
+.controller('ScoreboardCtrl', function($scope,$interval,$state,$stateParams,$http,$ionicLoading,$ionicPopup) {
+    var id = $stateParams.contestId;
+    $scope.contestants = [];
+    $scope.universities = [];
+    $scope.show_approval = false;
+    $scope.contest = {};
+    $scope.submissions = [];
+    $scope.problems = [];
+    $scope.users = [];
+    function get_scoreboard(){
+        $http.get('http://localhost:1337/contest/get_scoreboard/'+id)
+        .then(function(response) {
+            var res = response.data;
+            var contestants = res.users;
+            var universities = res.universities;
+            var submissions = res.submissions;
+            var problems = res.problems;
+            var contest = res.contest;
+            var show_approval = res.show_approval;
+            var users = [];
+            var index = 0, totalindex = 0;
+            var tempsolved = null, tempscore = null;
+            $scope.contestants = res.users;
+            $scope.universities = res.universities;
+            $scope.submissions = res.submissions;
+            $scope.show_approval = res.show_approval;
+            $scope.problems = res.problems;
+            $scope.contest = res.contest;
+            for(var i=0;i<contestants.length;i++){
+                var data = {};
+                data.name = contestants[i].id_user.name;
+                var elPos = universities.map(function(x) {return x.id; }).indexOf(contestants[i].id_user.university);
+                data.university = universities[elPos].name;
+                if(contest.freeze) {
+                    data.solved = contestants[i].solvefreeze;
+                    data.score = contestants[i].scorefreeze;
+                }
+                else {
+                    data.solved = contestants[i].solve;
+                    data.score = contestants[i].score;
+                }
+                totalindex++;
+                if (i == 0) {
+                    tempsolved = data.solved;
+                    tempscore = data.score;
+                    index++;
+                } else if (data.solved != tempsolved || data.score != tempscore) {
+                    index = totalindex;
+                }
+                data.index = index;
+                var problem = [];
+                for(var j=0;j<problems.length;j++){
+                    var res = false;
+                    var tried = 0;
+                    var min = 0;
+                    var tmp = {};
+                    for(var k=0;k<submissions.length;k++){
+                        if(contest.freeze && ((new Date(contest.datetimeclose).getTime() - new Date(submissions[k].createdAt).getTime()) < contest.freezetime * 60000)) {
+                            
+                        } else {
+                            if(submissions[k].id_user.id==contestants[i].id_user.id && submissions[k].id_problem.id==problems[j].id && !res){
+                                if(submissions[k].result != null ) { 
+                                    tried = tried + 1;
+                                    if(submissions[k].result==1) {
+                                        min = submissions[k].minute;
+                                        res = true;
+                                    }
+                                }
+                            }
+                        }
+                        tmp.min = min;
+                        tmp.tried = tried;
+                        tmp.res = res;
+                        if(tried) {
+                            if(res) {
+                                tmp.bg_color = "#00FF33";
+                                tmp.color = "black";
+                            }
+                            else { 
+                                tmp.bg_color = "#FF0000";
+                                tmp.color = "white";
+                            }
+                        }
+                        else {
+                            tmp.bg_color = "";
+                            tmp.color = "";
+                        }
+                    }
+                    problem.push(tmp);
+                }
+                data.problem = problem;
+                users.push(data);
+            }
+            $scope.users = users;
+        });
     }
-  ]
+    var myFunctionToCall = ionic.throttle(get_scoreboard, 1000);
+      $interval(function(){
+        myFunctionToCall();
+      }, 500);
 })
-.controller('DashCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'MPC Challenge', id: 1 },
-    { title: 'Ideafuse', id: 2 },
-    { title: 'MPC New Year', id: 3 },
-    { title: 'Ideafuse Warm Up', id: 4 },
-  ];
+.controller('DashCtrl', function($scope,$http,$ionicPopup, $ionicLoading) {
+          var url = 'http://localhost:1337/api/get_all_contest';
+          var live_contests = [];
+          $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+                var contests = resp.data.contests;
+                for(var i=0;i<contests.length;i++){
+                    var now = new Date();
+                    if(now <= new Date(contests[i].datetimeclose) && now>= new Date(contests[i].datetimeopen)){
+                        live_contests.push(contests[i]);
+                    }
+                }
+                $scope.live_contests = live_contests;
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+          })
 })
 .controller('OptionsCtrl', function($scope,$state,$ionicHistory,$ionicLoading,$timeout,$ionicPopup,$http,AuthService, ionicMaterialMotion, ionicMaterialInk){
   $scope.logout = function(){
@@ -119,8 +235,31 @@ angular.module('starter')
     $state.go('app.dash');
   };
 })
-.controller('RanklistsCtrl', function($scope) {
-
+.controller('RanklistsCtrl', function($scope,$http,$ionicLoading,$ionicPopup) {
+    $scope.users = [];
+    var url = 'http://localhost:1337/api/get_ranklists';
+    $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+              var users = resp.data.users;
+              var res = [];
+              for(var i=0;i<users.length;i++){
+                  if(!users[i].admin && users[i].verification){
+                      res.push(users[i]);
+                  }
+              }
+              $scope.users = res;
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+   })
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams) {

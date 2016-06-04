@@ -2,8 +2,8 @@
   <ion-content class="padding">
     <h3 style="text-align:center; margin-top:5px">List Contests</h3>
     <ion-list>
-      <ion-item ng-repeat="playlist in playlists" href="#/app/upcoming_contest_detail">
-        {{playlist.title}}
+      <ion-item ng-repeat="contest in upcoming_contests" href="#/app/upcoming_contest_detail">>
+        {{contest.name}}
       </ion-item>
     </ion-list>
   </ion-content>

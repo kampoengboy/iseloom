@@ -7,28 +7,32 @@
     <div class="table-responsive">
     <table class="table table-bordered table-hover table-striped">
         <thead>
-          <th>Rank</th>
-          <th>Univ</th>
-          <th>Name</th>
-          <th>Solved</th>
-          <th>Score</th>
-          <th>HW</th>
-          <th>MK</th>
-          <th>OP</th>
+            <th>#</th>
+            <th>Name</th>
+            <th>Univ</th>
+            <th>Solved</th>
+            <th>Score</th>
+            <th ng-repeat="problem in problems">
+                {{problem.valName}}
+            </th>
         </thead>
         <tbody>
-            <tr ng-repeat="data in ctrl">
-                <td >{{data.rank}}</td>
-                <td >{{data.univ}}</td>
-                <td >{{data.name}}</td>
-                <td >{{data.solve}}</td>
-                <td >{{data.score}}</td>
-                <td >{{data.hw}}</td>
-                <td >{{data.mk}}</td>
-                <td >{{data.mk}}</td>
-            </tr>
+                  <tr ng-repeat="user in users">
+                        <td>{{user.index}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.university}}</td>
+                        <td>{{user.solved}}</td>
+                        <td>{{user.score}}</td>
+                        <td ng-repeat="problem in user.problem" style="background-color:{{problem.bg_color}}; color:{{problem.color}}">
+                            <span ng-if="problem.tried==0"></span>
+                            <span ng-if="problem.tried>=1">
+                                <span ng-if="problem.res==true">{{problem.tried}} <span ng-if="problem.tried==1">({{problem.min}})</span><span ng-if="problem.tried>1">({{(problem.tried-1)*20}}+{{problem.min}})</span></span>
+                                <span ng-if="problem.res==false">{{problem.tried}}</span>
+                            </span>
+                        </td>
+                  </tr>
         </tbody>
-      </table>
+    </table>
     </div>
     <!--<th class="row header">
           <th >Rank</th>

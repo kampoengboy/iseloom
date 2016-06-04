@@ -6,7 +6,23 @@
  */
 var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
+var Promise = require('bluebird');
 module.exports = {
+    get_all_contest : function(req,res,next){
+        Contest.find(function(err,contests){
+            if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+            return res.json({code:200, contests : contests});
+        });
+    },
+    get_ranklists : function(req,res,next){
+        User.find().populate('university').sort('rating DESC').exec(function(err,users){
+            if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+            return res.json({
+                code: 200,
+                users : users 
+            });
+        });
+    },
     get_universities : function(req,res,next){
         University.find(function(err,universities){
             if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
