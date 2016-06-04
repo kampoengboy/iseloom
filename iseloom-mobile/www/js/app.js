@@ -32,6 +32,7 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
 
   $ionicConfigProvider.navBar.alignTitle('left');
   $ionicConfigProvider.tabs.position('bottom');
+  $ionicConfigProvider.backButton.text('').icon('ion-chevron-left').previousTitleText(false);
   $stateProvider
   .state('login', {
       url: '/login',
