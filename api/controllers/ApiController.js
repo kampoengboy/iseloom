@@ -86,7 +86,7 @@ module.exports = {
                 if(user.admin) {
                     return res.json({code:2, message:'There is temporary no feature for admin.'})
                 }
-                if(!user.activation && !user.admin) {
+                if(!user.activation) {
                     return res.json({code:2, message:'Your account has not yet activated. Please check your email to activate your account.'})
                 }
                 if(!user.verification) {
@@ -119,6 +119,12 @@ module.exports = {
       }
       if(req.param('password')!=req.param('password_confirmation')){
           return res.json({code:2, message:'Your password and confirmation password are not the same'})
+      }
+      if(req.param('university') == null) {
+          return res.json({code:2, message:'You must choose one of the university.'})
+      }
+      if(req.param('gender') == null) {
+          return res.json({code:2, message:'You must choose one of the gender.'})
       }
       User.findOne({ or : [ {username : req.param('username')}, { email: req.param('email') } ] },function foundUser(err,user){
            if(err) return res.json({code:2, message:'There is a problem with our server'});

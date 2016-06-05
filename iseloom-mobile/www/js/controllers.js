@@ -105,6 +105,17 @@ angular.module('starter')
             $scope.show_approval = res.show_approval;
             $scope.problems = res.problems;
             $scope.contest = res.contest;
+            $scope.now = new Date();
+            Number.prototype.padLeft = function(base,chr){
+              var  len = (String(base || 10).length - String(this).length)+1;
+              return len > 0? new Array(len).join(chr || '0')+this : this;
+            };
+            var startOpen = new Date(res.contest.datetimeopen);
+            var startClose = new Date(res.contest.datetimeclose);
+            var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"];
+            $scope.duration = startOpen.getDate().padLeft() + " " + month[startOpen.getMonth()] + " " + startOpen.getHours().padLeft() + ":" + startOpen.getMinutes().padLeft() + ":" + startOpen.getSeconds().padLeft() + " - " + startClose.getDate().padLeft() + " " + month[startClose.getMonth()] + " " + startClose.getHours().padLeft() + ":" + startClose.getMinutes().padLeft() + ":" + startClose.getSeconds().padLeft();
+            var freeze = (res.contest.freeze && ((new Date(res.contest.datetimeclose) - new Date()) < res.contest.freezetime * 60000) ? true : false);
+            $scope.freeze = freeze;
             for(var i=0;i<contestants.length;i++){
                 var data = {};
                 data.name = contestants[i].id_user.name;

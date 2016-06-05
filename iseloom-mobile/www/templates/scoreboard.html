@@ -5,6 +5,8 @@
   </ion-nav-bar>
   <ion-content class="padding">
     <h3 style="text-align:center; margin-top:5px">{{contest.name}}</h3>
+    <p class="text-center" ng-if="freeze">FREEZE</p>
+    <p class="text-center">{{duration}}</p>
     <div class="table-responsive">
     <table class="table table-bordered table-hover table-striped">
         <thead>
