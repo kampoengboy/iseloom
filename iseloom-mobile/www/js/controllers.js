@@ -178,10 +178,12 @@ angular.module('starter')
         myFunctionToCall();
       }, 500);
 })
-.controller('DashCtrl', function($scope,$http,$ionicPopup, $ionicLoading) {
+.controller('DashCtrl', function($scope,$http,$ionicPopup, $ionicLoading,$interval) {
           var url = 'http://localhost:1337/api/get_all_contest';
-          var live_contests = [];
+          $scope.live_contests = [];
+          function get_list_contest(){
           $http.get(url).then(function(resp) {
+            var live_contests = [];
             if(resp.data.code!=200){
                 var alertPopup = $ionicPopup.alert({
                     title : 'Something Wrong',
@@ -191,8 +193,26 @@ angular.module('starter')
                 var contests = resp.data.contests;
                 for(var i=0;i<contests.length;i++){
                     var now = new Date();
+                    Number.prototype.padLeft = function(base,chr){
+                      var  len = (String(base || 10).length - String(this).length)+1;
+                      return len > 0? new Array(len).join(chr || '0')+this : this;
+                    };
                     if(now <= new Date(contests[i].datetimeclose) && now>= new Date(contests[i].datetimeopen)){
-                        live_contests.push(contests[i]);
+                        var date = new Date(new Date(contests[i].datetimeclose) - now);
+                        if(((date.getDay()-4) == 1 && date.getHours() >= 7) || (date.getHours() < 7 && (date.getDay()-4) == 2)) {
+                            dformat = ((date.getHours() < 7) ? (date.getDay()-5) : (date.getDay()-4)) + " day " + [((date.getHours() < 7) ? (date.getHours() + 17) : (date.getHours() - 7)).padLeft(),
+                                      date.getMinutes().padLeft(),
+                                      date.getSeconds().padLeft()].join(':');
+                        } else if((date.getDay()-4) > 0 && (date.getDay()-4) != 1) {
+                            dformat = ((date.getHours() < 7) ? (date.getDay()-5) : (date.getDay()-4)) + " days " + [((date.getHours() < 7) ? (date.getHours() + 17) : (date.getHours() - 7)).padLeft(),
+                                      date.getMinutes().padLeft(),
+                                      date.getSeconds().padLeft()].join(':');
+                        } else {
+                            dformat = [((date.getHours() < 7) ? (date.getHours() + 17) : (date.getHours() - 7)).padLeft(),
+                                      date.getMinutes().padLeft(),
+                                      date.getSeconds().padLeft()].join(':');
+                        }
+                        live_contests.push({'contest':contests[i], 'timeleft': dformat});
                     }
                 }
                 $scope.live_contests = live_contests;
@@ -202,7 +222,12 @@ angular.module('starter')
             console.error('ERR', err);
             //reject('Login Failed.');
             // err.status will contain the status code
-          })
+          });
+        }
+    var myFunctionToCall = ionic.throttle(get_list_contest, 1000);
+      $interval(function(){
+        myFunctionToCall();
+      }, 500);
 })
 .controller('OptionsCtrl', function($scope,$state,$ionicHistory,$ionicLoading,$timeout,$ionicPopup,$http,AuthService, ionicMaterialMotion, ionicMaterialInk){
   $scope.logout = function(){
@@ -230,14 +255,11 @@ angular.module('starter')
                     template : resp.data.message
                 });
             } else {
-              var users = resp.data.users;
+              var users = resp.data.usersRank;
               var res = [];
               for(var i=0;i<users.length;i++){
-                  if(!users[i].admin && users[i].verification){
-                      res.push(users[i]);
-                  }
+                  res.push(users[i]);
               }
-              console.log(res);
               $scope.users = res;
             }
             // For JSON responses, resp.data contains the result

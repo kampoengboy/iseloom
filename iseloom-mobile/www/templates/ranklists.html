@@ -10,10 +10,10 @@
           </thead>
           <tbody>
                 <tr ng-repeat="user in users">
-                    <td>{{index+1}}</td>
-                    <td>{{user.username}}</td>
-                    <td>{{user.university.name}}</td>
-                    <td>{{user.rating}}</td>
+                    <td>{{user.rank}}</td>
+                    <td>{{user.user.username}}</td>
+                    <td>{{user.user.university.name}}</td>
+                    <td>{{user.user.rating}}</td>
                 </tr>
           </tbody>
         </table>

@@ -15,11 +15,28 @@ module.exports = {
         });
     },
     get_ranklists : function(req,res,next){
-        User.find().populate('university').sort('rating DESC').exec(function(err,users){
+        var usersRank = [], indexLoop = 0, tempTotal = 1, tempRank = 1, tempRating = 0;
+        function add(n){
+            indexLoop++;
+            if(indexLoop==n)
+            {
+                return res.json({
+                    code: 200,
+                    usersRank : usersRank 
+                });
+            }
+        }
+        User.find({'admin':false, 'verification':true, 'activation':true}).populate('university').sort('rating DESC').exec(function(err,users){
             if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
-            return res.json({
-                code: 200,
-                users : users 
+            users.forEach(function(user) {
+                if(usersRank.length == 0) tempRating = user.rating;
+                if(user.rating != tempRating) {
+                    tempRating = user.rating;
+                    tempRank = tempTotal;
+                }
+                usersRank.push({'user':user, 'rank':tempRank});
+                tempTotal++;
+                add(users.length);
             });
         });
     },

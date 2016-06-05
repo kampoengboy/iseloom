@@ -2,8 +2,8 @@
   <ion-content class="padding">
     <h3 style="text-align:center; margin-top:5px">Live Contests</h3>
     <ion-list>
-      <ion-item ng-repeat="contest in live_contests" href="#/app/scoreboard/{{contest.id}}">
-        {{contest.name}}
+      <ion-item ng-repeat="contest in live_contests" href="#/app/scoreboard/{{contest.contest.id}}">
+        <span class="pull-left">{{contest.contest.name}}</span> <span class="pull-right">{{contest.timeleft}} left</span>
       </ion-item>
     </ion-list>
   </ion-content>
