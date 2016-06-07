@@ -16,14 +16,16 @@ module.exports = {
                     var right = 8000;
                     while(right-left>1){
                         var mid = (left+right)/2;
-                        if(getSeed(contestants,mid) < rank) right = mid;
-                        else left = mid;
+                        console.log("Mid = "+mid);
+                        if(getSeed(contestants,mid) < rank) {right = mid;console.log("Right = "+right);}
+                        else {left = mid;console.log("Left = "+left);}
                     }
                     return left;
                 }
                 function getSeed(contestants, rating){
                     var extracontestant = {
                         party : 0,
+                        name : 'dummy',
                         rank : 0,
                         points : 0,
                         rating : rating
@@ -33,8 +35,10 @@ module.exports = {
                         var Ra = contestants[i].rating;
                         var Rb = extracontestant.rating;
                         var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
+                        console.log("Ra : "+contestants[i].rating+", Rb : "+extracontestant.rating+", e : "+e);
                         result += e;
                     }
+                    console.log('Result of sum = '+result);
                     return result;
                 }
                 var E = 0;
@@ -146,7 +150,9 @@ module.exports = {
                 console.log(contestant);
                 for(var i=0;i<contestant.length;i++){
                     var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
+                    console.log("Contestant-"+contestant[i].name+ " midRank = "+ midRank);
                     contestant[i].needRating = getRatingtoRank(contestant,midRank);
+                    console.log("Need Rating = "+contestant[i].needRating);
                     contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
                     contestant[i].delta = parseFloat(contestant[i].delta.toFixed(4));
                 }
