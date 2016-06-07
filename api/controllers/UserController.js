@@ -45,31 +45,36 @@ module.exports = {
                 var obj1 = {
                     solve : 4,
                     score : 120,
-                    rating : 1500
+                    rating : 1599,
+                    name : 'A'
                 }
                 users.push(obj1);
                 var obj2 = {
                     solve : 3,
-                    score : 100,
-                    rating : 1500
+                    score : 80,
+                    rating : 1571,
+                    name : 'B'
                 }
                 users.push(obj2);
                 var obj3 = {
                     solve : 3,
                     score : 90,
-                    rating : 1500
+                    rating : 1690,
+                    name : 'C'
                 }
                 users.push(obj3);
                 var obj4 = {
                     solve : 3,
                     score : 90,
-                    rating : 1500
+                    rating : 1659,
+                    name : 'D'
                 }
                 users.push(obj4);
                 var obj5 = {
                     solve : 2,
                     score : 90,
-                    rating : 1500
+                    rating : 1634,
+                    name : 'E'
                 }
                 users.push(obj5);
                 console.log(users);
@@ -79,6 +84,7 @@ module.exports = {
                         // data.rank = i+1;
                         data.points = users[i].score;
                         data.rating = users[i].rating;
+                        data.name = users[i].name;
                         if(users.length>1){
                             if(i==users.length-1){
                                 if(users[i-1].solve==users[i].solve){
@@ -132,6 +138,7 @@ module.exports = {
                             var Rb = contestant[j].rating;
                             var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
                             contestant[i].seed += e;
+                            console.log("Ri : "+contestant[i].name+", Rj : "+contestant[j].name+", e : "+e);
                         }
                     }
                 }

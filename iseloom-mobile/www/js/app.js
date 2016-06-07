@@ -89,6 +89,15 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
         }
       }
     })
+  .state('app.ranklistsUniv', {
+      url: '/ranklistsUniv',
+      views: {
+        'app-ranklistsUniv': {
+          templateUrl: 'templates/ranklistsUniv.html',
+          controller: 'RanklistsUnivCtrl'
+        }
+      }
+  })
     .state('app.upcoming_contest', {
       url: '/upcoming_contest',
       views: {
