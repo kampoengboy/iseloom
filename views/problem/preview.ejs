@@ -9,6 +9,7 @@
     <% } %>
     <br><br>
     <%- problem.description %>
+    <span class="pull-right">Problem creator : <%=problem.id_user.name%></span>
 </div>
 <% if(session.authenticated) { %>
 <br>
