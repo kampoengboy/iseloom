@@ -41,6 +41,62 @@ module.exports = {
                     console.log('Result of sum = '+result);
                     return result;
                 }
+                function elo_rating(contestant){
+                  for(var i=0;i<contestant.length;i++){
+                      contestant[i].seed = 1;
+                      for(var j=0;j<contestant.length;j++){
+                          if(i==j) continue;
+                          else {
+                              var Ra = contestant[i].rating;
+                              var Rb = contestant[j].rating;
+                              var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
+                              contestant[i].seed += e;
+                              console.log("Ri : "+contestant[i].name+", Rj : "+contestant[j].name+", e : "+e);
+                          }
+                      }
+                  }
+                  console.log('========');
+                  console.log(contestant);
+                  for(var i=0;i<contestant.length;i++){
+                      var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
+                      console.log("Contestant-"+contestant[i].name+ " midRank = "+ midRank);
+                      contestant[i].needRating = getRatingtoRank(contestant,midRank);
+                      console.log("Need Rating = "+contestant[i].needRating);
+                      contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
+                      contestant[i].delta = parseFloat(contestant[i].delta.toFixed(4));
+                  }
+                  console.log('========');
+                  console.log(contestant);
+                  contestant.sort(function(a, b) {
+                          return b.rating - a.rating;
+                  });
+                  var sum = 0;
+                  for(var i=0;i<contestant.length;i++){
+                      sum+=contestant[i].delta;
+                  }
+                  var inc = (-1*sum) / (contestant.length - 1);
+                  console.log("=========");
+                  console.log(sum);
+                  console.log(inc);
+                  for(var i=0;i<contestant.length;i++){
+                      contestant[i].delta += inc;
+                  }
+                  console.log("========")
+                  console.log(contestant);
+                  var sum = 0;
+                  var zeroSumCount = Math.min((4 * Math.round(Math.sqrt(contestant.length))),contestant.length);
+                  for(var i=0;i<zeroSumCount;i++){
+                      sum += contestant[i].delta;
+                  }
+                  var inc = Math.min( Math.max( ((-1 * sum) / zeroSumCount) , -10) , 0);
+                  console.log("========");
+                  console.log(sum);
+                  console.log(inc);
+                  for(var i=0;i<contestant.length;i++){
+                      contestant[i].delta += inc;
+                  }
+                  return contestant;
+                }
                 var E = 0;
                 var contestant = [];
                 var new_rating = [];
@@ -100,7 +156,7 @@ module.exports = {
                                         rank++;
                                     }
                                 } else {
-                                    
+
                                     data.rank = rank;
                                     rank++;
                                 }
@@ -110,12 +166,10 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        
                                         data.rank = rank;
                                         rank++;
                                     }
                                 } else {
-                                    
                                     data.rank = rank;
                                     rank++;
                                 }
@@ -133,60 +187,8 @@ module.exports = {
                 }
                 console.log('========');
                 console.log(contestant);
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].seed = 1;
-                    for(var j=0;j<contestant.length;j++){
-                        if(i==j) continue;
-                        else {
-                            var Ra = contestant[i].rating;
-                            var Rb = contestant[j].rating;
-                            var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
-                            contestant[i].seed += e;
-                            console.log("Ri : "+contestant[i].name+", Rj : "+contestant[j].name+", e : "+e);
-                        }
-                    }
-                }
-                console.log('========');
-                console.log(contestant);
-                for(var i=0;i<contestant.length;i++){
-                    var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
-                    console.log("Contestant-"+contestant[i].name+ " midRank = "+ midRank);
-                    contestant[i].needRating = getRatingtoRank(contestant,midRank);
-                    console.log("Need Rating = "+contestant[i].needRating);
-                    contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
-                    contestant[i].delta = parseFloat(contestant[i].delta.toFixed(4));
-                }
-                console.log('========');
-                console.log(contestant);
-                contestant.sort(function(a, b) {
-                        return b.rating - a.rating;
-                });
-                var sum = 0;
-                for(var i=0;i<contestant.length;i++){
-                    sum+=contestant[i].delta;
-                }
-                var inc = (-1*sum) / (contestant.length - 1);
-                console.log("=========");
-                console.log(sum);
-                console.log(inc);
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].delta += inc;
-                }
-                console.log("========")
-                console.log(contestant);
-                var sum = 0;
-                var zeroSumCount = Math.min((4 * Math.round(Math.sqrt(contestant.length))),contestant.length);
-                for(var i=0;i<zeroSumCount;i++){
-                    sum += contestant[i].delta;
-                }
-                var inc = Math.min( Math.max( ((-1 * sum) / zeroSumCount) , -10) , 0);
-                console.log("========");
-                console.log(sum);
-                console.log(inc);
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].delta += inc;
-                }
-                console.log("========")
+                contestant = elo_rating(contestant);
+                console.log("========setelah elo=========")
                 console.log(contestant);
                 for(var i=0;i<contestant.length;i++){
                     var dummy = {
@@ -230,11 +232,11 @@ module.exports = {
                             break;
                         }
                     }
-                    if(found) result.push(users[i]); 
+                    if(found) result.push(users[i]);
                 }
             }
-            return res.view({result : result, q:q});  
-        });  
+            return res.view({result : result, q:q});
+        });
     },
     testingaja : function(req,res,next){
         // var data = {
@@ -250,7 +252,7 @@ module.exports = {
         });
     },
     subscribe : function(req,res,next){
-        User.watch(req);  
+        User.watch(req);
     },
     'profile' : function(req,res,next){
         User.findOne({where: { username:  req.param('id')}}).populate('university').exec(function (err, user){
@@ -273,7 +275,7 @@ module.exports = {
          var text = "";
          if(req.param('type')=='1'){
             var tmp_file = req.param('file_url_1');
-            var file = tmp_file.replace('data:application/octet-stream;base64,',""); 
+            var file = tmp_file.replace('data:application/octet-stream;base64,',"");
             file = file.replace('data:;base64,',"");
             buf = new Buffer(file,'base64');
             var namefile = 'file-'+req.session.User.id+'.txt';
@@ -284,8 +286,8 @@ module.exports = {
                 if(text.length==0){
                     return res.redirect('/');
                 }
-                do_compile(text); 
-            });     
+                do_compile(text);
+            });
          }
          else
          {
@@ -299,7 +301,7 @@ module.exports = {
             var compile_output = [];
             var submit_on_contest = false;
             if(typeof req.param('idc')!="undefined") {
-                submit_on_contest = true;  
+                submit_on_contest = true;
             }
             if(submit_on_contest){
                 Contest.findOne({'id':req.param('idc')}, function(err,contest){
@@ -427,7 +429,7 @@ module.exports = {
                                 var ans = JSON.parse(result.body);
                                 var flag = ans.flag;
                                 if(flag==1 || flag==2 || flag==3){
-                                    
+
                                 } else {
                                     var tmp_time = ans.time.split('\n');
                                     var time = parseFloat(tmp_time[0]);
@@ -477,7 +479,7 @@ module.exports = {
                                                 id_contest : req.param('idc'),
                                                 id_user : req.session.User.id
                                             }
-                                            if(!has_solve) { 
+                                            if(!has_solve) {
                                                 UserContest.findOne({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id } ] }, function(err,usercontest){
                                                     Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idProblem')}, {'result' : 0} ] }).exec(function(err,wrongsubs){
                                                         var solve = usercontest.solve + 1;
@@ -501,8 +503,8 @@ module.exports = {
                                 compile(problem.input[i],i,problem.input.length);
                             }
                             return res.redirect('/contest/submission?idc='+contest.id+'&idp='+problem.id);
-                    }); 
-                   }); 
+                    });
+                   });
                 });
             }
             else {
@@ -559,7 +561,7 @@ module.exports = {
                             var ans = JSON.parse(result.body);
                             var flag = ans.flag;
                             if(flag==1 || flag==2 || flag==3){
-                                        
+
                             } else {
                             var tmp_time = ans.time.split('\n');
                             var time = parseFloat(tmp_time[0]);
@@ -604,7 +606,7 @@ module.exports = {
                                     }
                                 }
                                 if (correct) {
-                                    Submission.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});    
+                                    Submission.update({'id':submission.id}, {'output':out, 'result':1},function(err,su){});
                                 } else {
                                     Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
                                 }
@@ -734,10 +736,10 @@ module.exports = {
                     subs: subs
                 });
             });
-        });  
+        });
     },
     'subscribe_submissions' : function(req,res,next){
-        Submission.watch(req);     
+        Submission.watch(req);
     },
     'resend_email' : function(req,res,next) {
         if(req.session.authenticated) return res.redirect('/');
@@ -765,11 +767,11 @@ module.exports = {
             }
             var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
             var mailOptions = {
-                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
-                to: user.email, // list of receivers 
-                subject: 'Resend Activation Iseloom Account', // Subject line 
+                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: 'Resend Activation Iseloom Account', // Subject line
                 text: "Hola "+user.name+"\r\n\r\nPlease activate your account by clicking the link below.\r\n\r\n"+req.baseUrl+'/activate/'+user.encryptedId,
-                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+user.encryptedId+"'><button>Click Here!</button></a>" // html body 
+                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please activate your account by clicking the button below.</p><a href='"+req.baseUrl+"/activate/"+user.encryptedId+"'><button>Click Here!</button></a>" // html body
             };
             transporter.sendMail(mailOptions, function(error, info){
                 if(error){
@@ -795,11 +797,11 @@ module.exports = {
             }
             var transporter = nodemailer.createTransport('smtps://iseloom.adm%40gmail.com:iseloomiseloom@smtp.gmail.com');
             var mailOptions = {
-                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address 
-                to: user.email, // list of receivers 
-                subject: 'Reset Password Iseloom Account', // Subject line 
+                from: 'Iseloom <iseloom.adm@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: 'Reset Password Iseloom Account', // Subject line
                 text: "Hola "+user.name+"\r\n\r\nPlease visit the link below to reset password Iseloom account.\r\n\r\n"+req.baseUrl+'/reset_password/'+user.encryptedId+'\r\n\r\nIgnore this message if you never forget password.',
-                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please click the button below to reset password Iseloom account.</p><a href='"+req.baseUrl+"/reset_password/"+user.encryptedId+"'><button>Click Here!</button></a><p>Ignore this message if you never forget password.</p>" // html body 
+                html: "<h1>Hola "+user.name+"</h1>"+"<p>Please click the button below to reset password Iseloom account.</p><a href='"+req.baseUrl+"/reset_password/"+user.encryptedId+"'><button>Click Here!</button></a><p>Ignore this message if you never forget password.</p>" // html body
             };
             transporter.sendMail(mailOptions, function(error, info){
                 if(error){

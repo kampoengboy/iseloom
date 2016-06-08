@@ -7,9 +7,9 @@
 
 var Promise = require('bluebird');
 module.exports = {
-	create : function(req,res,next) {
+		create : function(req,res,next) {
         if(!req.session.User.admin) return res.redirect('/');
-        return res.view();  
+        return res.view();
     },
     'done_contest' : function(req,res,next){
 
@@ -41,7 +41,7 @@ module.exports = {
                         }
                         Notification.create(obj, function(err,notifications){});
                     }
-                    return res.redirect('/contest/clarification/'+req.param('idc'));   
+                    return res.redirect('/contest/clarification/'+req.param('idc'));
                 });
             });
         });
@@ -64,10 +64,10 @@ module.exports = {
                     }
                     Notification.create(obj, function(err,notifications){});
                 }
-                return res.redirect('/contest/clarification/'+clarification.id_contest); 
+                return res.redirect('/contest/clarification/'+clarification.id_contest);
             });
         });
-        
+
     },
     clarification : function(req,res,next){
         Clarification.find({'id_contest':req.param('id')})
@@ -76,20 +76,20 @@ module.exports = {
         .exec(function(err,clarifications){
             if(err) return next(err);
             Notification.update({'id_contest':req.param('id'),'id_user':req.session.User.id}, {'read':true}, function(err,notification){});
-            return res.view({clarifications : clarifications,id_contest:req.param('id')}); 
-        });  
+            return res.view({clarifications : clarifications,id_contest:req.param('id')});
+        });
     },
     'clarification_detail' : function(req,res,next){
         Clarification.findOne(req.param('id'), function(err,clarification){
             if(err) return next(err);
             if(!clarification) return res.redirect('/');
-            return res.view({clarification:clarification}); 
+            return res.view({clarification:clarification});
         });
     },
     'get_notification' : function(req,res,next){
         if(req.session.authenticated){
             Notification.find({'id_contest':req.param('idc'),read:false,'id_user':req.session.User.id},function(err,notifications){
-                return res.json({notifications : notifications.length}); 
+                return res.json({notifications : notifications.length});
             });
         } else {
             return res.json({notifications : 0})
@@ -105,7 +105,7 @@ module.exports = {
         .exec(function(err,submission){
             if(err) return next(err);
             if(!submission) return res.redirect('/');
-            return res.view({submission:submission}); 
+            return res.view({submission:submission});
         });
     },
     allsubmission : function(req,res,next){
@@ -113,7 +113,7 @@ module.exports = {
         if(!req.session.User.admin) return res.redirect('/');
         Contest.findOne({'id':req.param('id')}, function(err,contest){
             if(err) return next(err);
-            if(!contest) return res.redirect('/'); 
+            if(!contest) return res.redirect('/');
             return res.view({contest:contest});
         });
     },
@@ -124,10 +124,13 @@ module.exports = {
         .populate('id_problem')
         .sort('createdAt DESC')
         .exec(function(err,submissions){
-            return res.json({submissions : submissions}); 
+            return res.json({submissions : submissions});
         });
     },
     'apply_rating' : function(req,res,next){
+				function elo_rating(users){
+
+				}
         Contest.findOne({'id':req.param('id')}, function(err,contest){
             if(err) return next(err);
             if(!contest) return res.redirect('/');
@@ -148,7 +151,7 @@ module.exports = {
                             rating : contestant.rating,
                             date : new Date().toJSON().slice(0,10)
                         }
-                        UserRating.create(valObj, function(err,userrating){}); 
+                        UserRating.create(valObj, function(err,userrating){});
                     });
                 }
                 function getRatingtoRank(contestants,rank){
@@ -177,6 +180,46 @@ module.exports = {
                     }
                     return result;
                 }
+								function elo_rating(contestant){
+										for(var i=0;i<contestant.length;i++){
+		                    contestant[i].seed = 1;
+		                    for(var j=0;j<contestant.length;j++){
+		                        if(i==j) continue;
+		                        else {
+		                            var Ra = contestant[i].rating;
+		                            var Rb = contestant[j].rating;
+		                            var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
+		                            contestant[i].seed += e;
+		                        }
+		                    }
+		                }
+		                for(var i=0;i<contestant.length;i++){
+		                    var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
+		                    contestant[i].needRating = getRatingtoRank(contestant,midRank);
+		                    contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
+		                }
+		                contestant.sort(function(a, b) {
+		                        return b.rating - a.rating;
+		                });
+		                var sum = 0;
+		                for(var i=0;i<contestant.length;i++){
+		                    sum+=contestant[i].delta;
+		                }
+		                var inc = (-1*sum) / (contestant.length - 1);
+		                for(var i=0;i<contestant.length;i++){
+		                    contestant[i].delta += inc;
+		                }
+		                var sum = 0;
+		                var zeroSumCount = Math.min(4 * Math.round(Math.sqrt(contestant.length)),contestant.length);
+		                for(var i=0;i<zeroSumCount;i++){
+		                    sum += contestant[i].delta;
+		                }
+		                var inc = Math.min( Math.max( (-1 * sum) / zeroSumCount , -10) , 0);
+		                for(var i=0;i<contestant.length;i++){
+		                    contestant[i].delta += inc;
+		                }
+										return contestant;
+								}
                 var E = 0;
                 var contestant = [];
                 var new_rating = [];
@@ -194,12 +237,12 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        
+
                                         data.rank = rank;
                                         rank++;
                                     }
                                 } else {
-                                    
+
                                     data.rank = rank;
                                     rank++;
                                 }
@@ -209,12 +252,12 @@ module.exports = {
                                         data.rank = rank;
                                     }
                                     else {
-                                        
+
                                         data.rank = rank;
                                         rank++;
                                     }
                                 } else {
-                                    
+
                                     data.rank = rank;
                                     rank++;
                                 }
@@ -231,58 +274,22 @@ module.exports = {
                         // }
                         contestant.push(data);
                 }
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].seed = 1;
-                    for(var j=0;j<contestant.length;j++){
-                        if(i==j) continue;
-                        else {
-                            var Ra = contestant[i].rating;
-                            var Rb = contestant[j].rating;
-                            var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
-                            contestant[i].seed += e;
-                        }
-                    }
-                }
-                for(var i=0;i<contestant.length;i++){
-                    var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
-                    contestant[i].needRating = getRatingtoRank(contestant,midRank);
-                    contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
-                }
-                contestant.sort(function(a, b) {
-                        return b.rating - a.rating;
-                });
-                var sum = 0;
-                for(var i=0;i<contestant.length;i++){
-                    sum+=contestant[i].delta;
-                }
-                var inc = (-1*sum) / (contestant.length - 1);
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].delta += inc;
-                }
-                var sum = 0;
-                var zeroSumCount = Math.min(4 * Math.round(Math.sqrt(contestant.length)),contestant.length);
-                for(var i=0;i<zeroSumCount;i++){
-                    sum += contestant[i].delta;
-                }
-                var inc = Math.min( Math.max( (-1 * sum) / zeroSumCount , -10) , 0);
-                for(var i=0;i<contestant.length;i++){
-                    contestant[i].delta += inc;
-                }
-                for(var i=0;i<contestant.length;i++){
-                    var dummy = {
-                            id_user : contestant[i].id_user,
-                            rating : contestant[i].rating + contestant[i].delta,
-                    }
-                    dummy.highest_rating = dummy.rating;
-                    new_rating.push(dummy);
-                }
+								contestant = elo_rating(contestant);
+								for(var i=0;i<contestant.length;i++){
+										var dummy = {
+														id_user : contestant[i].id_user,
+														rating : contestant[i].rating + contestant[i].delta,
+										}
+										dummy.highest_rating = dummy.rating;
+										new_rating.push(dummy);
+								}
                 for(var i=0;i<new_rating.length;i++){
                     update_rating(new_rating[i]);
                 }
                 Contest.update({'id':req.param('id')}, {'approve':true,'stop':true}, function(err,contestsss){});
                 return res.redirect('/contest/scoreboard/'+req.param('id'));
           });
-        });   
+        });
     },
     submission : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
@@ -297,8 +304,8 @@ module.exports = {
             if(!submission) return res.redirect('/');
             return res.view({
                 submissions : submission
-            }) 
-        });  
+            })
+        });
     },
     'get_submission' : function(req,res,next){
         Submission.find({ $and : [ {'id_contest' : req.param('idc')}, { 'id_user' : req.session.User.id }, {'id_problem':req.param('idp')} ] })
@@ -311,11 +318,11 @@ module.exports = {
             if(!submission) return res.json({submissions:[]});
             return res.json({
                 submissions : submission
-            }) 
-        });  
+            })
+        });
     },
     'subscribe_scoreboard' : function(req,res,next){
-        Submission.watch(req);     
+        Submission.watch(req);
     },
     scoreboard : function(req,res,next){
         var probs = [];
@@ -398,7 +405,7 @@ module.exports = {
                                         contest : contest,
                                         problems : probs,
                                         users : users
-                                    }); 
+                                    });
                                 });
                             });
                          })
@@ -421,13 +428,13 @@ module.exports = {
                                         contest : contest,
                                         problems : probs,
                                         users : users
-                                    }); 
+                                    });
                                 });
                             });
                          })
                      }
                 });
-                
+
             });
         });
     },
@@ -512,7 +519,7 @@ module.exports = {
                                         contest : contest,
                                         problems : probs,
                                         users : users
-                                    }); 
+                                    });
                                 });
                             });
                          })
@@ -535,13 +542,13 @@ module.exports = {
                                         contest : contest,
                                         problems : probs,
                                         users : users
-                                    }); 
+                                    });
                                 });
                             });
                          })
                      }
                 });
-                
+
             });
         });
     },
@@ -606,7 +613,7 @@ module.exports = {
             } else {
                 return res.send('Sorry, register of contestant has ended');
             }
-        }); 
+        });
     },
     'remove_contestant' : function(req,res,next){
         if(!req.session.authenticated) return res.redirect('/');
@@ -669,7 +676,7 @@ module.exports = {
             } else {
                 return res.send('Sorry, register of contestant has ended');
             }
-        }); 
+        });
     },
     'create_contest' : function(req,res,next) {
         if(!req.session.authenticated) return res.redirect('/');
