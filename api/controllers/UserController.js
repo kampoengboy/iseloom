@@ -860,5 +860,79 @@ module.exports = {
                 })
             });
         });
+    },
+    edit : function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
+        User.findOne({'id' : req.session.User.id}).exec(function(err, user) {
+            if(!user) {
+                return res.redirect('/');
+            }
+            University.find(function(err,universities){
+                res.view({
+                    user: user,
+                    universities: universities
+                });
+            });
+        });
+    },
+    'edit_profile' : function(req,res,next) {
+        if(!req.session.authenticated) return res.redirect('/');
+        if(typeof req.param('edit') !== 'undefined') {
+            University.findOne({'val_name':req.param('university')}, function(err,university){
+                if (req.param('name') == req.session.User.name && university.id == req.session.User.university) {
+                    var editError = ['Name and university don\'t change.'];
+                      req.session.flash = {
+                            err: editError
+                      }
+                    return res.redirect('/user/profile/'+req.session.User.username);
+                }
+                User.update({'id':req.session.User.id}, {'name':req.param('name'), 'university':university.id},function(err,user) {
+                    req.session.User = user[0];
+                    var editSuccess = ['Profile has been updated.'];
+                      req.session.flash = {
+                            success: editSuccess
+                      }
+                    return res.redirect('/user/profile/'+req.session.User.username);
+                });
+            });
+        } else if (typeof req.param('edit_password') !== 'undefined') {
+            bcrypt.compare(req.param('old_password'), req.session.User.password, function(err, valid) {
+                if (err) return next(err);
+                if (!valid) {
+                    var passwordMismatchError = ['Your old password is wrong.']
+                    req.session.flash = {
+                        err: passwordMismatchError,
+                    }
+                    res.redirect('/user/profile/'+req.session.User.username);
+                    return;
+                }
+                if(req.param('new_password').trim()=="" || req.param('retype_password').trim()==""){
+                    var editPasswordError = ['Please fill the form completely.'];
+                    req.session.flash = {
+                            err: editPasswordError
+                    }
+                    return res.redirect('/user/profile/'+req.session.User.username);
+                } else if(req.param('new_password')!=req.param('retype_password')){
+                    var editPasswordError = ['Your new password and your retype new password is not same.'];
+                    req.session.flash = {
+                        err: editPasswordError
+                    }
+                    return res.redirect('/user/profile/'+req.session.User.username);
+                } else {
+                    bcrypt.hash(req.param('new_password'), 10, function PasswordEncrypted(err, encryptedPassword) {
+                        User.update({'id':req.session.User.id}, {'password':encryptedPassword},function(err,user) {
+                            req.session.User = user[0];
+                            var editSuccess = ['Password has been changed.'];
+                              req.session.flash = {
+                                    success: editSuccess
+                              }
+                            return res.redirect('/user/profile/'+req.session.User.username);
+                        });
+                    });
+                }
+            });
+        } else {
+            return res.redirect('/');
+        }
     }
 };
