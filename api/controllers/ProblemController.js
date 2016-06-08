@@ -326,7 +326,6 @@ module.exports = {
         });
     },
     preview : function(req,res,next){
-        if(!req.session.authenticated) return res.redirect('/');
         if(typeof req.param('prob')=="undefined" || req.param('prob').length==0)
             return res.redirect('/');
         Problem.findOne({'valName':req.param('prob')}, function(err,problem){
@@ -370,6 +369,13 @@ module.exports = {
                    .groupBy('id_problem')
                    .sum('result')
                    .exec(function(err, SubmissionsSolved){
+                        if(SubmissionsSolved.length == 0) {
+                            return res.view({
+                                problemsPublish : problemPublish,
+                                problemsNotPublish : problemNotPublish,
+                                problemSubs : problemSubs
+                            });
+                        }
                        SubmissionsSolved.forEach(function(data) {
                             Submission.count({'id_problem':data.id_problem.toString(), 'is_admin':false, 'is_contest':false}).exec(function (err, problemSubsTotal) {
                                 if(req.session.authenticated) {
