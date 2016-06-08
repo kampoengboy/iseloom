@@ -270,7 +270,7 @@ module.exports = {
             timelimit : req.param('timelimit'),
             memorylimit : req.param('memorylimit'),
             category : category,
-            id_maker : req.session.User.id,
+            id_user : req.session.User.id,
             input : [],
             output : [],
             publish : publish
