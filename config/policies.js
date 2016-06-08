@@ -36,7 +36,8 @@ module.exports.policies = {
       'scoreboard' : ['flash']
   },
   'user' : {
-      'reset_password' : ['flash']
+      'reset_password' : ['flash'],
+      'profile' : ['flash']
   }
   /***************************************************************************
   *                                                                          *

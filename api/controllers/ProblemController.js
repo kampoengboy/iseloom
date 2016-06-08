@@ -328,7 +328,7 @@ module.exports = {
     preview : function(req,res,next){
         if(typeof req.param('prob')=="undefined" || req.param('prob').length==0)
             return res.redirect('/');
-        Problem.findOne({'valName':req.param('prob')}, function(err,problem){
+        Problem.findOne({'valName':req.param('prob')}).populate('id_user').exec(function(err,problem){
             if(err) return next(err);
             if(!problem) return res.redirect('/');
             if(typeof req.param('idc')=="undefined" || req.param('idc').length==0) {

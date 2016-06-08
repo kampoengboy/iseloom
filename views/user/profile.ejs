@@ -1,10 +1,40 @@
+<div id="body" class="container" style="">
+<% if(flash) { %>
+<% if(flash.err) { %>
+      <div>
+      <br><br>
+      <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <% Object.keys(flash.err).forEach(function(error) { %>
+              <%= flash.err[error] %>
+        <% }) %>
+      </div>
+      </div>
+<% } else if (flash.success){ %>
+  <div>
+  <br><br>
+  <div class="alert alert-success" role="alert">
+    <span class="sr-only">Success:</span>
+    <% Object.keys(flash.success).forEach(function(success) { %>
+          <%= flash.success[success] %>
+    <% }) %>
+  </div>
+  </div>
+<% } %>
+<% } %>
 <div class="container" style="background-color:white">
 	<div class="row">
 	    <div class="col-md-9"><h1><%= user.username %> <small><%= user.name %></small></h1></div>
 	    <div class="col-md-3 text-right"><h2><%= user.rating %><sup><small>Highest : <%=user.highest_rating%></small></sup></h2></div>
 	</div>
     <hr >
-    <h3><%= user.university.name %></h3>
+    <% if(session.authenticated && user.id == session.User.id) { %>
+	    <div class="pull-right">
+			<a href="/user/edit"><button type="button" class="btn btn-success">Edit Profile</button></a>
+		</div>
+	<% } %>
+	<h3><%= user.university.name %></h3>
     <div class="row">
     	<span class="col-md-2">Registered : </span><span class="col-md-2" id="regitered"></span>
     </div>
@@ -19,6 +49,7 @@
 			
 		</div>
 	<% } %>
+</div>
 </div>
 
 <% if(userRating) { %>
