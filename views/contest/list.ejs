@@ -17,8 +17,26 @@
                   <tr>
                       <td><%=usercontest.id_contest.name%></td>
                       <td><%=Math.floor(range/3600)%>:<%=("0" + (range/60)%60).slice(-2)%>:<%=("0" + range%60).slice(-2)%></td>
-                      <td><%=usercontest.id_contest.datetimeopen%></td>
-                      <td><%=usercontest.id_contest.datetimeclose%></td>
+                      <% var date_open = new Date(usercontest.id_contest.datetimeopen); %>
+                      <% var format ="AM";
+                          var hour=date_open.getHours();
+                          var min=date_open.getMinutes();
+                          if(hour>11){format="PM";}
+                          if (hour   > 12) { hour = hour - 12; }
+                          if (hour   == 0) { hour = 12; }
+                          if (min < 10){min = "0" + min;} %>
+                      <% var txt_date_open = date_open.getDay()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
+                      <td><%=txt_date_open%></td>
+                      <% var date_close = new Date(usercontest.id_contest.datetimeclose); %>
+                      <% var format ="AM";
+                          var hour=date_close.getHours();
+                          var min=date_close.getMinutes();
+                          if(hour>11){format="PM";}
+                          if (hour   > 12) { hour = hour - 12; }
+                          if (hour   == 0) { hour = 12; }
+                          if (min < 10){min = "0" + min;} %>
+                      <% var txt_date_close = date_close.getDay()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
+                      <td><%=txt_date_close%></td>
                       <% if(session.authenticated && session.User.admin) { %>
                         <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-equalizer" aria-hidden="true" title="Scoreboard"></span></a></td>
                         <td><a href="problemset/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-th-list" aria-hidden="true" title="Set Problems"></span></a></td>
@@ -57,8 +75,26 @@
                 <tr>
                     <td><%=contest.name%></td>
                     <td><%=Math.floor(range/3600)%>:<%=("0" + (range/60)%60).slice(-2)%>:<%=("0" + range%60).slice(-2)%></td>
-                    <td><%=contest.datetimeopen%></td>
-                    <td><%=contest.datetimeclose%></td>
+                    <% var date_open = new Date(contest.datetimeopen); %>
+                    <% var format ="AM";
+                        var hour=date_open.getHours();
+                        var min=date_open.getMinutes();
+                        if(hour>11){format="PM";}
+                        if (hour   > 12) { hour = hour - 12; }
+                        if (hour   == 0) { hour = 12; }
+                        if (min < 10){min = "0" + min;} %>
+                    <% var txt_date_open = date_open.getDay()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
+                    <td><%=txt_date_open%></td>
+                    <% var date_close = new Date(contest.datetimeclose); %>
+                    <% var format ="AM";
+                        var hour=date_close.getHours();
+                        var min=date_close.getMinutes();
+                        if(hour>11){format="PM";}
+                        if (hour   > 12) { hour = hour - 12; }
+                        if (hour   == 0) { hour = 12; }
+                        if (min < 10){min = "0" + min;} %>
+                    <% var txt_date_close = date_close.getDay()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
+                    <td><%=txt_date_close%></td>
                     <% if(session.authenticated && !session.User.admin && contest.datetimeopen > new Date()) { %>
                       <% if(!contestRegis[contest.id]) { %>
                         <td><a href="add_contestant/<%=contest.id%>"><button class="btn btn-success"><span class="glyphicon glyphicon-log-in" aria-hidden="true" title="Join Contest"></span> Join!</button></a></td>
