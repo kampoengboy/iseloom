@@ -25,7 +25,7 @@
                           if (hour   > 12) { hour = hour - 12; }
                           if (hour   == 0) { hour = 12; }
                           if (min < 10){min = "0" + min;} %>
-                      <% var txt_date_open = date_open.getDay()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
+                      <% var txt_date_open = date_open.getDate()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
                       <td><%=txt_date_open%></td>
                       <% var date_close = new Date(usercontest.id_contest.datetimeclose); %>
                       <% var format ="AM";
@@ -35,7 +35,7 @@
                           if (hour   > 12) { hour = hour - 12; }
                           if (hour   == 0) { hour = 12; }
                           if (min < 10){min = "0" + min;} %>
-                      <% var txt_date_close = date_close.getDay()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
+                      <% var txt_date_close = date_close.getDate()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
                       <td><%=txt_date_close%></td>
                       <% if(session.authenticated && session.User.admin) { %>
                         <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-equalizer" aria-hidden="true" title="Scoreboard"></span></a></td>
@@ -83,7 +83,7 @@
                         if (hour   > 12) { hour = hour - 12; }
                         if (hour   == 0) { hour = 12; }
                         if (min < 10){min = "0" + min;} %>
-                    <% var txt_date_open = date_open.getDay()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
+                    <% var txt_date_open = date_open.getDate()+"/"+(date_open.getMonth()+1)+"/"+date_open.getFullYear()+" "+hour+":"+min+" "+format; %>
                     <td><%=txt_date_open%></td>
                     <% var date_close = new Date(contest.datetimeclose); %>
                     <% var format ="AM";
@@ -93,7 +93,7 @@
                         if (hour   > 12) { hour = hour - 12; }
                         if (hour   == 0) { hour = 12; }
                         if (min < 10){min = "0" + min;} %>
-                    <% var txt_date_close = date_close.getDay()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
+                    <% var txt_date_close = date_close.getDate()+"/"+(date_close.getMonth()+1)+"/"+date_close.getFullYear()+" "+hour+":"+min+" "+format; %>
                     <td><%=txt_date_close%></td>
                     <% if(session.authenticated && !session.User.admin && contest.datetimeopen > new Date()) { %>
                       <% if(!contestRegis[contest.id]) { %>
