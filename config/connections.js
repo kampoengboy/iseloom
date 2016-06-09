@@ -59,11 +59,11 @@ module.exports.connections = {
   someMongodbServer: {
     adapter: 'sails-mongo',
     url : 'mongodb://adminiseloom:adminiseloom@capital.3.mongolayer.com:10234,capital.2.mongolayer.com:10234/iseloom?replicaSet=set-5577c1c32881a197cf000b90'
-    // host: 'localhost',
-    // port: 27017,
+     //host: 'localhost',
+     //port: 27017,
     // user: 'username',
     // password: 'password',
-    // database: 'iseloom'
+     //database: 'iseloom'
   },
 
   /***************************************************************************
