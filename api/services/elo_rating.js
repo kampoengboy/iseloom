@@ -1,42 +1,41 @@
 module.exports = {
-
+    getRatingtoRank : function(contestants, rank){
+      var left = 1;
+      var right = 8000;
+      while(right-left>1){
+          var mid = (left+right)/2;
+          //console.log("Mid = "+mid);
+          if(elo_rating.getSeed(contestants,mid) < rank) {
+            right = mid;
+            //console.log("Right = "+right);
+          }
+          else {
+            left = mid;
+            //console.log("Left = "+left);
+          }
+      }
+      return left;
+    },
+    getSeed : function(contestants, rating){
+      var extracontestant = {
+          party : 0,
+          name : 'dummy',
+          rank : 0,
+          points : 0,
+          rating : rating
+      }
+      var result = 0;
+      for(var i=0;i<contestants.length;i++){
+          var Ra = contestants[i].rating;
+          var Rb = extracontestant.rating;
+          var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
+          //console.log("Ra : "+contestants[i].rating+", Rb : "+extracontestant.rating+", e : "+e);
+          result += e;
+      }
+      //console.log('Result of sum = '+result);
+      return result;
+    },
     process : function(contestant){
-      function getRatingtoRank(contestants,rank){
-          var left = 1;
-          var right = 8000;
-          while(right-left>1){
-              var mid = (left+right)/2;
-              //console.log("Mid = "+mid);
-              if(getSeed(contestants,mid) < rank) {
-                right = mid;
-                //console.log("Right = "+right);
-              }
-              else {
-                left = mid;
-                //console.log("Left = "+left);
-              }
-          }
-          return left;
-      }
-      function getSeed(contestants, rating){
-          var extracontestant = {
-              party : 0,
-              name : 'dummy',
-              rank : 0,
-              points : 0,
-              rating : rating
-          }
-          var result = 0;
-          for(var i=0;i<contestants.length;i++){
-              var Ra = contestants[i].rating;
-              var Rb = extracontestant.rating;
-              var e = 1.00 / (parseFloat(1) + Math.pow(10,(parseFloat(Rb - Ra)) / 400.00 ));
-              //console.log("Ra : "+contestants[i].rating+", Rb : "+extracontestant.rating+", e : "+e);
-              result += e;
-          }
-          //console.log('Result of sum = '+result);
-          return result;
-      }
       for(var i=0;i<contestant.length;i++){
           contestant[i].seed = 1;
           for(var j=0;j<contestant.length;j++){
@@ -51,7 +50,7 @@ module.exports = {
       }
       for(var i=0;i<contestant.length;i++){
           var midRank = Math.sqrt(contestant[i].rank * contestant[i].seed);
-          contestant[i].needRating = getRatingtoRank(contestant,midRank);
+          contestant[i].needRating = elo_rating.getRatingtoRank(contestant,midRank);
           contestant[i].delta = (contestant[i].needRating - contestant[i].rating) / 2;
       }
       contestant.sort(function(a, b) {
