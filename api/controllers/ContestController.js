@@ -128,9 +128,6 @@ module.exports = {
         });
     },
     'apply_rating' : function(req,res,next){
-				function elo_rating(users){
-
-				}
         Contest.findOne({'id':req.param('id')}, function(err,contest){
             if(err) return next(err);
             if(!contest) return res.redirect('/');
