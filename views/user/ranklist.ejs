@@ -23,7 +23,7 @@
               <% _.each(usersRank, function(user){%>
                 <tr>
                     <td><%=user.rank%></td>
-                    <td><a href="/user/profile/<%=user.user.username%>"><%=user.user.username%></a></td>
+                    <td><a href="/user/profile/<%=user.user.username%>"><%=user.user.name%></a></td>
                     <td><%=user.user.university.name%></td>
                     <td><%=user.user.rating%></td>
                 </tr>
