@@ -581,7 +581,7 @@ module.exports = {
         User.find({'verification':true,admin:false, 'activation':true}).groupBy('university').sum('rating').exec(function(err,ratingUniv) {
             ratingUniv.forEach(function(data) {
                 University.findOne({'id':data.university.toString()}).exec(function(err, university) {
-                    User.count({'university':data.university.toString(),'verification':true,admin:false}).exec(function(err, userCount) {
+                    User.count({'university':data.university.toString(),'verification':true,admin:false, 'activation':true}).exec(function(err, userCount) {
                         universities.push({'value':university.val_name,'name':university.name, 'rating':Math.round(data.rating/userCount), 'member':userCount});
                         add(ratingUniv.length);
                     });
