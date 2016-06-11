@@ -95,7 +95,7 @@ angular.module('scoreboard', [])
                 data.problem = problem;
                 users.push(data);
             }
-            console.log(users);
+            //console.log(users);
             $scope.users = users;
         });
     }
