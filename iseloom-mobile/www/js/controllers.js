@@ -74,8 +74,31 @@ angular.module('starter')
             // err.status will contain the status code
           })
 })
-.controller('UpComingContestDetailCtrl', function($scope) {
-
+.controller('UpComingContestDetailCtrl', function($scope,$stateParams,AuthService,$http) {
+          $scope.isLoggedIn = AuthService.isAuthenticated();
+          var isLoggedIn = AuthService.isAuthenticated();
+          if(isLoggedIn) {
+            $scope.user = AuthService.user();
+          } else {
+            $scope.user = null;
+          }
+          var url = 'http://localhost:1337/api/get_contest?idContest='+$stateParams.contestId+'&idUser='+($scope.user ? $scope.user.id : null);
+          $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+                console.log(resp.data.contest);
+                console.log(resp.data.userContest);
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+          })
 })
 .controller('ScoreboardCtrl', function($scope,$interval,$state,$stateParams,$http,$ionicLoading,$ionicPopup) {
     var id = $stateParams.contestId;

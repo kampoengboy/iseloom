@@ -175,6 +175,19 @@ module.exports = {
                }); 
            }
       });
+    },
+    get_contest : function(req,res,next) {
+        Contest.findOne({'id':req.param('idContest')}).exec(function(err,contest){
+            if(req.param('user')) {
+                UserContest.findOne({'id_contest':contest.id, 'id_user':req.param('user')}).exec(function(err,userContest) {
+                    if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+                    return res.json({code:200, contest:contest,userContest:true});
+                });
+            } else {
+                if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+                return res.json({code:200, contest : contest});
+            }
+        });
     }
 };
 

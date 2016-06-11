@@ -1,8 +1,11 @@
-<ion-view view-title="Upcoming Contests">
+<ion-view>
+  <ion-nav-title>
+    <img src="img/iseloom.png" style="width:30px"> Upcoming Contests
+  </ion-nav-title>
   <ion-content class="padding">
     <h3 style="text-align:center; margin-top:5px">List Contests</h3>
     <ion-list>
-      <ion-item ng-repeat="contest in upcoming_contests" href="#/app/upcoming_contest_detail">>
+      <ion-item ng-repeat="contest in upcoming_contests" href="#/app/upcoming_contest_detail/{{contest.id}}">>
         {{contest.name}}
       </ion-item>
     </ion-list>
