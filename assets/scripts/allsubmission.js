@@ -27,7 +27,7 @@ angular.module('allsubmission', [])
                 data.output = output.length;
                 submissions.push(data);
             }
-            console.log(submissions);
+            //console.log(submissions);
             $scope.submissions = [];
             $scope.submissions = submissions;
         });  

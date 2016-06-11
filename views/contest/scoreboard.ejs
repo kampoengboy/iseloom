@@ -57,7 +57,7 @@
         <tbody>
             <% if(users.length > 0) { %>
            <% var idx = 1 %>
-                  <tr ng-repeat="user in users">
+                  <tr ng-repeat="user in users" ng-if="users.length>0">
                         <td>{{user.index}}</td>
                         <td>{{user.name}}</td>
                         <td>{{user.university}}</td>
@@ -66,7 +66,7 @@
                         <td ng-repeat="problem in user.problem" style="background-color:{{problem.bg_color}}; color:{{problem.color}}">
                             <span ng-if="problem.tried==0"></span>
                             <span ng-if="problem.tried>=1">
-                                <span ng-if="problem.res==true">{{problem.tried}} <span ng-if="problem.tried==1">({{problem.min}})</span><span ng-if="problem.tried>1">({{problem.min}}+{{(problem.tried-1)*20}})</span></span>
+                                <span ng-if="problem.res==true">{{problem.tried}} <span ng-if="problem.tried==1">({{problem.min}})</span><span ng-if="problem.tried>1">({{problem.min}} + {{(problem.tried-1)*20}})</span></span>
                                 <span ng-if="problem.res==false">{{problem.tried}}</span>
                             </span>
                         </td>
