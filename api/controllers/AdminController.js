@@ -6,23 +6,6 @@
  */
 var bcrypt = require('bcrypt');
 module.exports = {
-    'temporary' : function(req,res,next) {
-        User.find({admin:false, activation:true,verification:true}).exec(function(err,users){
-            var users = users;
-            users.forEach(function(user) {
-                UserContest.find({id_contest:'575966ceab8555754cb7f3ec', id_user:user.id}, function found(err, lol) {
-                    if(lol.length == 0) {
-                        var valObj = {
-                            id_contest : '575966ceab8555754cb7f3ec',
-                            id_user : user.id,
-                        }
-                        UserContest.create(valObj, function(err,userContest){
-                        });
-                    } 
-                });
-            });
-        });
-    },
     'add_admin' : function(req,res,next){
         var usrObj = {
             username : req.param('username'),
