@@ -140,7 +140,7 @@ module.exports = {
                 if(err) return next(err);
                 function update_rating(contestant){
                     User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
-                        if(contestant.highest_rating < contestant.rating) {
+                        if(user.highest_rating < contestant.rating) {
                             User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
                         }
                         var valObj = {
