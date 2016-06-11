@@ -57,7 +57,7 @@
         <tbody>
             <% if(users.length > 0) { %>
            <% var idx = 1 %>
-                  <tr ng-repeat="user in users">
+                  <tr ng-repeat="user in users" ng-if="users.length>0">
                         <td>{{user.index}}</td>
                         <td>{{user.name}}</td>
                         <td>{{user.university}}</td>
