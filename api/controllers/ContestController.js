@@ -21,7 +21,16 @@ module.exports = {
             var out = [];
             //Update Submission
             Submission.update(submission.id,{output:out}, function(err,subupdated){});
-            function compile(input,i,n){
+                Submission.find({ $and : [ {'id_contest' : submission.id_contest.id}, { 'id_user' : submission.id_user.id }, {'id_problem':submission.id_problem.id} ] })
+                   .exec(function(err,allsubs){
+                        var has_solve = false;
+                        for(var i=0;i<allsubs.length;i++){
+                            if(allsubs[i].result==1){
+                                has_solve = true;
+                                break;
+                            }
+                        }
+                        function compile(input,i,n){
                                 Http.sendHttpRequest({
                                 url: '/compile',
                                 baseUrl: 'http://api.mikelrn.com',
@@ -148,11 +157,12 @@ module.exports = {
                                     }
                                 },
                             });
-            }
-            for(var i=0;i<problem.input.length;i++){
-                compile(problem.input[i],i,problem.input.length);
-            }
-            return res.redirect('/contest/allsubmission/'+contest.id);
+                }
+                for(var i=0;i<problem.input.length;i++){
+                    compile(problem.input[i],i,problem.input.length);
+                }
+                return res.redirect('/contest/allsubmission/'+contest.id);
+            });    
         });
     },
 	create : function(req,res,next) {
