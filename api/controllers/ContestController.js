@@ -297,17 +297,19 @@ module.exports = {
             .exec(function(err,users){
                 if(err) return next(err);
                 function update_rating(contestant){
-                    User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
-                        if(user.highest_rating < contestant.rating) {
-                            User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
-                        }
-                        var valObj = {
-                            id_user : contestant.id_user,
-                            rating : contestant.rating,
-                            date : new Date().toJSON().slice(0,10)
-                        }
-                        UserRating.create(valObj, function(err,userrating){});
-                    });
+                    User.findOne({'id':contestant.id_user}, function(err,founduser){
+                        User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
+                            if(founduser.highest_rating < contestant.rating) {
+                                User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
+                            }
+                            var valObj = {
+                                id_user : contestant.id_user,
+                                rating : contestant.rating,
+                                date : new Date().toJSON().slice(0,10)
+                            }
+                            UserRating.create(valObj, function(err,userrating){});
+                        });
+                    });    
                 }
                 var E = 0;
                 var contestant = [];
