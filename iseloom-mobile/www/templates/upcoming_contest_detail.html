@@ -20,7 +20,8 @@
     <span>{{ end }}</span>
     <br><br>
     <div class="padding" style="margin-top:-20px" ng-if="user">
-        <a href="#/app/join/{{contest.id}}"><button type="submit" class="button button-full button-assertive ink">{{join ? 'Unjoin' : 'Join'}} Contest</button></a>
+        <a ng-click="unjoin_contest()" ng-if="join==true"><button type="submit" class="button button-full button-assertive ink">{{join ? 'Unjoin' : 'Join'}} Contest</button></a>
+        <a ng-click="join_contest()" ng-if="join==false"><button type="submit" class="button button-full button-assertive ink">{{join ? 'Unjoin' : 'Join'}} Contest</button></a>
    </div>
   </ion-content>
 </ion-view>

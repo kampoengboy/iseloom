@@ -82,6 +82,50 @@ angular.module('starter')
           } else {
             $scope.user = null;
           }
+          $scope.join_contest = function(){
+              var url = 'http://localhost:1337/api/join_contest?idContest='+$scope.contest.id+'&idUser='+$scope.user.id;
+                $http.get(url).then(function(resp) {
+                        if(resp.data.code!=200){
+                            var alertPopup = $ionicPopup.alert({
+                                title : 'Something Wrong',
+                                template : resp.data.message
+                            });
+                        } else {
+                        var alertPopup = $ionicPopup.alert({
+                            title : 'Success',
+                            template : 'You have successfully join/unjoin contest.'
+                        });
+                        $ionicHistory.goBack();
+                        }
+                        // For JSON responses, resp.data contains the result
+                    }, function(err) {
+                        console.error('ERR', err);
+                        //reject('Login Failed.');
+                        // err.status will contain the status code
+                })
+          }
+          $scope.unjoin_contest = function(){
+              var url = 'http://localhost:1337/api/join_contest?idContest='+$scope.contest.id+'&idUser='+$scope.user.id;
+                $http.get(url).then(function(resp) {
+                        if(resp.data.code!=200){
+                            var alertPopup = $ionicPopup.alert({
+                                title : 'Something Wrong',
+                                template : resp.data.message
+                            });
+                        } else {
+                        var alertPopup = $ionicPopup.alert({
+                            title : 'Success',
+                            template : 'You have successfully join/unjoin contest.'
+                        });
+                        $ionicHistory.goBack();
+                        }
+                        // For JSON responses, resp.data contains the result
+                    }, function(err) {
+                        console.error('ERR', err);
+                        //reject('Login Failed.');
+                        // err.status will contain the status code
+                })
+          }
           var url = 'http://localhost:1337/api/get_contest?idContest='+$stateParams.contestId+'&idUser='+($scope.user ? $scope.user.id : null);
           $http.get(url).then(function(resp) {
             if(resp.data.code!=200){
