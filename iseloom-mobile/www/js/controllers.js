@@ -74,7 +74,7 @@ angular.module('starter')
             // err.status will contain the status code
           })
 })
-.controller('UpComingContestDetailCtrl', function($scope,$stateParams,AuthService,$http) {
+.controller('UpComingContestDetailCtrl', function($scope,$stateParams,AuthService,$http, $ionicHistory, $ionicPopup) {
           $scope.isLoggedIn = AuthService.isAuthenticated();
           var isLoggedIn = AuthService.isAuthenticated();
           if(isLoggedIn) {
@@ -313,7 +313,7 @@ angular.module('starter')
    })
 })
 
-.controller('JoinContestCtrl', function($scope,AuthService, $stateParams, $http,$ionicPopup) {
+.controller('JoinContestCtrl', function($scope,AuthService, $stateParams, $http,$ionicPopup, $ionicHistory) {
     $scope.isLoggedIn = AuthService.isAuthenticated();
     var isLoggedIn = AuthService.isAuthenticated();
     if(isLoggedIn) {
@@ -333,6 +333,11 @@ angular.module('starter')
                   res.push(users[i]);
               }
               $scope.users = res;
+              var alertPopup = $ionicPopup.alert({
+                  title : 'Success',
+                  template : 'You have successfully join/unjoin contest.'
+              });
+              $ionicHistory.goBack();
             }
             // For JSON responses, resp.data contains the result
           }, function(err) {
