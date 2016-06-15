@@ -45,7 +45,7 @@ angular.module('starter')
             template : 'Sorry, there is a problem with your connection'
         })
       })
-   }
+}
 })
 .controller('WelcomeCtrl', function($scope) {})
 .controller('UpComingContestCtrl', function($scope,$http,$ionicLoading,$ionicPopup) {
@@ -90,8 +90,17 @@ angular.module('starter')
                     template : resp.data.message
                 });
             } else {
-                console.log(resp.data.contest);
-                console.log(resp.data.userContest);
+                $scope.join = (resp.data.userContest ? true : false);
+                $scope.contest = resp.data.contest;
+                var startOpen = new Date($scope.contest.datetimeopen);
+                var startClose = new Date($scope.contest.datetimeclose);
+                Number.prototype.padLeft = function(base,chr){
+                  var  len = (String(base || 10).length - String(this).length)+1;
+                  return len > 0? new Array(len).join(chr || '0')+this : this;
+                };
+                var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"];
+                $scope.start = startOpen.getDate().padLeft() + " " + month[startOpen.getMonth()] + " " + startOpen.getHours().padLeft() + ":" + startOpen.getMinutes().padLeft() + ":" + startOpen.getSeconds().padLeft();
+                $scope.end = startClose.getDate().padLeft() + " " + month[startClose.getMonth()] + " " + startClose.getHours().padLeft() + ":" + startClose.getMinutes().padLeft() + ":" + startClose.getSeconds().padLeft();
             }
             // For JSON responses, resp.data contains the result
           }, function(err) {
@@ -304,7 +313,33 @@ angular.module('starter')
    })
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams) {
+.controller('JoinContestCtrl', function($scope,AuthService, $stateParams, $http,$ionicPopup) {
+    $scope.isLoggedIn = AuthService.isAuthenticated();
+    var isLoggedIn = AuthService.isAuthenticated();
+    if(isLoggedIn) {
+      $scope.user = AuthService.user();
+    }
+    var url = 'http://localhost:1337/api/join_contest?idContest='+$stateParams.contestId+'&idUser='+$scope.user.id;
+    $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+              var users = resp.data.usersRank;
+              var res = [];
+              for(var i=0;i<users.length;i++){
+                  res.push(users[i]);
+              }
+              $scope.users = res;
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+    })
 })
 
 
@@ -314,7 +349,6 @@ angular.module('starter')
     $scope.data = [];
     $scope.isLoggedIn = AuthService.isAuthenticated();
     var isLoggedIn = AuthService.isAuthenticated();
-    console.log(AuthService.user());
     $scope.flag_nav = "hide";
     $scope.flag_chart = false;
     $scope.loading_chart_data = false;

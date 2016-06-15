@@ -107,6 +107,15 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
         }
       }
     })
+    .state('app.join', {
+      url: '/join/:contestId',
+      views: {
+        'app-contest': {
+          templateUrl: 'templates/upcoming_contest_detail.html',
+          controller: 'JoinContestCtrl'
+        }
+      }
+    })
   .state('app.account', {
     url: '/account',
     views: {

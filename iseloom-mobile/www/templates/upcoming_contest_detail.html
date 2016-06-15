@@ -9,22 +9,18 @@
   <ion-content class="padding">
     <b>Contest Name : </b>
     <br>
-    <span>MPC Challenge</span>
-    <br>
-    <b>Contest Length : </b>
-    <br>
-    <span>2:00:00</span>
+    <span>{{ contest.name }}</span>
     <br>
     <b>Start Time: </b>
     <br>
-    <span>2:00:00</span>
+    <span>{{ start }}</span>
     <br>
     <b>End Time : </b>
     <br>
-    <span>4:00:00</span>
+    <span>{{ end }}</span>
     <br><br>
-    <div class="padding" style="margin-top:-20px">
-        <button type="submit" class="button button-full button-assertive ink">Join Contest</button>
+    <div class="padding" style="margin-top:-20px" ng-if="user">
+        <a href="#/app/join/{{contest.id}}"><button type="submit" class="button button-full button-assertive ink">{{join ? 'Unjoin' : 'Join'}} Contest</button></a>
    </div>
   </ion-content>
 </ion-view>

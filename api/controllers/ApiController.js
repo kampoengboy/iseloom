@@ -178,14 +178,49 @@ module.exports = {
     },
     get_contest : function(req,res,next) {
         Contest.findOne({'id':req.param('idContest')}).exec(function(err,contest){
-            if(req.param('user')) {
-                UserContest.findOne({'id_contest':contest.id, 'id_user':req.param('user')}).exec(function(err,userContest) {
+            if(req.param('idUser')) {
+                UserContest.findOne({'id_contest':contest.id, 'id_user':req.param('idUser')}).exec(function(err,userContest) {
                     if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
-                    return res.json({code:200, contest:contest,userContest:true});
+                    if(userContest) {
+                        return res.json({code:200, contest:contest,userContest:true});
+                    } else {
+                        return res.json({code:200, contest:contest,userContest:false});
+                    }
                 });
             } else {
                 if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
                 return res.json({code:200, contest : contest});
+            }
+        });
+    },
+    join_contest : function(req,res,next) {
+        Contest.findOne({'id':req.param('idContest')}).exec(function(err,contest){
+            if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});
+            var datenow = new Date();
+            var dateopen = new Date(contest.datetimeopen).getTime();
+            if(datenow >= dateopen) {
+                return res.json({code:2, message:'Contest has been start.'});
+            }
+            if(req.param('idUser')) {
+                UserContest.findOne({'id_contest':contest.id, 'id_user':req.param('idUser')}).exec(function(err,userContest) {
+                    if(userContest) {
+                        UserContest.destroy({'id_contest':contest.id, 'id_user':req.param('idUser')}, function contestDestroyed(err) {
+                            if (err) return next(err);
+                            return res.json({code:200, message:'You have unjoin the contest.'});
+                        });
+                    } else {
+                        var valObj = {
+                            id_contest : contest.id,
+                            id_user : req.param('idUser'),
+                        }
+                        UserContest.create(valObj, function(err,userContest){
+                            if(err) return next(err);
+                            return res.json({code:200, message:'You have join the contest.'});
+                        });
+                    }
+                });
+            } else {
+                return res.json({code:2, message:'Sorry, there is a problem with our server'});
             }
         });
     }
