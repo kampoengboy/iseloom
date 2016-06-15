@@ -6,8 +6,166 @@
  */
 
 var Promise = require('bluebird');
+var Http = require('machinepack-http');
 module.exports = {
-		create : function(req,res,next) {
+    recompile : function(req,res,next){
+        Submission.findOne({'id':req.param('id')})
+        .populate('id_problem')
+        .populate('id_contest')
+        .populate('id_user')
+        .exec(function(err,submission){
+            if(err) return next(err);
+            var problem = submission.id_problem;
+            var text = submission.code;
+            var contest = submission.id_contest;
+            var out = [];
+            //Update Submission
+            Submission.update(submission.id,{output:out}, function(err,subupdated){});
+                Submission.find({ $and : [ {'id_contest' : submission.id_contest.id}, { 'id_user' : submission.id_user.id }, {'id_problem':submission.id_problem.id} ] })
+                   .exec(function(err,allsubs){
+                        var has_solve = false;
+                        for(var i=0;i<allsubs.length;i++){
+                            if(allsubs[i].result==1){
+                                has_solve = true;
+                                break;
+                            }
+                        }
+                        function compile(input,i,n){
+                                Http.sendHttpRequest({
+                                url: '/compile',
+                                baseUrl: 'http://api.mikelrn.com',
+                                method: 'POST',
+                                params: {language:7,code:text,stdin:input,memory_limit:problem.memorylimit},
+                                formData: false,
+                                headers: {},
+                            }).exec({
+                                // An unexpected error occurred.
+                                error: function (err){
+                                    console.log(err);
+                                },
+                                // 404 status code returned from server
+                                notFound: function (result){
+                                    console.log(result);
+                                },
+                                // 400 status code returned from server
+                                badRequest: function (result){
+                                    console.log(result);
+                                },
+                                // 403 status code returned from server
+                                forbidden: function (result){
+                                    console.log(result);
+                                },
+                                // 401 status code returned from server
+                                unauthorized: function (result){
+                                    console.log(result);
+                                },
+                                // 5xx status code returned from server (this usually means something went wrong on the other end)
+                                serverError: function (result){
+                                    console.log(result);
+                                },
+                                // Unexpected connection error: could not send or receive HTTP request.
+                                requestFailed: function (err){
+                                    console.log(err);
+                                },
+                                // OK.
+                                success: function (result){
+                                var ans = JSON.parse(result.body);
+                                var flag = ans.flag;
+                                if(flag==1 || flag==2 || flag==3){
+
+                                } else {
+                                    var tmp_time = ans.time.split('\n');
+                                    var time = parseFloat(tmp_time[0]);
+                                }
+                                //console.log(ans);
+                                // console.log(time);
+                                //var out = sub.output;
+                                    var usr = {
+                                        idx : i,
+                                        out : ans.output,
+                                        ans : problem.output[i]
+                                    }
+                                    if(flag==0) {
+                                        if(time>problem.timelimit+5){
+                                            usr.result = 2;
+                                        } else {
+                                            if(ans.output!=problem.output[i]){
+                                                usr.result = 0
+                                            } else {
+                                                usr.result = 1
+                                            }
+                                        }
+                                    } else if(flag==1){
+                                        //timeout
+                                        usr.result = 2
+                                    } else if(flag==2){
+                                        //memory limit
+                                        usr.result = 3;
+                                    } else if(flag==3){
+                                        //error
+                                        usr.result = 4;
+                                    }
+                                    out.push(usr);
+                                    if(out.length==n){
+                                        var correct = true;
+                                        var code_flag = 1;
+                                        for (var j=0;j<out.length;j++) {
+                                            if (out[j].result != 1) {
+                                                correct = false;
+                                                code_flag = out[j].result;
+                                                break;
+                                            }
+                                        }
+                                        if (correct) {
+                                            Submission.update({'id':submission.id}, {'output':out, 'result':1, 'minute':Math.round((submission.createdAt - contest.datetimeopen)/60000)},function(err,su){});
+                                            var user_contest = {
+                                                id_contest : submission.id_contest.id,
+                                                id_user : submission.id_user.id
+                                            }
+                                            if(!has_solve) {
+                                                UserContest.findOne({ $and : [ {'id_contest' : submission.id_contest.id}, { 'id_user' : submission.id_user.id} ] }, function(err,usercontest){
+                                                    var obj_contest_rules = {
+                                                        $and : [
+                                                            {'id_contest':submission.id_contest.id},
+                                                            {'id_user':submission.id_user.id},
+                                                            {'id_problem' : submission.id_problem.id},
+                                                            {
+                                                                $or : [
+                                                                    {'result' : 0},
+                                                                    {'result' : 2},
+                                                                    {'result' : 3},
+                                                                    {'result' : 4},
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                    Submission.find(obj_contest_rules).exec(function(err,wrongsubs){
+                                                        if(err) return next(err);
+                                                        var solve = usercontest.solve + 1;
+                                                        var score = usercontest.score + Math.round((submission.createdAt - contest.datetimeopen)/60000) + (wrongsubs.length * 20);
+                                                        if ((contest.datetimeclose - submission.createdAt) >= contest.freezetime * 60000) {
+                                                            UserContest.update(usercontest.id, {'solvefreeze':solve,'scorefreeze':score,'tried':true}, function(err,usc){});
+                                                        }
+                                                        UserContest.update(usercontest.id, {'solve':solve,'score':score,'tried':true}, function(err,usc){});
+                                                    });
+                                                });
+                                            }
+                                        } else {
+                                            Submission.update({'id':submission.id}, {'output':out, 'result':code_flag},function(err,su){});
+                                        }
+                                        Submission.publishCreate({id:submission.id,message:0});
+                                    }
+                                },
+                            });
+                }
+                for(var i=0;i<problem.input.length;i++){
+                    compile(problem.input[i],i,problem.input.length);
+                }
+                return res.redirect('/contest/allsubmission/'+contest.id);
+            });    
+        });
+    },
+	create : function(req,res,next) {
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();
     },
@@ -139,17 +297,19 @@ module.exports = {
             .exec(function(err,users){
                 if(err) return next(err);
                 function update_rating(contestant){
-                    User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
-                        if(user.highest_rating < contestant.rating) {
-                            User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
-                        }
-                        var valObj = {
-                            id_user : contestant.id_user,
-                            rating : contestant.rating,
-                            date : new Date().toJSON().slice(0,10)
-                        }
-                        UserRating.create(valObj, function(err,userrating){});
-                    });
+                    User.findOne({'id':contestant.id_user}, function(err,founduser){
+                        User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
+                            if(founduser.highest_rating < contestant.rating) {
+                                User.update({'id':contestant.id_user}, {'highest_rating':contestant.rating}, function(err,userupdated){});
+                            }
+                            var valObj = {
+                                id_user : contestant.id_user,
+                                rating : contestant.rating,
+                                date : new Date().toJSON().slice(0,10)
+                            }
+                            UserRating.create(valObj, function(err,userrating){});
+                        });
+                    });    
                 }
                 var E = 0;
                 var contestant = [];
