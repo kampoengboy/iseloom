@@ -2,25 +2,35 @@
   <ion-nav-title>
     <img src="img/iseloom.png" style="width:30px"> Ranklists
   </ion-nav-title>
-  <ion-content>
+  <ion-content class="padding">
     <br>
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-striped">
-          <thead>
-                  <th>No.</th>
-                  <th>User</th>
-                  <th>University</th>
-                  <th>Rating</th>
-          </thead>
-          <tbody>
-                <tr ng-repeat="user in users">
-                    <td>{{user.rank}}</td>
-                    <td>{{user.user.name}}</td>
-                    <td>{{user.user.university.name}}</td>
-                    <td>{{user.user.rating}}</td>
-                </tr>
-          </tbody>
-        </table>
+    <div class="card" style="margin-top:-20px">
+      <a class="item" ng-repeat="user in users" style="margin-top:10px">
+            <div class="row">
+                <div class="col-30">
+                    <b>Name : </b>
+                </div>
+                <div class="col" style="margin-left:10px; margin-top:-5px">
+                    <span>{{user.user.name}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-30">
+                    <b>University : </b>
+                </div>
+                <div class="col" style="margin-left:10px; margin-top:-5px">
+                    <span>{{user.user.university.name}}</span>
+                </div>
+            </div> 
+            <div class="row">
+                <div class="col-30">
+                    <b>Rating : </b>
+                </div>
+                <div class="col" style="margin-left:10px; margin-top:-5px">
+                    <span>{{user.user.rating}}</span>
+                </div>
+            </div>        
+        </a>
     </div>
   </ion-content>
 </ion-view>
