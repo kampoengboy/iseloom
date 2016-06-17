@@ -71,6 +71,15 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
       }
     }
   })
+  .state('app.scoreboarddetail/:contestant_obj/:problems', {
+    url: '/scoreboarddetail/:contestant_obj/:problems',
+    views: {
+      'app-dash': {
+        templateUrl: 'templates/scoreboard_detail.html',
+        controller: 'ScoreboardDetailCtrl'
+      }
+    }
+  })
   .state('app.options', {
           url: 'app/options',
           views: {
@@ -122,6 +131,24 @@ angular.module('starter', ['ionic','ionic-material','chart.js'])
       'app-account': {
         templateUrl: 'templates/account.html',
         controller: 'AccountCtrl'
+      }
+    }
+  })
+  .state('app.editprofile', {
+    url: '/editprofile',
+    views: {
+      'app-account': {
+        templateUrl: 'templates/edit_profile.html',
+        controller: 'EditProfileCtrl'
+      }
+    }
+  })
+  .state('app.changepassword', {
+    url: '/changepassword',
+    views: {
+      'app-account': {
+        templateUrl: 'templates/change_password.html',
+        controller: 'ChangePasswordCtrl'
       }
     }
   })
