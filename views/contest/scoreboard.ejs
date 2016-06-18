@@ -3,7 +3,7 @@
     <h4 id="clock" class="text-center"></h4>
     <% if(session.authenticated) { %>
         <% if(session.User.admin) { %>
-            <% if(!contest.approve) { %>
+            <% if(!contest.approve && show_approval) { %>
                 <a href="/contest/apply_rating/<%=contest.id%>" class="btn btn-success">Approve Contest</a>
                 <br><br>
             <% } %>
