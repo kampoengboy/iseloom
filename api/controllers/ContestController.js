@@ -11,7 +11,10 @@ module.exports = {
         if(!req.session.User.admin) return res.redirect('/');
         return res.view();  
     },
-    'donecontest' : function(req,res,next){
+    'done_contest' : function(req,res,next){
+          
+    },
+    'apply_rating' : function(req,res,next){
           UserContest.find({'id_contest' : req.param('id')})
           .populate('id_user')
           .sort('solve DESC')
@@ -19,7 +22,14 @@ module.exports = {
           .exec(function(err,users){
               if(err) return next(err);
               function update_rating(contestant){
-                  User.update({'id':contestant.id}, {'rating':contestant.rating}, function(err,user){});
+                  User.update({'id':contestant.id_user}, {'rating':contestant.rating}, function(err,user){
+                     var valObj = {
+                        id_user : contestant.id_user,
+                        rating : contestant.rating,
+                        date : new Date().toJSON().slice(0,10)
+                     }
+                     UserRating.create(valObj, function(err,userrating){}); 
+                  });
               }
             //   function getRatingtoRank(seed,rank){
             //       var left = 1;
@@ -52,16 +62,16 @@ module.exports = {
                   var rating = users[i].id_user.rating + k * (seed - (i+1));
                   var d = (rating-users[i].id_user.rating)/2;
                   var contestant = {
-                      id_user : users[i].id,
+                      id_user : users[i].id_user.id,
                       rating : users[i].id_user.rating+d
                   }
-                  console.log(contestant.rating);
                   new_rating.push(contestant);
               }
               for(var i=0;i<new_rating.length;i++){
                   update_rating(new_rating[i]);
               }
-              return res.redirect('/');
+              Contest.update({'id':req.param('id')}, {'approve':true}, function(err,contestsss){});
+              return res.redirect('/contest/scoreboard/'+req.param('id'));
           });
     },
     submission : function(req,res,next){

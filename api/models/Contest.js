@@ -16,6 +16,10 @@ module.exports = {
           type : 'boolean',
           defaultsTo : true
       },
+      approve : {
+        type : 'boolean',
+        defaultsTo : false  
+      },
       stop : {
         type : 'boolean',
         defaultsTo : false  

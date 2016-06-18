@@ -34,6 +34,58 @@ module.exports = {
                 Contest.findOne({'id':req.param('idc')}, function(err,contest){
                    if(err) return next(err);
                    if(!contest) return res.redirect('/');
+                   var datenow = new Date();
+                   var dateopen = new Date(contest.datetimeopen).getTime();
+                    var dateclose = new Date(contest.datetimeclose).getTime();
+                    //open_time
+                    var seconds_left_to_open = (dateopen - datenow) / 1000;
+                    days_to_open = parseInt(seconds_left_to_open / 86400);
+                    seconds_left_to_open = seconds_left_to_open % 86400;
+                    hours_to_open = parseInt(seconds_left_to_open / 3600);
+                    seconds_left_to_open = seconds_left_to_open % 3600;
+                    minutes_to_open = parseInt(seconds_left_to_open / 60);
+                    seconds_to_open = parseInt(seconds_left_to_open % 60);
+                    //close_time
+                    var seconds_left_to_close = (dateclose - datenow) / 1000;
+                    days_to_close = parseInt(seconds_left_to_close / 86400);
+                    seconds_left_to_close = seconds_left_to_close % 86400;
+                    hours_to_close = parseInt(seconds_left_to_close / 3600);
+                    seconds_left_to_close = seconds_left_to_close % 3600;
+                    minutes_to_close = parseInt(seconds_left_to_close / 60);
+                    seconds_to_close = parseInt(seconds_left_to_close % 60);
+                    var contest_start = true;
+                    if(days_to_open>0){
+                        contest_start = false;
+                    } else if(days_to_open < 0){
+                        contest_start = true;
+                    } else if(days_to_open==0){
+                        if(hours_to_open<=0 && minutes_to_open<=0 && seconds_to_open<=0)
+                            contest_start = true;
+                        else
+                            contest_start = false;
+                    }
+                    var contest_end = false;
+                    if(days_to_close>0){
+                        contest_end = false;
+                    } else if(days_to_close < 0){
+                        contest_end = true;
+                    } else if(days_to_close==0){
+                        if(hours_to_close<=0 && minutes_to_close<=0 && seconds_to_close<=0)
+                            contest_end = true;
+                        else
+                            contest_end = false;
+                    }
+                    var cannot_submit = false;
+                    if(!contest_start){
+                        cannot_submit = true;
+                    } else {
+                        if(contest_end){
+                            cannot_submit = true;
+                        } else {
+                            cannot_submit = false;
+                        }
+                    }
+                   if(cannot_submit) return res.redirect('/contest/scoreboard/'+req.param('idc'));
                    var obj = {
                         id_contest : req.param('idc'),
                         id_user : req.session.User.id,
