@@ -93,7 +93,7 @@ angular.module('starter')
                         } else {
                         var alertPopup = $ionicPopup.alert({
                             title : 'Success',
-                            template : 'You have successfully join/unjoin contest.'
+                            template : 'You have successfully join contest.'
                         });
                         $ionicHistory.goBack();
                         }
@@ -115,7 +115,7 @@ angular.module('starter')
                         } else {
                         var alertPopup = $ionicPopup.alert({
                             title : 'Success',
-                            template : 'You have successfully join/unjoin contest.'
+                            template : 'You have successfully unjoin contest.'
                         });
                         $ionicHistory.goBack();
                         }
