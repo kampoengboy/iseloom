@@ -47,6 +47,118 @@ angular.module('starter')
       })
 }
 })
+.controller('ScoreboardDetailCtrl', function($scope,$stateParams) {
+    var contestant = JSON.parse($stateParams.contestant_obj);
+    var problems = JSON.parse($stateParams.problems);
+    var problems_from_contestant = contestant.problem;
+    $scope.data = [];
+    var data = [];
+    for(var i=0;i<problems.length;i++){
+        var obj = {};
+        obj.problem = problems[i];
+        if(problems_from_contestant[i]!=null){
+            obj.res = problems_from_contestant[i];
+            obj.has_submit = true
+        } else {
+            obj.res.tried = 0;
+            obj.res.min = "-";
+            obj.has_submit = false;
+        }
+        data.push(obj);
+    }
+    $scope.data = data;
+})
+.controller('EditProfileCtrl', function($scope,AuthService,$stateParams,$http,$ionicLoading,$ionicHistory,$ionicPopup) {
+    $scope.universities = [];
+    $scope.data = AuthService.user();
+    $scope.data.university = $scope.data.university.val_name;
+    var url = 'http://localhost:1337/api/get_universities';
+    $http.get(url).then(function(resp) {
+            if(resp.data.code!=200){
+                var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+            } else {
+                $scope.universities = resp.data.universities;
+            }
+            // For JSON responses, resp.data contains the result
+          }, function(err) {
+            console.error('ERR', err);
+            //reject('Login Failed.');
+            // err.status will contain the status code
+   })
+   $scope.editprofile = function(data){
+       $ionicLoading.show({
+            template: '<ion-spinner></ion-spinner> <br> Loading'
+        });
+       var obj = {
+           id_user : AuthService.user().id,
+           name : data.name,
+           university : data.university
+       }
+       $http.post('http://localhost:1337/api/editprofile', obj)
+        .success(function(datas){
+            $ionicLoading.hide();
+            if(datas.code!=200) {
+               var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+              return;
+            } else {
+                console.log(datas);
+                AuthService.changeProfile(datas.user);
+                $ionicHistory.goBack();
+            }
+        })
+        .error(function(err){
+          $ionicLoading.hide();
+           var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+          return;
+        })
+   }
+})
+.controller('ChangePasswordCtrl', function($scope,AuthService,$stateParams,$http,$ionicLoading,$ionicHistory,$ionicPopup) {
+    $scope.data = {};
+    $scope.changepassword = function(data){
+        if(data.old_password==null || data.new_password==null){
+            var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : 'Please fill the form completely'
+                });
+              return;
+        }
+       data.id_user = AuthService.user().id;
+       $ionicLoading.show({
+            template: '<ion-spinner></ion-spinner> <br> Loading'
+        });
+       $http.post('http://localhost:1337/api/changepassword', data)
+        .success(function(datas){
+            $ionicLoading.hide();
+            if(datas.code!=200) {
+               var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+              return;
+            } else {
+                $ionicHistory.goBack();
+            }
+        })
+        .error(function(err){
+          $ionicLoading.hide();
+           var alertPopup = $ionicPopup.alert({
+                    title : 'Something Wrong',
+                    template : resp.data.message
+                });
+          return;
+        })
+   }
+})
 .controller('WelcomeCtrl', function($scope) {})
 .controller('UpComingContestCtrl', function($scope,$http,$ionicLoading,$ionicPopup) {
           var url = 'http://localhost:1337/api/get_all_contest';
@@ -162,6 +274,9 @@ angular.module('starter')
     $scope.submissions = [];
     $scope.problems = [];
     $scope.users = [];
+    $scope.goto = function(obj){
+        $state.go('app.scoreboarddetail/:contestant_obj/:problems',{contestant_obj:JSON.stringify(obj),problems:JSON.stringify($scope.problems)});
+    }
     function get_scoreboard(){
         $http.get('http://localhost:1337/contest/get_scoreboard/'+id)
         .then(function(response) {

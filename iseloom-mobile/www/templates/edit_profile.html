@@ -1,0 +1,33 @@
+<ion-view>
+  <ion-nav-title>
+    <img src="img/iseloom.png" style="width:30px"> Edit Profile
+  </ion-nav-title>
+  <ion-content class="padding">
+    <div>
+        <form ng-submit="editprofile(data)">
+        <div class="padding">
+          <label class="item item-input red-border" style="background-color:white;">
+            <i class="icon ion-android-person placeholder-icon"></i>
+            <input type="text" id="name" name="name" placeholder="Name" ng-model="data.name" tabindex="1">
+          </label>
+          <br>
+          <div class="list">
+            <label class="item item-input item-select">
+            <div class="input-label">
+              <i class="icon ion-university placeholder-icon"></i> University
+            </div>
+            <select name="university" ng-model="data.university">
+                <option ng-repeat="university in universities" value="{{university.val_name}}">{{university.name}}</option>
+            </select>
+            </label>
+          </div>
+          <br>
+        </div>
+        <div class="padding" style="margin-top:-20px">
+              <button type="submit" class="button button-full button-positive ink">Edit</button>
+        </div>
+        </form>
+        <br>
+      </div>
+  </ion-content>
+</ion-view>

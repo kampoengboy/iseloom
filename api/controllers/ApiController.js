@@ -8,6 +8,36 @@ var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 var Promise = require('bluebird');
 module.exports = {
+    changepassword : function(req,res,next){
+        User.findOne({'id':req.param('id_user')}, function(err,user){
+            bcrypt.compare(req.param('old_password'), user.password, function(err, valid) {
+                if (err) return res.json({code:2, message:'Sorry, there is a connection problem'});
+                if (!valid) {
+                    return res.json({code:2, message: 'Your old password is wrong'})
+                }
+                if(req.param('new_password').trim()==""){
+                    return res.json({code:2, message: 'Please fill the form completely'});
+                } else {
+                    bcrypt.hash(req.param('new_password'), 10, function PasswordEncrypted(err, encryptedPassword) {
+                        User.update({'id':user.id}, {'password':encryptedPassword},function(err,user) {
+                            return res.json({code:200, message:'Success, change password'});
+                        });
+                    });
+                }
+            });
+        });
+    },
+    editprofile : function(req,res,next){
+        University.findOne({'val_name':req.param('university')}, function(err,university){
+                User.update({'id':req.param('id_user')}, {'name':req.param('name'), 'university':university.id},function(err,user) {
+                    User.findOne({'id':req.param('id_user')})
+                    .populate('university')
+                    .exec(function(err,users){
+                        return res.json({code:200, message:'Success Edited Profile',user:users});
+                    })
+                });
+        });
+    },
     get_all_contest : function(req,res,next){
         Contest.find(function(err,contests){
             if(err) return res.json({code:2, message:'Sorry, there is a problem with our server'});

@@ -110,11 +110,7 @@ angular.module('starter')
     },
     changeProfile : function(obj){
       window.localStorage.removeItem(LOCAL_TOKEN_KEY);
-      user.image = obj.image;
-      user.gender = obj.gender;
-      user.date_birth = obj.date_birth;
-      user.phone = obj.phone;
-      user.email = obj.email;
+      user = obj;
       storeUserCredentials(user);
     },
     changeOauth: function(obj){

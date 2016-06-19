@@ -1,0 +1,36 @@
+<ion-view>
+  <ion-nav-title>
+    <img src="img/iseloom.png" style="width:30px"> Scoreboard Detail
+  </ion-nav-title>
+  <ion-nav-bar class="bar-positive">
+    <ion-nav-back-button class="no-text">
+    </ion-nav-back-button>
+  </ion-nav-bar>
+  <ion-content class="padding">
+    <div class="list card">
+       <a class="item" ng-repeat="problem in data" style="margin-bottom:10px; background-color:{{problem.res.bg_color}}; color:{{problem.res.color}}">
+            <b>{{problem.problem.name}}</b>
+            <br>
+            <span>{{user.university}}</span>
+            <div style="padding-left:10px">
+            <div class="row">
+                <div class="col-30">
+                    <b>Tried : </b>
+                </div>
+                <div class="col" style="margin-left:10px; margin-top:-5px">
+                    <span>{{problem.res.tried}}</span>
+                </div>
+            </div> 
+            <div class="row">
+                <div class="col-30">
+                    <b>Minute : </b>
+                </div>
+                <div class="col" style="margin-left:10px; margin-top:-5px">
+                    <span>{{problem.res.min}}</span>
+                </div>
+            </div> 
+            </div>       
+        </a> 
+    </div>
+  </ion-content>
+</ion-view>
