@@ -32,7 +32,7 @@
     <br><br>
     <h3>Write your code below</h3>
     <form action="/user/compile" method="POST">
-    <textarea style="border:1px solid black; height:400px" name="code" placeholder="Write your code"></textarea>
+    <textarea style="border:1px solid black; height:400px" name="code" placeholder="Write your code" id="code"></textarea>
     <br><br>
     <button type="submit" class="btn btn-success btn-block">Send</button>
     <br>
@@ -86,5 +86,23 @@ function previewFile1(){
       file_url_1.value = "";
   }
 }
+$(document).delegate('#code', 'keydown', function(e) {
+  var keyCode = e.keyCode || e.which;
+
+  if (keyCode == 9) {
+    e.preventDefault();
+    var start = $(this).get(0).selectionStart;
+    var end = $(this).get(0).selectionEnd;
+
+    // set textarea value to: text before caret + tab + text after caret
+    $(this).val($(this).val().substring(0, start)
+                + "\t"
+                + $(this).val().substring(end));
+
+    // put caret at right position again
+    $(this).get(0).selectionStart =
+    $(this).get(0).selectionEnd = start + 1;
+  }
+});
 </script>
 <% } %>
