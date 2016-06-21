@@ -44,6 +44,8 @@
                         <td><a href="remove/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
                       <% } else if (now >= usercontest.id_contest.datetimeopen && now <= usercontest.id_contest.datetimeclose) {%>
                         <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><button class="btn-success">Go To Contest!</button></a></td>
+                      <% } else {%>
+                        <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-equalizer" aria-hidden="true" title="Scoreboard"></span></a></td>
                       <% } %>
                   </tr>
                 <%})%>

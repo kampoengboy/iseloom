@@ -772,6 +772,13 @@ module.exports = {
     'create_contest' : function(req,res,next) {
         if(!req.session.authenticated) return res.redirect('/');
         if(!req.session.User.admin) return res.redirect('/');
+        if(req.param('datetimeopen') > req.param('datetimeclose')) {
+            var createContestErr = ['DateTime Open must be earlier than DateTime Close.'];
+            req.session.flash = {
+               err: createContestErr
+            }
+            return res.redirect('/contest/create');
+        }
         var usrObj = {
             name : req.param('contestname'),
             datetimeopen : req.param('datetimeopen'),
@@ -798,6 +805,10 @@ module.exports = {
                     var contestRegis = [];
                     for(var i=0;i<userActiveContests.length;i++){
                         contestRegis[userActiveContests[i].id_contest.id] = true;
+                    }
+                    for(var i=0;i<userActiveContests.length;i++){
+                        var elPos = contests.map(function(x) {return x.id; }).indexOf(userActiveContests[i].id_contest.id);
+                        contests.splice(elPos,1);
                     }
                     if (err) return next(err);
                     return res.view({
@@ -868,13 +879,13 @@ module.exports = {
             }
             Contest.update(req.param('id'), data, function contestUpdated(err) {
                 if (err) return next(err);
-            });
 
-            var updateContestSuccess = ['Contest ', contest.name, ' has been updated.'];
-            req.session.flash = {
-               success: updateContestSuccess
-            }
-            res.redirect('/contest/list');
+                var updateContestSuccess = ['Contest ', contest.name, ' has been updated.'];
+                req.session.flash = {
+                   success: updateContestSuccess
+                }
+                res.redirect('/contest/list');
+            });
         });
     },
     problemset: function(req,res,next) {

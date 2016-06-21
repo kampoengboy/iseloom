@@ -14,7 +14,7 @@
                   <% _.each(problemsContest, function(problem){%>
                       <tr>
                           <td><%=idx%></td>
-                          <td><%=problem.id_problem.name%></td>
+                          <td><a href="/problem/preview?prob=<%=problem.id_problem.valName%>"><%=problem.id_problem.name%></a></td>
                           <td><%=problem.order%></td>
                       </tr>
                       <% idx++ %>

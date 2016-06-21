@@ -35,6 +35,7 @@ module.exports.routes = {
   '/': {
     controller : 'home'
   },
+  '/faq' : 'HomeController.faq',
   '/login' : 'SessionController.login',
   '/register' : 'SessionController.register',
   '/uploader' : {

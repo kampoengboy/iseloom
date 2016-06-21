@@ -79,6 +79,9 @@ module.exports = {
                     
         //         });
         // });
+    },
+    faq : function(req,res,next) {
+        return res.view();
     }
 };
 
