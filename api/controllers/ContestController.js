@@ -796,11 +796,11 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
-        Contest.find(function(err,contests){
+        Contest.find().sort('datetimeopen DESC').exec(function(err,contests){
             if(err) return next(err);
             userActiveContests = [];
             if (req.session.authenticated && !req.session.User.admin) {
-                UserContest.find({where: { id_user: req.session.User.id }}).populate('id_contest').exec(function (err, userActiveContests){
+                UserContest.find({where: { id_user: req.session.User.id }}).populate('id_contest').sort('createdAt DESC').exec(function (err, userActiveContests){
                     var now = new Date();
                     var contestRegis = [];
                     for(var i=0;i<userActiveContests.length;i++){
