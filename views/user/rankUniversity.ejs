@@ -35,4 +35,18 @@
           </tbody>
         </table>
     </div>
+    <nav>
+      <ul class="pager">
+        <% if(page==1) { %>
+         <li class="disabled">
+            <a>Previous</a>
+         </li>
+        <% } else { %>
+        <li>
+           <a href="/ranklists/university?page=<%=prevpage%>" class="disabled">Previous</a>
+        </li>
+        <% } %>
+        <li><a href="/ranklists/university?page=<%=nextpage%>">Next</a></li>
+      </ul>
+    </nav>
 </div>

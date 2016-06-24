@@ -796,6 +796,15 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
+        var start = 0;
+        var page = 1;
+        if(req.param('page')!=null){
+            page = req.param('page');
+        }
+        start = (page-1)*10;
+        var end = (page*10)-1;
+        var prevpage = parseInt(page)-1;
+        var nextpage = parseInt(page)+1;
         Contest.find().sort('datetimeopen DESC').exec(function(err,contests){
             if(err) return next(err);
             userActiveContests = [];
@@ -810,17 +819,37 @@ module.exports = {
                         var elPos = contests.map(function(x) {return x.id; }).indexOf(userActiveContests[i].id_contest.id);
                         contests.splice(elPos,1);
                     }
+                    var tmp_contest = [];
+                    for(var i=start;i<=end;i++){
+                        if(contests[i]!=null)
+                            tmp_contest.push(contests[i]);
+                        else
+                            break;
+                    }
                     if (err) return next(err);
                     return res.view({
-                        contests : contests,
+                        prevpage : prevpage,
+                        page : page,
+                        nextpage : nextpage,
+                        contests : tmp_contest,
                         userActiveContests : userActiveContests,
                         now : now,
                         contestRegis : contestRegis
                     });
                 });
             } else {
+                var tmp_contest = [];
+                for(var i=start;i<=end;i++){
+                    if(contests[i]!=null)
+                        tmp_contest.push(contests[i]);
+                    else
+                        break;
+                }
                 return res.view({
-                    contests : contests,
+                    prevpage : prevpage,
+                    page : page,
+                    nextpage : nextpage,
+                    contests : tmp_contest,
                     userActiveContests : userActiveContests
                 });
             }
