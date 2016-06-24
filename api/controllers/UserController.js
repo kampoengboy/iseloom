@@ -129,7 +129,8 @@ module.exports = {
                 var username = users[i].username.toLowerCase();
                 var found = false;
                 for(var j=0;j<=username.length-q.length;j++){
-                    var strtmp = username.substring(j,q.length);
+                    var strtmp = username.substr(j,q.length);
+                    console.log(strtmp);
                     if(strtmp == q){
                         found = true;
                         break;
@@ -140,7 +141,7 @@ module.exports = {
                 //search name
                     var name = users[i].name.toLowerCase();;
                     for(var j=0;j<=name.length-q.length;j++){
-                        var strtmp = name.substring(j,q.length);
+                        var strtmp = name.substr(j,q.length);
                         if(strtmp == q){
                             found = true;
                             break;
