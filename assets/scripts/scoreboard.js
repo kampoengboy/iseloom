@@ -10,10 +10,12 @@ angular.module('scoreboard', [])
     $scope.submissions = [];
     $scope.problems = [];
     $scope.users = [];
+    $scope.loadingData = true;
     var url = window.location.href.toString().split("/");
     function get_scoreboard(){
         $http.get('/contest/get_scoreboard/'+url[5])
         .then(function(response) {
+            $scope.loadingData = false;
             var res = response.data;
             var contestants = res.users;
             var universities = res.universities;

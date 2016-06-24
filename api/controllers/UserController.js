@@ -130,7 +130,6 @@ module.exports = {
                 var found = false;
                 for(var j=0;j<=username.length-q.length;j++){
                     var strtmp = username.substr(j,q.length);
-                    console.log(strtmp);
                     if(strtmp == q){
                         found = true;
                         break;
