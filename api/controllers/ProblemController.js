@@ -10,7 +10,30 @@ var fs = require('fs');
 var Promise = require('bluebird');
 module.exports = {
     search : function(req,res,next){
-
+        var q = "";
+        if(typeof req.param('q')!="undefined")
+            q = req.param('q');
+        Problem.find({publish:true})
+        .exec(function(err,problems){
+            if(err) return next(err);
+            if(q=="") return res.view({result : [],q:""});
+            var result = [];
+            q = q.toLowerCase();
+            for(var i=0;i<problems.length;i++){
+                //search name
+                var name = problems[i].name;
+                var found = false;
+                for(var j=0;j<=name.length-q.length;j++){
+                    var strtmp = name.substr(j,q.length);
+                    if(strtmp == q){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) result.push(problems[i]);
+            }
+            return res.view({result : result, q:q});
+        });
     },
     'list_category' : function(req,res,next){
         Category.find(function(err,categories){
