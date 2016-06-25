@@ -120,6 +120,7 @@
           </tbody>
         </table>
     </div>
+    <% if(showprevnext) { %>
     <nav>
       <ul class="pager">
         <% if(page==1) { %>
@@ -134,4 +135,5 @@
         <li><a href="/contest/list?page=<%=nextpage%>">Next</a></li>
       </ul>
     </nav>
+    <% } %>
 </div>

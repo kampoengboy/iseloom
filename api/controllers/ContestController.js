@@ -805,6 +805,7 @@ module.exports = {
         var end = (page*10)-1;
         var prevpage = parseInt(page)-1;
         var nextpage = parseInt(page)+1;
+        var showprevnext = true;
         Contest.find().sort('datetimeopen DESC').exec(function(err,contests){
             if(err) return next(err);
             userActiveContests = [];
@@ -827,9 +828,13 @@ module.exports = {
                             break;
                     }
                     if (err) return next(err);
+                    if(tmp_contest.length != 10){
+                        showprevnext = false
+                    }
                     return res.view({
                         prevpage : prevpage,
                         page : page,
+                        showprevnext : showprevnext,
                         nextpage : nextpage,
                         contests : tmp_contest,
                         userActiveContests : userActiveContests,
@@ -845,9 +850,13 @@ module.exports = {
                     else
                         break;
                 }
+                if(tmp_contest.length != 10){
+                        showprevnext = false
+                }
                 return res.view({
                     prevpage : prevpage,
                     page : page,
+                    showprevnext : showprevnext,
                     nextpage : nextpage,
                     contests : tmp_contest,
                     userActiveContests : userActiveContests
