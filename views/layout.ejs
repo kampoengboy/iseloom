@@ -66,6 +66,9 @@
                                     <li><a href="/problem/create">Create Problem Sets</a></li>
                                 </ul>
                             </li>
+                            <li>
+                                <a href="/faq">FAQ</a>
+                            </li>
                         <% } else { %>
                             <li>
                                 <a href="/user/profile/<%=session.User.username%>"><%= session.User.username %></a>
@@ -86,6 +89,9 @@
                             <li>
                                 <a href="/ranklists">Ranklists</a>
                             </li>
+                            <li>
+                                <a href="/faq">FAQ</a>
+                            </li>
                         <% } %>
                     <% } else { %>
                         <li>
@@ -96,6 +102,9 @@
                         </li>
                         <li>
                             <a href="/ranklists">Ranklists</a>
+                        </li>
+                        <li>
+                            <a href="/faq">FAQ</a>
                         </li>
                     <% } %>
                 </ul>
