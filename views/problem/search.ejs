@@ -1,0 +1,29 @@
+<div class="container" style="background-color:white">
+    <h4>Search Result of <b><%=q%></b></h4>
+    <% if(result.length != 0) { %>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead>
+                  <th>#</th>
+                  <th>Problem ID</th>
+                  <th>Name</th>
+                  <th></th>
+          </thead>
+          <tbody>
+            <% for(var i=0;i<result.length;i++) { %>
+                <tr>
+                    <td><%=i+1%></td>
+                    <td><%=result[i].valName%></td>
+                    <td><%=result[i].name%></td>
+                    <td><a class="btn btn-info" href="/problem/preview?prob=<%=result[i].valName%>">See Problem</a></td>
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+     </div>
+     <% } else { %>
+        <br><br>
+        <h3 class="text-center">There has no result.</h3>
+        <br><br>
+     <% } %>
+</div>

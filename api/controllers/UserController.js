@@ -129,7 +129,7 @@ module.exports = {
                 var username = users[i].username.toLowerCase();
                 var found = false;
                 for(var j=0;j<=username.length-q.length;j++){
-                    var strtmp = username.substring(j,q.length);
+                    var strtmp = username.substr(j,q.length);
                     if(strtmp == q){
                         found = true;
                         break;
@@ -140,7 +140,7 @@ module.exports = {
                 //search name
                     var name = users[i].name.toLowerCase();;
                     for(var j=0;j<=name.length-q.length;j++){
-                        var strtmp = name.substring(j,q.length);
+                        var strtmp = name.substr(j,q.length);
                         if(strtmp == q){
                             found = true;
                             break;
@@ -565,22 +565,62 @@ module.exports = {
                 });
             }
         }
-        User.find({'admin':false, 'verification':true, 'activation':true}).populate('university').sort('rating DESC').exec(function(err,users){
+        var start = 0;
+        var page = 1;
+        if(req.param('page')!=null){
+            page = req.param('page');
+        }
+        start = (page-1)*10;
+        var end = (page*10)-1;
+        User.find({'admin':false, 'verification':true, 'activation':true}).populate('university').sort('rating DESC').limit(page*10).exec(function(err,users){
             if(err) return next(err);
-            users.forEach(function(user) {
-                if(usersRank.length == 0) tempRating = user.rating;
-                if(user.rating != tempRating) {
-                    tempRating = user.rating;
+            var tmp_users = [];
+            for(var i=start;i<users.length;i++){
+                if(users[i]!=null)
+                    tmp_users.push(users[i]);
+                else
+                    break;
+            }
+            for(var i=0;i<tmp_users.length;i++){
+                if(usersRank.length==0) tempRating = tmp_users[i].rating;
+                if(tmp_users[i].rating!=tempRating){
+                    tempRating = tmp_users[i].rating;
                     tempRank = tempTotal;
                 }
-                usersRank.push({'user':user, 'rank':tempRank});
+                usersRank.push({'user':tmp_users[i], 'rank':tempRank});
                 tempTotal++;
-                add(users.length);
+            }
+            var prevpage = parseInt(page)-1;
+            var nextpage = parseInt(page)+1;
+            return res.view({
+                    prevpage : prevpage,
+                    page : page,
+                    nextpage : nextpage,
+                    usersRank : usersRank
             });
+            // tmp_users.forEach(function(user) {
+            //     if(usersRank.length == 0) tempRating = user.rating;
+            //     if(user.rating != tempRating) {
+            //         tempRating = user.rating;
+            //         tempRank = tempTotal;
+            //     }
+            //     usersRank.push({'user':user, 'rank':tempRank});
+            //     tempTotal++;
+            //     add(users.length);
+            // });
         });
     },
     rankUniversity: function(req,res,next) {
         var universities = [], indexLoop = 0;
+        var start = 0;
+        var page = 1;
+        if(req.param('page')!=null){
+            page = req.param('page');
+        }
+        start = (page-1)*10;
+        var end = (page*10)-1;
+        var prevpage = parseInt(page)-1;
+        var nextpage = parseInt(page)+1;
         function add(n){
             indexLoop++;
             if(indexLoop==n)
@@ -588,8 +628,18 @@ module.exports = {
                 universities.sort(function(a,b) {
                     return b.rating - a.rating;
                 });
+                var tmp_universities = [];
+                for(var i=start;i<=end;i++){
+                    if(universities[i]!=null)
+                        tmp_universities.push(universities[i]);
+                    else
+                        break;
+                }
                 return res.view({
-                    universities : universities
+                    prevpage : prevpage,
+                    page : page,
+                    nextpage : nextpage,
+                    universities : tmp_universities
                 });
             }
         }
@@ -623,6 +673,13 @@ module.exports = {
     },
     universityProfile: function(req,res,next) {
         var usersRank = [], university = null, indexLoop = 0, tempTotal = 1, tempRank = 1, tempRating = 0;
+        var start = 0;
+        var page = 1;
+        if(req.param('page')!=null){
+            page = req.param('page');
+        }
+        start = (page-1)*10;
+        var end = (page*10)-1;
         function add(n){
             indexLoop++;
             if(indexLoop==n)
@@ -635,17 +692,42 @@ module.exports = {
         }
         University.findOne({'val_name':req.param('val')}).exec(function(err, universityFound) {
             university = universityFound;
-            User.find({'university':university.id,'verification':true,'admin':false, 'activation':true}).sort('rating DESC').exec(function(err,users) {
-                users.forEach(function(user) {
-                    if(usersRank.length == 0) tempRating = user.rating;
-                    if(user.rating != tempRating) {
-                        tempRating = user.rating;
+            User.find({'university':university.id,'verification':true,'admin':false, 'activation':true}).sort('rating DESC').limit(page*10).exec(function(err,users) {
+                var tmp_users = [];
+                for(var i=start;i<users.length;i++){
+                    if(users[i]!=null)
+                        tmp_users.push(users[i]);
+                    else
+                        break;
+                }
+                for(var i=0;i<tmp_users.length;i++){
+                    if(usersRank.length==0) tempRating = tmp_users[i].rating;
+                    if(tmp_users[i].rating!=tempRating){
+                        tempRating = tmp_users[i].rating;
                         tempRank = tempTotal;
                     }
-                    usersRank.push({'user':user, 'rank':tempRank});
+                    usersRank.push({'user':tmp_users[i], 'rank':tempRank});
                     tempTotal++;
-                    add(users.length);
+                }
+                var prevpage = parseInt(page)-1;
+                var nextpage = parseInt(page)+1;
+                return res.view({
+                        prevpage : prevpage,
+                        page : page,
+                        nextpage : nextpage,
+                        usersRank : usersRank,
+                        university : university
                 });
+                // users.forEach(function(user) {
+                //     if(usersRank.length == 0) tempRating = user.rating;
+                //     if(user.rating != tempRating) {
+                //         tempRating = user.rating;
+                //         tempRank = tempTotal;
+                //     }
+                //     usersRank.push({'user':user, 'rank':tempRank});
+                //     tempTotal++;
+                //     add(users.length);
+                // });
             });
         });
     },

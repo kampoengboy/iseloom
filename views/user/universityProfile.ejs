@@ -8,16 +8,32 @@
                   <th>Rating</th>
           </thead>
           <tbody>
+              <% var idx = ((page*10)-10 )+1; %>
               <% _.each(usersRank, function(user){%>
                 <tr>
-                    <td><%=user.rank%></td>
+                    <td><%=idx%></td>
                     <td><a href="/user/profile/<%=user.user.username%>"><%=user.user.name%></a></td>
                     <td><%= user.user.rating %></td>
+                    <% idx++ %>
                 </tr>
               <%})%>
           </tbody>
         </table>
     </div>
+    <nav>
+      <ul class="pager">
+        <% if(page==1) { %>
+         <li class="disabled">
+            <a>Previous</a>
+         </li>
+        <% } else { %>
+        <li>
+           <a href="?page=<%=prevpage%>" class="disabled">Previous</a>
+        </li>
+        <% } %>
+        <li><a href="?page=<%=nextpage%>">Next</a></li>
+      </ul>
+    </nav>
     <div class="row">
       <div class="col-md-4">
         <div class="btn-group" role="group" aria-label="...">

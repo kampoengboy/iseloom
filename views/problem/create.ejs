@@ -124,7 +124,7 @@ function previewFile1(){
       file_url_1.value = reader.result;
   }
   if (file1) {
-       if(file1.type!="application/zip" && file1.type!="application/x-rar")
+       if(file1.type!="application/zip" && file1.type!="application/x-rar" && file1.type!="document/unknown")
        {
          $('#file1').val("");
          alert("File yang diupload harus dalam bentuk RAR ataupun ZIP.");

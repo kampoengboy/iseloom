@@ -9,6 +9,32 @@ var AdmZip = require('adm-zip');
 var fs = require('fs');
 var Promise = require('bluebird');
 module.exports = {
+    search : function(req,res,next){
+        var q = "";
+        if(typeof req.param('q')!="undefined")
+            q = req.param('q');
+        Problem.find({publish:true})
+        .exec(function(err,problems){
+            if(err) return next(err);
+            if(q=="") return res.view({result : [],q:""});
+            var result = [];
+            q = q.toLowerCase();
+            for(var i=0;i<problems.length;i++){
+                //search name
+                var name = problems[i].name;
+                var found = false;
+                for(var j=0;j<=name.length-q.length;j++){
+                    var strtmp = name.substr(j,q.length);
+                    if(strtmp == q){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) result.push(problems[i]);
+            }
+            return res.view({result : result, q:q});
+        });
+    },
     'list_category' : function(req,res,next){
         Category.find(function(err,categories){
             if(err) return next(err);
@@ -243,8 +269,10 @@ module.exports = {
         var stdout_name = req.param('file_name_2');
         stdin_file = stdin_file.replace('data:application/zip;base64,', "");
         stdin_file = stdin_file.replace('data:application/x-rar;base64,', "");
+        stdin_file = stdin_file.replace('data:document/unknown;base64,', "");
         stdout_file= stdout_file.replace('data:application/zip;base64,', "");
-        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "")
+        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "");
+        stdout_file = stdout_file.replace('data:document/unknown;base64,', "");
         if(stdin_name==stdout_name){
             var sameNameError = ['File name for Testcase Input and Output should be different.']
             req.session.flash = {
@@ -347,13 +375,39 @@ module.exports = {
         });
     },
     list : function(req,res,next) {
+        var start = 0;
+        var page = 1;
+        if(req.param('page')!=null){
+            page = req.param('page');
+        }
+        start = (page-1)*10;
+        var end = (page*10)-1;
+        var prevpage = parseInt(page)-1;
+        var nextpage = parseInt(page)+1;
         var problemsPublish = [], problemNotPublish = [], problemSubs = [], indexLoop = 0;
         function add(problemsPublish, problemsNotPublish, n){
             indexLoop++;
             if(indexLoop==n)
             {
+                var tmp_problempublish = [];
+                var tmp_problemsubs = [];
+                for(var i=start;i<=end;i++){
+                    if(problemsPublish[i]!=null)
+                        tmp_problempublish.push(problemsPublish[i]);
+                    else
+                        break;
+                }
+                // for(var i=start;i<=end;i++){
+                //     if(problemSubs[i]!=null)
+                //         tmp_problemsubs.push(problemSubs[i]);
+                //     else
+                //         break;
+                // }
                 return res.view({
-                    problemsPublish : problemsPublish,
+                    prevpage : prevpage,
+                    page : page,
+                    nextpage : nextpage,
+                    problemsPublish : tmp_problempublish,
                     problemsNotPublish : problemsNotPublish,
                     problemSubs : problemSubs
                 });
