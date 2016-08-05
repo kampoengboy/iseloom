@@ -269,8 +269,10 @@ module.exports = {
         var stdout_name = req.param('file_name_2');
         stdin_file = stdin_file.replace('data:application/zip;base64,', "");
         stdin_file = stdin_file.replace('data:application/x-rar;base64,', "");
+        stdin_file = stdin_file.replace('data:document/unknown;base64,', "");
         stdout_file= stdout_file.replace('data:application/zip;base64,', "");
-        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "")
+        stdout_file = stdout_file.replace('data:application/x-rar;base64,', "");
+        stdout_file = stdout_file.replace('data:document/unknown;base64,', "");
         if(stdin_name==stdout_name){
             var sameNameError = ['File name for Testcase Input and Output should be different.']
             req.session.flash = {
