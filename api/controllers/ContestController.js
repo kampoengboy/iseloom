@@ -837,13 +837,14 @@ module.exports = {
 
             Contest.destroy(req.param('id'), function contestDestroyed(err) {
                 if (err) return next(err);
+                UserContest.destroy({'id_contest':req.param('id')}, function(err, usercontest){});
+                ProblemContest.destroy({'id_contest':req.param('id')}, function(err, problemcontest){});
+                var removeContestSuccess = ['Contest ', contest.name, ' has been removed.'];
+                req.session.flash = {
+                   success: removeContestSuccess
+                }
+                res.redirect('/contest/list');
             });
-
-            var removeContestSuccess = ['Contest ', contest.name, ' has been removed.'];
-            req.session.flash = {
-               success: removeContestSuccess
-            }
-            res.redirect('/contest/list');
         });
     },
     edit: function(req,res,next) {
