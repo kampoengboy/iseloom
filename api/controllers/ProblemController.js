@@ -391,11 +391,15 @@ module.exports = {
             {
                 var tmp_problempublish = [];
                 var tmp_problemsubs = [];
+                var disabledNext = false;
                 for(var i=start;i<=end;i++){
                     if(problemsPublish[i]!=null)
                         tmp_problempublish.push(problemsPublish[i]);
                     else
                         break;
+                }
+                if(page*10 > problemsPublish.length) {
+                    disabledNext = true;
                 }
                 // for(var i=start;i<=end;i++){
                 //     if(problemSubs[i]!=null)
@@ -409,7 +413,8 @@ module.exports = {
                     nextpage : nextpage,
                     problemsPublish : tmp_problempublish,
                     problemsNotPublish : problemsNotPublish,
-                    problemSubs : problemSubs
+                    problemSubs : problemSubs,
+                    disabledNext : disabledNext
                 });
             }
         }

@@ -116,7 +116,13 @@
            <a href="/problem/list?page=<%=prevpage%>" class="disabled">Previous</a>
         </li>
         <% } %>
-        <li><a href="/problem/list?page=<%=nextpage%>">Next</a></li>
+        <% if(disabledNext) { %>
+         <li class="disabled">
+            <a>Next</a>
+         </li>
+        <% } else { %>
+          <li><a href="/problem/list?page=<%=nextpage%>">Next</a></li>
+        <% } %>
       </ul>
     </nav>
     <% if(session.authenticated && session.User.admin) {%>
