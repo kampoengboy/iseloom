@@ -61,7 +61,7 @@
                             <% if(idx == 1) { tempRating = user.rating } %>
                             <% if(!user.admin && user.verification && user.activation) { %>
                             <tr>
-                                <td><% if(tempRating == user.rating) { %><%=idxSame%><% } else { %><%=idx%><% } %></td>
+                                <td><%=idx%></td>
                                 <td><a href="/user/profile/<%=user.username%>"><%=user.name%></a></td>
                                 <td><%=user.rating%></td>
                             </tr>
