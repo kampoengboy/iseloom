@@ -1,4 +1,28 @@
 <div class="container" style="background-color:white">
+  <% if(flash) { %>
+    <% if(flash.err) { %>
+          <div>
+          <br><br>
+          <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            <% Object.keys(flash.err).forEach(function(error) { %>
+                  <%= flash.err[error] %>
+            <% }) %>
+          </div>
+          </div>
+    <% } else if (flash.success){ %>
+      <div>
+      <br><br>
+      <div class="alert alert-success" role="alert">
+        <span class="sr-only">Success:</span>
+        <% Object.keys(flash.success).forEach(function(success) { %>
+              <%= flash.success[success] %>
+        <% }) %>
+      </div>
+      </div>
+    <% } %>
+  <% } %>
     <% if(session.authenticated && !session.User.admin && userActiveContests.length > 0) {%>
       <br>
       <legend>My Contest</legend>
@@ -44,6 +68,8 @@
                         <td><a href="remove/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-remove" aria-hidden="true" title="Remove Contest"></span></a></td>
                       <% } else if (now >= usercontest.id_contest.datetimeopen && now <= usercontest.id_contest.datetimeclose) {%>
                         <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><button class="btn-success">Go To Contest!</button></a></td>
+                      <% } else if (now <= usercontest.id_contest.datetimeopen) {%>
+                        <td><a href="remove_contestant/<%=usercontest.id_contest.id%>"><button class="btn btn-danger"><span class="glyphicon glyphicon-log-out" aria-hidden="true" title="Unjoin Contest"></span> Unjoin!</button></a></td>
                       <% } else {%>
                         <td><a href="scoreboard/<%=usercontest.id_contest.id%>"><span class="glyphicon glyphicon-equalizer" aria-hidden="true" title="Scoreboard"></span></a></td>
                       <% } %>

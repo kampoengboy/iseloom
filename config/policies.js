@@ -33,7 +33,8 @@ module.exports.policies = {
   'contest' : {
       'create' : ['flash','sessionAuth'],
       'remove' : ['flash','sessionAuth'],
-      'scoreboard' : ['flash']
+      'scoreboard' : ['flash'],
+      'list' : ['flash']
   },
   'user' : {
       'reset_password' : ['flash'],
