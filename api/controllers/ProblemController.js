@@ -21,7 +21,7 @@ module.exports = {
             q = q.toLowerCase();
             for(var i=0;i<problems.length;i++){
                 //search name
-                var name = problems[i].name;
+                var name = problems[i].name.toLowerCase();
                 var found = false;
                 for(var j=0;j<=name.length-q.length;j++){
                     var strtmp = name.substr(j,q.length);
