@@ -44,7 +44,13 @@
            <a href="/ranklists?page=<%=prevpage%>" class="disabled">Previous</a>
         </li>
         <% } %>
-        <li><a href="/ranklists?page=<%=nextpage%>">Next</a></li>
+        <% if(disabledNext) { %>
+         <li class="disabled">
+            <a>Next</a>
+         </li>
+        <% } else { %>
+          <li><a href="/ranklists?page=<%=nextpage%>">Next</a></li>
+        <% } %>
       </ul>
     </nav>
 </div>

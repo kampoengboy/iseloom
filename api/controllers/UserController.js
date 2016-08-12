@@ -590,13 +590,18 @@ module.exports = {
                 usersRank.push({'user':tmp_users[i], 'rank':tempRank});
                 tempTotal++;
             }
+            var disabledNext = false;
+            if(page*10 > users.length) {
+                disabledNext = true;
+            }
             var prevpage = parseInt(page)-1;
             var nextpage = parseInt(page)+1;
             return res.view({
                     prevpage : prevpage,
                     page : page,
                     nextpage : nextpage,
-                    usersRank : usersRank
+                    usersRank : usersRank,
+                    disabledNext : disabledNext
             });
             // tmp_users.forEach(function(user) {
             //     if(usersRank.length == 0) tempRating = user.rating;
@@ -635,11 +640,16 @@ module.exports = {
                     else
                         break;
                 }
+                var disabledNext = false;
+                if(page*10 > universities.length) {
+                    disabledNext = true;
+                }
                 return res.view({
                     prevpage : prevpage,
                     page : page,
                     nextpage : nextpage,
-                    universities : tmp_universities
+                    universities : tmp_universities,
+                    disabledNext : disabledNext
                 });
             }
         }
@@ -709,6 +719,10 @@ module.exports = {
                     usersRank.push({'user':tmp_users[i], 'rank':tempRank});
                     tempTotal++;
                 }
+                var disabledNext = false;
+                if(page*10 > usersRank.length) {
+                    disabledNext = true;
+                }
                 var prevpage = parseInt(page)-1;
                 var nextpage = parseInt(page)+1;
                 return res.view({
@@ -716,7 +730,8 @@ module.exports = {
                         page : page,
                         nextpage : nextpage,
                         usersRank : usersRank,
-                        university : university
+                        university : university,
+                        disabledNext : disabledNext
                 });
                 // users.forEach(function(user) {
                 //     if(usersRank.length == 0) tempRating = user.rating;
