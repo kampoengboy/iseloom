@@ -49,6 +49,8 @@ angular.module('scoreboard', [])
                     tempscore = data.score;
                     index++;
                 } else if (data.solved != tempsolved || data.score != tempscore) {
+                    tempsolved = data.solved;
+                    tempscore = data.score;
                     index = totalindex;
                 }
                 data.index = index;
